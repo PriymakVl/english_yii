@@ -23,9 +23,9 @@ $this->title = 'Перечень текстов';
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            // 'id',
             'title:ntext',
-            'created',
+            // 'created',
             // 'status',
 
             ['class' => 'yii\grid\ActionColumn'],

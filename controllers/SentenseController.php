@@ -46,12 +46,14 @@ class SentenseController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $id_text)
+    public function actionView($id, $id_text, $direction = false)
     {
-        $sentense = Sentense::findOne($id);
-        $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
-        $sentense->getVariantsRu($sentenses);
-        return $this->render('view', compact('sentense', 'sentenses'));
+        if ($direction == 'next') $id++;
+        else if ($direction == 'previos') $id--;
+        $model = Sentense::findOne($id);
+        if (!$model) throw new NotFoundHttpException('Предложение не найдено');
+        $model->getAll()->getCurrentNumber()->getVariantsRu();
+        return $this->render('view', compact('model'));
     }
 
     /**

@@ -16,6 +16,11 @@ use yii\web\NotFoundHttpException;
  */
 class Sentense extends \yii\db\ActiveRecord
 {
+
+    public $all; //array all of setneses text
+    public $allQty; //count all sentenses of text
+    public $currentNum;
+
     /**
      * {@inheritdoc}
      */
@@ -66,5 +71,38 @@ class Sentense extends \yii\db\ActiveRecord
             $obj->id_text = $id_text;
             $obj->save();
         }
+    }
+
+    public function getAll()
+    {
+         $this->all = Sentense::findAll(['id_text' => $this->id_text, 'status' => 1]);
+         $this->allQty = count($this->all);
+         return $this;
+    }
+
+    public function getCurrentNumber()
+    {
+        $this->currentNum = 1;
+        foreach ($this->all as $item) {
+            if ($item->id == $this->id) return $this;
+            $this->currentNum++;
+        }
+        return $this;
+    }
+
+    public function getVariantsRu($count = 3)
+    {
+        $this->variantsRu[$this->id] = $this->ru; 
+        for ($i = 1; $i < $count; $i++) {
+            $item = $this->getRandom();
+            $this->variantsRu[$item->id] = $item->ru;
+        }
+    }
+
+    private function getRandom()
+    {
+        $num = rand(1, $this->allQty);
+        if ($num == $currentNum) $this->getRandom();
+        return $this->all[$num - 1];
     }
 }
