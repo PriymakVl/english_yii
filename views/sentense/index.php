@@ -7,7 +7,9 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\SentenseSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Sentenses';
+$this->title = 'Предложения';
+
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="sentense-index">

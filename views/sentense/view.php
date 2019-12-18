@@ -7,33 +7,33 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Sentense */
 
 $this->title = 'Предложение №'.$model->currentNum. ' всего предложений: '.$model->allQty;
-$this->params['breadcrumbs'][] = ['label' => 'Sentenses', 'url' => ['index']];
+
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['index', 'id_text' => $model->id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
-
-create_variants_ru($model->variantsRu);
 
 function create_ru($ru)
 {
     return sprintf('<a href="#" str="%s" onclick="show_ru(this);">Показать перевод</a>', $ru); 
 }
 
-function create_variants_ru($variants_ru)
+function create_variants_ru($model)
 {
-    $variants_str = '<a href="#" onclick="show_variants(this);">Показать варианты</a><br>';
+    $variants_str = '<a href="#" onclick="show_variants(this);">Показать варианты</a><div id="variants_ru">';
     $number = 1;
-    foreach ($variants_ru as $id => $text) {
-        $str = sprintf('<a href="#" id_str="%s" onclick="check_variant(this);">%s</a><br>', $id, $text); 
+    foreach ($model->variantsRu as $id => $text) {
+        $str = sprintf('<a href="#" id_variant="%s" id_sentense="%s" onclick="check_variant(this);">%s</a><br><br>', $id, $model->id, $text); 
         $variants_str .= '<span class="variant_ru">' . $number . ') ' . $str . '</span>';
         $number++;
     }
-    return $variants_str; 
+    return $variants_str.'</div>'; 
 }
 
 ?>
 
 <style> 
-.variant_ru {
+#variants_ru {
     display: none;
 }
 </style>
@@ -63,7 +63,7 @@ function create_variants_ru($variants_ru)
                 'value' => function($model) {return create_ru($model->ru);}, 
             ],
             ['attribute' => 'variantsRu', 'label' => 'Варианты ответов', 'format' => 'raw',
-                'value' => function($model) {return create_variants_ru($model->variantsRu);}, 
+                'value' => function($model) {return create_variants_ru($model);}, 
             ],
         ],
     ]) ?>
@@ -79,5 +79,17 @@ function show_ru(link) {
     parent.innerText = str;
     link.style.display = 'none';
     return false;
+}
+
+function show_variants(link) {
+    document.getElementById('variants_ru').style.display = 'block';
+    link.style.display = 'none';
+}
+
+function check_variant(link) {
+    let id_variant = link.getAttribute('id_variant');
+    let id_sentense = link.getAttribute('id_sentense');
+    if (id_sentense == id_variant) alert('Верно');
+    else alert('Ошибка');
 }
 </script>

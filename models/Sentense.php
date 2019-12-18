@@ -90,13 +90,14 @@ class Sentense extends \yii\db\ActiveRecord
         return $this;
     }
 
-    public function getVariantsRu($count = 3)
+    public function getVariantsRu($count = 2)
     {
         $this->variantsRu[$this->id] = $this->ru; 
         for ($i = 1; $i < $count; $i++) {
             $item = $this->getRandom();
             $this->variantsRu[$item->id] = $item->ru;
         }
+        shuffle($this->variantsRu);
     }
 
     private function getRandom()

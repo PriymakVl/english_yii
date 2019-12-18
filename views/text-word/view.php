@@ -2,17 +2,16 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Text */
+/* @var $model app\models\TextWord */
 
-$this->title = $model->title;
-
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Text Words', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="text-view">
+<div class="text-word-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -25,17 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Предложения', ['/sentense', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Слова', ['/word', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
-            'engl:ntext',
-            'ru:ntext',
-            'created',
+            'id_text',
+            'id_word',
             'status',
         ],
     ]) ?>
