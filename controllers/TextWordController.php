@@ -33,15 +33,12 @@ class TextWordController extends Controller
      * Lists all TextWord models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id_text)
     {
+        // $words = TextWord::findAll(['id_text' => $id_text, 'status' => 1]);
         $searchModel = new TextWordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index', compact('searchModel', 'dataProvider', 'id_text'));
     }
 
     /**
@@ -57,31 +54,19 @@ class TextWordController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new TextWord model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
+    public function actionCreate($id_text)
     {
         $model = new TextWord();
+        $model->id_text = $id_text;
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if (Yii::$app->request->isPost) {
+            if ($model->saveWords()) {
+                return $this->redirect(['index', 'id_text' => $id_text]);
+            }
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
 
-    /**
-     * Updates an existing TextWord model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);

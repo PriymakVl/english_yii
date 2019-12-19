@@ -10,16 +10,14 @@ use yii\widgets\ActiveForm;
 
 <div class="text-word-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-    <?= $form->field($model, 'id_text')->textInput() ?>
+    <?= $form->field($model, 'file_ru')->fileInput()->hint('Выберите файл с русскими словами') ?>
 
-    <?= $form->field($model, 'id_word')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'file_engl')->fileInput()->hint('Выберите файл с английскими словами') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Добавить слова', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

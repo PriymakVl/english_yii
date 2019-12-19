@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\TextWordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Text Words';
+$this->title = 'Слова';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="text-word-index">
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Text Word', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить слова', ['create', 'id_text' => $id_text], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

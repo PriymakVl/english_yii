@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\TextWord */
 
-$this->title = 'Create Text Word';
-$this->params['breadcrumbs'][] = ['label' => 'Text Words', 'url' => ['index']];
+$this->title = 'Добавить слова для текста';
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['index', 'id_text' => $model->id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="text-word-create">
