@@ -4,31 +4,18 @@ namespace app\models;
 
 use Yii;
 use yii\web\UploadedFile;
+use app\models\Word;
 
-/**
- * This is the model class for table "text_word".
- *
- * @property int $id
- * @property int|null $id_text
- * @property int|null $id_word
- * @property int|null $status
- */
 class TextWord extends \yii\db\ActiveRecord
 {
     public $file_ru;
     public $file_engl;
 
-    /**
-     * {@inheritdoc}
-     */
     public static function tableName()
     {
         return 'text_word';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rules()
     {
         return [
@@ -37,9 +24,6 @@ class TextWord extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attributeLabels()
     {
         return [
@@ -54,12 +38,12 @@ class TextWord extends \yii\db\ActiveRecord
     {
         $words = $this->getWordsFromFiles();
         for ($i = 0; $i < count($words['engl']); $i++) {
-            $obj = new self;
-            $obj->id_text = $this->id;
-            $obj->engl = $words['engl'][$i];
-            $obj->ru = mb_convert_encoding($words['ru'][$i], "utf-8", "windows-1251");
-            $obj->save();
+            $word = Word::findOne(['engl' => $words['engl'][$i], 'status' => 1]);
+            if (!$word) $word = $this->addWord($words, $i);
+            $sql = sprintf("INSERT INTO `%s` (`id_text`, `id_word`) VALUES (%d, %d)", $this->tableName(), $this->id_text, $word->id);
+            \Yii::$app->db->createCommand($sql)->execute();
         }
+        return true;
     }
 
     private function getWordsFromFiles()
@@ -67,7 +51,15 @@ class TextWord extends \yii\db\ActiveRecord
         $file_ru = UploadedFile::getInstance($this, 'file_ru');
         $words['ru'] = file($file_ru->tempName);
         $file_engl = UploadedFile::getInstance($this, 'file_engl');
-        $words['engl'] = file($file_ru->tempName);
+        $words['engl'] = file($file_engl->tempName);
         return $words;
+    }
+
+    private function addWord($words, $i) {
+        $word = new Word;
+        $word->engl = trim($words['engl'][$i]);
+        $word->ru = mb_convert_encoding(trim($words['ru'][$i]), "utf-8", "windows-1251");
+        $res = $word->save();
+        return Word::findOne(['engl' => trim($words['engl'][$i])]);
     }
 }
