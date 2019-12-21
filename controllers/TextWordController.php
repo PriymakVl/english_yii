@@ -41,9 +41,9 @@ class TextWordController extends Controller
         return $this->render('index', compact('searchModel', 'dataProvider', 'id_text'));
     }
 
-    public function actionView($id)
+    public function actionView($id, $direction = false)
     {
-        return $this->render('view', ['model' => $this->findModel($id)]);
+        return $this->render('view', ['model' => $this->findModel($id, $direction)]);
     }
 
     public function actionCreate($id_text)
@@ -93,8 +93,11 @@ class TextWordController extends Controller
      * @return TextWord the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $direction)
     {
+        if ($direction == 'next') $id++;
+        else if ($direction == 'previos') $id--;
+        
         if (($model = TextWord::findOne($id)) !== null) {
             return $model;
         }

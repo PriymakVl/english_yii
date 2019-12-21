@@ -106,4 +106,15 @@ class Sentense extends \yii\db\ActiveRecord
         if ($num == $currentNum) $this->getRandom();
         return $this->all[$num - 1];
     }
+
+    public function getWords()
+    {
+        $items = explode(' ', $this->engl);
+        $words = [];
+        foreach ($items as $item) {
+            $word = Word::findOne(['engl' => trim($item), 'status' => 1]);
+            if ($word) $words[] = $word;
+        }
+        return $words;
+    }
 }

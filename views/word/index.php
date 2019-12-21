@@ -3,11 +3,11 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\SearchWord */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+debug($id_text);
 
-$this->title = 'Words';
+$this->title = 'Слова';
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="word-index">
@@ -15,7 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Word', ['create'], ['class' => 'btn btn-success']) ?>
+        <?//= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -26,10 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'engl',
             'ru',
-            'status',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

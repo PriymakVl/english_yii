@@ -5,11 +5,15 @@ namespace app\models;
 use Yii;
 use yii\web\UploadedFile;
 use app\models\Word;
+use app\models\Sentense;
 
 class TextWord extends \yii\db\ActiveRecord
 {
     public $file_ru;
     public $file_engl;
+    public $ru;
+    public $engl;
+    public $sentenses;
 
     public static function tableName()
     {
@@ -57,9 +61,19 @@ class TextWord extends \yii\db\ActiveRecord
 
     private function addWord($words, $i) {
         $word = new Word;
-        $word->engl = trim($words['engl'][$i]);
-        $word->ru = mb_convert_encoding(trim($words['ru'][$i]), "utf-8", "windows-1251");
+        $word->engl = strtolower(trim($words['engl'][$i]));
+        //ru
+        $ru = mb_convert_encoding($ru, "utf-8", "windows-1251");
+        $word->ru = mb_strtolower(trim($words['ru'][$i]));
+
         $res = $word->save();
         return Word::findOne(['engl' => trim($words['engl'][$i])]);
+    }
+
+    public function getSentenses()
+    {
+        $word = Word::findOne($this->id_word);
+        if (!$word) return false;
+        return Sentense::find()->where(['like', 'engl', $word->engl])->all();
     }
 }

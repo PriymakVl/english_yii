@@ -2,12 +2,11 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\TextWordSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use app\models\Word;
 
 $this->title = 'Слова';
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="text-word-index">
@@ -26,10 +25,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'id_text',
-            'id_word',
-            'status',
+            ['attribute' => 'engl', 'label' => 'Английские', 'format' => 'raw',
+                'value' => function($model) {return Word::findOne($model->id)->engl;}, 
+            ],
+
+            ['attribute' => 'engl', 'label' => 'Русские', 'format' => 'raw',
+                'value' => function($model) {return Word::findOne($model->id)->ru;}, 
+            ],
+
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

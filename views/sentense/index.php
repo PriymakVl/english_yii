@@ -11,6 +11,7 @@ $this->title = 'Предложения';
 
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $text->id]];
 ?>
 <div class="sentense-index">
 
@@ -21,7 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <th>№</th>
             <th>Английский</th>
             <th>Русский</th>
-            <th></th>
         </tr>
         <? $number = 1; ?>
         <? foreach ($sentenses as $sentense): ?>
@@ -31,7 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 </td>
                 <td><?=$sentense->engl?></td>
                 <td><?=$sentense->ru?></td>
-                <td></td>
             </tr>
             <? $number++; ?>
         <? endforeach; ?>

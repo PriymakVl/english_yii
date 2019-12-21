@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Sentense */
+$words = $model->getWords();
 
 $this->title = 'Предложение №'.$model->currentNum. ' всего предложений: '.$model->allQty;
 
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['index', 'id_text' => $model->id_text]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $model->id_text]];
+
 \yii\web\YiiAsset::register($this);
 
 function create_ru($ru)
@@ -28,6 +28,15 @@ function create_variants_ru($model)
         $number++;
     }
     return $variants_str.'</div>'; 
+}
+
+function create_words($words) {
+    if (!$words) return false;
+    $list_words = '<a href="#" onclick="show_words(this);">Показать слова</a><ul id="words" style="display:none;">';
+    foreach ($words as $word) {
+        $list_words .= sprintf('<li><span>%s</span>&nbsp;&nbsp;=&nbsp;&nbsp;<span>%s<span></li>', $word->engl, $word->ru);
+    }
+    return $list_words.'</ul>';
 }
 
 ?>
@@ -65,6 +74,10 @@ function create_variants_ru($model)
             ['attribute' => 'variantsRu', 'label' => 'Варианты ответов', 'format' => 'raw',
                 'value' => function($model) {return create_variants_ru($model);}, 
             ],
+
+            ['attribute' => 'words', 'label' => 'Слова', 'format' => 'raw',
+                'value' => function($model) {return create_words($model->getWords());}, 
+            ],
         ],
     ]) ?>
 
@@ -91,5 +104,10 @@ function check_variant(link) {
     let id_sentense = link.getAttribute('id_sentense');
     if (id_sentense == id_variant) alert('Верно');
     else alert('Ошибка');
+}
+
+function show_words(link) {
+    document.getElementById('words').style.display = 'block';
+    link.style.display = 'none';
 }
 </script>
