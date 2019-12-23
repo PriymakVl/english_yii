@@ -9,6 +9,9 @@ use app\models\Sentense;
 
 class TextWord extends \yii\db\ActiveRecord
 {
+    const SCENARIO_CREATE = 'create';
+    const SCENARIO_DELETE = 'delete';
+
     public $file_ru;
     public $file_engl;
     public $ru;
@@ -18,6 +21,14 @@ class TextWord extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'text_word';
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[static::SCENARIO_CREATE] = ['file_ru', 'file_engl'];
+        $scenarios[static::SCENARIO_DELETE] = ['status'];
+        return $scenarios;
     }
 
     public function rules()

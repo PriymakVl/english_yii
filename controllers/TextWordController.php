@@ -8,6 +8,7 @@ use app\models\TextWordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * TextWordController implements the CRUD actions for TextWord model.
@@ -29,15 +30,13 @@ class TextWordController extends Controller
         ];
     }
 
-    /**
-     * Lists all TextWord models.
-     * @return mixed
-     */
     public function actionIndex($id_text)
     {
-        // $words = TextWord::findAll(['id_text' => $id_text, 'status' => 1]);
+        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $searchModel = new TextWordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params['query'] = $query;
+        $params['pagination'] = ['pageSize' => 8];
+        $dataProvider = new ActiveDataProvider($params);
         return $this->render('index', compact('searchModel', 'dataProvider', 'id_text'));
     }
 
@@ -48,7 +47,7 @@ class TextWordController extends Controller
 
     public function actionCreate($id_text)
     {
-        $model = new TextWord();
+        $model = new TextWord(['scenario' => TextWord::SCENARIO_CREATE]);
         $model->id_text = $id_text;
 
         if (Yii::$app->request->isPost) {
@@ -62,37 +61,32 @@ class TextWordController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
     }
 
-    /**
-     * Deletes an existing TextWord model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
+    public function actionGuess($id_text)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $text = Text::findOne($id_text);
+        $query = TextWord::find()->where(['id_text' => $id_txt, 'status' => STATUS_ACTIVE]);
+        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 8]);
+        $words = $query->offset($pages->offset)->limit($pages->limit)->all();
+        return $this->render('guess', compact('words', 'pages', 'text'));
     }
 
-    /**
-     * Finds the TextWord model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return TextWord the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    public function actionDelete($id)
+    {
+        $obj = TextWord::findOne($id);
+        $obj->scenario = TextWord::SCENARIO_DELETE;
+        $obj->status = 0;
+        $obj->save();
+        return $this->redirect(['index', 'id_text' => $obj->id_text]);
+    }
+
     protected function findModel($id, $direction)
     {
         if ($direction == 'next') $id++;
