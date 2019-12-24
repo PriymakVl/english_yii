@@ -3,12 +3,15 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\TextWord;
-use app\models\TextWordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use yii\data\Pagination;
+use app\models\TextWordSearch;
+use app\models\TextWord;
+use app\models\Text;
+
 
 /**
  * TextWordController implements the CRUD actions for TextWord model.
@@ -72,7 +75,7 @@ class TextWordController extends Controller
     public function actionGuess($id_text)
     {
         $text = Text::findOne($id_text);
-        $query = TextWord::find()->where(['id_text' => $id_txt, 'status' => STATUS_ACTIVE]);
+        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 8]);
         $words = $query->offset($pages->offset)->limit($pages->limit)->all();
         return $this->render('guess', compact('words', 'pages', 'text'));

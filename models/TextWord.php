@@ -87,4 +87,9 @@ class TextWord extends \yii\db\ActiveRecord
         if (!$word) return false;
         return Sentense::find()->where(['like', 'engl', $word->engl])->all();
     }
+
+    public function getWord()
+    {
+        return $this->hasOne(Word::className(), ['id' => 'id_word']);
+    }
 }
