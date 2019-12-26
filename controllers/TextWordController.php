@@ -78,7 +78,8 @@ class TextWordController extends Controller
         $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 8]);
         $words = $query->offset($pages->offset)->limit($pages->limit)->all();
-        return $this->render('guess', compact('words', 'pages', 'text'));
+        $engl = $words; $ru = $words; shuffle($ru);
+        return $this->render('guess', compact('engl', 'ru', 'pages', 'text'));
     }
 
     public function actionDelete($id)

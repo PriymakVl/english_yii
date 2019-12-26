@@ -5,8 +5,9 @@ use app\models\Word;
 use yii\widgets\LinkPager;
 
 $this->title = 'Угадай';
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style type="text/css">
@@ -15,15 +16,34 @@ $this->params['breadcrumbs'][] = $this->title;
         justify-content: center;
     }
     .words_wrp h2 {
-        font-size: 16px;
+        font-size: 20px;
+        text-transform: uppercase;
     }
     .words_wrp div {
-        margin: 20px;
+        margin-right: 100px;
     }
     .words_wrp ul {
-        margin: 0;
+        margin-left: -25px;
+    }
+
+    .words_wrp li {
+        font-size: 16px;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+
+    .words_wrp li:hover {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
     }
 </style>
+
 <div class="text-word-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -32,7 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="engl_wrp">
             <h2>English</h2>
             <ul class="engl_words">
-                <? foreach ($words as $item): ?>
+                <? foreach ($engl as $item): ?>
                     <li id_word="<?=$item->id?>" onclick="get_id_eng(this);"><?=$item->word->engl?></li>
                 <? endforeach; ?>
             </ul>
@@ -40,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="ru_wrp">
             <h2>Russian</h2>
              <ul class="ru_words">
-                <? foreach ($words as $item): ?>
+                <? foreach ($ru as $item): ?>
                     <li id_word="<?=$item->id?>" onclick="get_id_ru(this);"><?=$item->word->ru?></li>
                 <? endforeach; ?>
             </ul>
@@ -50,20 +70,34 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= LinkPager::widget(['pagination' => $pages]); ?>
     
     <script>
-        let id_engl, id_ru;
-        function check_word(elem, lang) {
-            elem.style.color = 'blue';
-            // if (id_engl) {
-            //     document.querySelector('.engl_words li[id_word="' + id_engl + '"]').style.color = 'black';
-            // }
-            id_word = elem.getAttribute('id_word');
-            lang == 'engl' ? id_engl = id_word : id_ru = id_word;
-            if (!id_ru) return;
-            if (id_ru != id_engl) return alert('no');
-            elem.style.display = 'none';
-            document.querySelector('.ru_words li[id_word="' + id_ru + '"]').style.display = 'none';
-            id_engl = null;
-            id_ru = null;
+    let id_engl, id_ru;
+
+    function get_id_eng(elem) {
+        elem.style.color = 'blue';
+        if (id_engl) {
+            document.querySelector('.engl_words li[id_word="' + id_engl + '"]').style.color = 'black';
+        }
+        id_engl = elem.getAttribute('id_word');
+        if (!id_ru) return;
+        if (id_ru != id_engl) return alert('no');
+        elem.style.display = 'none';
+        document.querySelector('.ru_words li[id_word="' + id_ru + '"]').style.display = 'none';
+        id_engl = null;
+        id_ru = null;
+    }
+
+    function get_id_ru(elem) {
+        elem.style.color = 'blue';
+        if (id_ru) {
+            let res = document.querySelector('.ru_words li[id_word="' + id_ru + '"]').style.color = 'black';
+        }
+        id_ru = elem.getAttribute('id_word');
+        if (!id_engl) return;
+        if (id_ru != id_engl) return alert('no');
+        elem.style.display = 'none';
+        document.querySelector('.engl_words li[id_word="' + id_engl + '"]').style.display = 'none';
+        id_engl = null;
+        id_ru = null;
     }
     </script>
 </div>
