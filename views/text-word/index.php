@@ -27,15 +27,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             ['attribute' => 'engl', 'label' => 'Английские', 'format' => 'raw',
-                'value' => function($model) {return Word::findOne($model->id)->engl;}, 
+                'value' => function($model) {return Word::findOne($model->id_word)->engl;}, 
             ],
 
             ['attribute' => 'engl', 'label' => 'Русские', 'format' => 'raw',
-                'value' => function($model) {return Word::findOne($model->id)->ru;}, 
+                'value' => function($model) {return Word::findOne($model->id_word)->ru;}, 
             ],
 
+            ['class' => 'yii\grid\ActionColumn', 'contentOptions' => ['style' => 'width:100px; text-align:center;'],
 
-            ['class' => 'yii\grid\ActionColumn'],
+                'headerOptions' => ['class' => 'text-info'], 'header' => 'Операции', 'template' => '{view} {update} {delete}', 
+                'buttons' => [
+                    'update' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/word/update', 'id' => $model->id_word]);
+                    }
+                ],
+
+            ],  
+
+
+            // ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 

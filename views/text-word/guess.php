@@ -79,9 +79,12 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         id_engl = elem.getAttribute('id_word');
         if (!id_ru) return;
-        if (id_ru != id_engl) return alert('no');
+        if (id_ru != id_engl) return addError(id_engl);
         elem.style.display = 'none';
         document.querySelector('.ru_words li[id_word="' + id_ru + '"]').style.display = 'none';
+        //check empty
+        let empty_list = document.querySelector('.ru_words:blank');
+        console.log(empty_list);
         id_engl = null;
         id_ru = null;
     }
@@ -93,11 +96,24 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         id_ru = elem.getAttribute('id_word');
         if (!id_engl) return;
-        if (id_ru != id_engl) return alert('no');
+        if (id_ru != id_engl) return addError(id_ru);
         elem.style.display = 'none';
         document.querySelector('.engl_words li[id_word="' + id_engl + '"]').style.display = 'none';
+        //check empty
+        let empty_list = document.querySelector('.ru_words:blank');
+        console.log(empty_list);
+
         id_engl = null;
         id_ru = null;
+    }
+
+    function addError(id_word, clear = false)
+    {
+        if (clear) document.cookie = '';
+        else document.cookie = document.cookie + ':' + id_word;
+        // let errors = Cookies.get('errors');
+        // console.log(document.cookie);
+        alert('no');
     }
     </script>
 </div>
