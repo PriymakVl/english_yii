@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?= LinkPager::widget(['pagination' => $pages]); ?>
     
-    <script>
+<script>
     let id_engl, id_ru;
 
     function get_id_eng(elem) {
@@ -79,12 +79,10 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         id_engl = elem.getAttribute('id_word');
         if (!id_ru) return;
-        if (id_ru != id_engl) return addError(id_engl);
+        if (id_ru != id_engl) return add_error(id_engl);
         elem.style.display = 'none';
         document.querySelector('.ru_words li[id_word="' + id_ru + '"]').style.display = 'none';
-        //check empty
-        let empty_list = document.querySelector('.ru_words:blank');
-        console.log(empty_list);
+        show_errors();
         id_engl = null;
         id_ru = null;
     }
@@ -96,24 +94,32 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         id_ru = elem.getAttribute('id_word');
         if (!id_engl) return;
-        if (id_ru != id_engl) return addError(id_ru);
+        if (id_ru != id_engl) return add_error(id_engl);
         elem.style.display = 'none';
         document.querySelector('.engl_words li[id_word="' + id_engl + '"]').style.display = 'none';
-        //check empty
-        let empty_list = document.querySelector('.ru_words:blank');
-        console.log(empty_list);
-
+        show_errors();
         id_engl = null;
         id_ru = null;
     }
 
-    function addError(id_word, clear = false)
+    function add_error(id_word)
     {
-        if (clear) document.cookie = '';
-        else document.cookie = document.cookie + ':' + id_word;
+        let engl = $('.engl_words li[id_word="' + id_word + '"]').text();
+        let ru = $('.ru_words li[id_word="' + id_word + '"]').text();
+        let error = id_word + ',' + engl + ',' + ru;
+        document.cookie = document.cookie + ':' + error;
         // let errors = Cookies.get('errors');
         // console.log(document.cookie);
         alert('no');
     }
-    </script>
+
+    function show_errors() {
+        let check_empty = $('.engl_words li:visible').length;
+        if (check_empty != 0) return;
+        let errors = document.cookie.split(':');
+        console.log(errors);
+    }
+
+    document.cookie = '';
+</script>
 </div>
