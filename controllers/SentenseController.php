@@ -46,7 +46,7 @@ class SentenseController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $id_text, $direction = false)
+    public function actionView($id, $direction = false)
     {
         if ($direction == 'next') $id++;
         else if ($direction == 'previos') $id--;

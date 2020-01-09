@@ -92,4 +92,11 @@ class TextWord extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Word::className(), ['id' => 'id_word']);
     }
+
+    public static function getByIndex($id_text, $index)
+    {
+        $items = TextWord::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        $index = isset($items[$index]) ? $index : 0;
+        return $items[$index];
+    }
 }

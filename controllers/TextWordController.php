@@ -72,6 +72,15 @@ class TextWordController extends Controller
         ]);
     }
 
+    public function actionDelete($id)
+    {
+        $obj = TextWord::findOne($id);
+        $obj->scenario = TextWord::SCENARIO_DELETE;
+        $obj->status = 0;
+        $obj->save();
+        return $this->redirect(['index', 'id_text' => $obj->id_text]);
+    }
+
     public function actionGuess($id_text)
     {
         $text = Text::findOne($id_text);
@@ -82,13 +91,18 @@ class TextWordController extends Controller
         return $this->render('guess', compact('engl', 'ru', 'pages', 'text'));
     }
 
-    public function actionDelete($id)
+    public function actionWrite($id_text, $index = 0)
     {
-        $obj = TextWord::findOne($id);
-        $obj->scenario = TextWord::SCENARIO_DELETE;
-        $obj->status = 0;
-        $obj->save();
-        return $this->redirect(['index', 'id_text' => $obj->id_text]);
+        $text = Text::findOne($id_text);
+        $item = TextWord::getByIndex($id_text, $index);
+        return $this->render('write', compact('text', 'item', 'index'));
+    }
+
+    public function actionTeach($id_text, $index = 0)
+    {
+        $text = Text::findOne($id_text);
+        $item = TextWord::getByIndex($id_text, $index);
+        return $this->render('teach', compact('text', 'item', 'index'));
     }
 
     protected function findModel($id, $direction)
@@ -99,7 +113,6 @@ class TextWordController extends Controller
         if (($model = TextWord::findOne($id)) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
