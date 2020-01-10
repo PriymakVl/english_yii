@@ -105,6 +105,15 @@ class TextWordController extends Controller
         return $this->render('teach', compact('text', 'item', 'index'));
     }
 
+    public function actionState($id, $state, $page, $per_page)
+    {
+        $item = TextWord::findOne($id);
+        $item->scenario = TextWord::SCENARIO_STATE;
+        $item->state = $state;
+        $item->save();
+        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page, 'per-page' => $per_page]);
+    }
+
     protected function findModel($id, $direction)
     {
         if ($direction == 'next') $id++;

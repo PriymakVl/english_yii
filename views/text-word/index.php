@@ -3,11 +3,19 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Word;
+use app\models\TextWord;
 
 $this->title = 'Слова';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
 $this->params['breadcrumbs'][] = $this->title;
+
+function create_link_state($item) {
+    $page = Yii::$app->request->get('page');
+    $per_page = Yii::$app->request->get('per-page');
+    if ($item->state == TextWord::STATE_NOT_LEARNED) return Html::a('не выучено', ['text-word/state', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page, 'state' => 1], ['class' => 'text-danger']);
+    return Html::a('выучено', ['text-word/state', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page, 'state' => 0], ['class' => 'text-success']);
+}
 ?>
 <div class="text-word-index">
 
@@ -34,6 +42,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['attribute' => 'engl', 'label' => 'Русские', 'format' => 'raw',
                 'value' => function($model) {return Word::findOne($model->id_word)->ru;}, 
+            ],
+
+            ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
+                'value' => function($model) {return create_link_state($model);}, 
             ],
 
             ['class' => 'yii\grid\ActionColumn', 'contentOptions' => ['style' => 'width:100px; text-align:center;'],

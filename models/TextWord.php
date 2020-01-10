@@ -11,6 +11,9 @@ class TextWord extends \yii\db\ActiveRecord
 {
     const SCENARIO_CREATE = 'create';
     const SCENARIO_DELETE = 'delete';
+    const SCENARIO_STATE = 'state';
+    const STATE_NOT_LEARNED = 0;
+    const STATE_LEARNED = 1;
 
     public $file_ru;
     public $file_engl;
@@ -28,6 +31,7 @@ class TextWord extends \yii\db\ActiveRecord
         $scenarios = parent::scenarios();
         $scenarios[static::SCENARIO_CREATE] = ['file_ru', 'file_engl'];
         $scenarios[static::SCENARIO_DELETE] = ['status'];
+        $scenarios[static::SCENARIO_STATE] = ['state'];
         return $scenarios;
     }
 
@@ -93,10 +97,13 @@ class TextWord extends \yii\db\ActiveRecord
         return $this->hasOne(Word::className(), ['id' => 'id_word']);
     }
 
-    public static function getByIndex($id_text, $index)
+    public static function getByIndex($id_text, $index, $learned = true)
     {
-        $items = TextWord::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        $params = ['id_text' => $id_text, 'status' => STATUS_ACTIVE, 'state' => self::STATE_NOT_LEARNED];
+        if (!$learned) unset($params['state']);
+        $items = TextWord::findAll($params);
         $index = isset($items[$index]) ? $index : 0;
         return $items[$index];
     }
+
 }
