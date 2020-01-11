@@ -105,13 +105,24 @@ class TextWordController extends Controller
         return $this->render('teach', compact('text', 'item', 'index'));
     }
 
-    public function actionState($id, $state, $page, $per_page)
+    public function actionStateIndex($id, $state, $page, $per_page)
+    {
+        $this->setState($id, $state);
+        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page, 'per-page' => $per_page]);
+    }
+
+    public function actionStateTeach($id, $id_text, $index)
+    {
+        $this->setState($id, TextWord::STATE_LEARNED);
+        $this->redirect(['teach', 'id_text' => $id_text, 'index' => $index]);
+    }
+
+    private function setState()
     {
         $item = TextWord::findOne($id);
-        $item->scenario = TextWord::SCENARIO_STATE;
-        $item->state = $state;
-        $item->save();
-        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page, 'per-page' => $per_page]);
+        $item->setState($state);
+        $word = Word::findOne($item->id_word);
+        $word->setState($state);
     }
 
     protected function findModel($id, $direction)

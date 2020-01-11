@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     <p>
         <?= Html::a('Предыдущее', ['teach', 'id_text' => $text->id, 'index' => $index - 1], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Следущее', ['teach', 'id_text' => $text->id, 'index' => $index + 1], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Выучено', ['state', 'id_text' => $text->id, 'index' => $index + 1], ['class' => 'btn btn-primary']) ?>
     </p>
     
     <h2><?=$item->word->engl?></h2>

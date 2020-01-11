@@ -17,7 +17,7 @@ class TextWordSearch extends TextWord
     public function rules()
     {
         return [
-            [['id', 'id_text', 'id_word', 'status'], 'integer'],
+            [['id', 'id_text', 'id_word', 'status', 'state'], 'integer'],
         ];
     }
 
@@ -61,6 +61,7 @@ class TextWordSearch extends TextWord
             'id_text' => $this->id_text,
             'id_word' => $this->id_word,
             'status' => $this->status,
+            'state'=> $this->state,
         ]);
 
         return $dataProvider;

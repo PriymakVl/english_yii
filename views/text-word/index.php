@@ -32,7 +32,7 @@ function create_link_state($item) {
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        // 'filterModel' => $searchModel,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -46,6 +46,7 @@ function create_link_state($item) {
 
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
                 'value' => function($model) {return create_link_state($model);}, 
+                'filter' => [1 => 'выучено', 0 => 'не выучено'],
             ],
 
             ['class' => 'yii\grid\ActionColumn', 'contentOptions' => ['style' => 'width:100px; text-align:center;'],

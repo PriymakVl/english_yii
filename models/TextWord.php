@@ -106,4 +106,11 @@ class TextWord extends \yii\db\ActiveRecord
         return $items[$index];
     }
 
+    public function setState($state)
+    {
+        $this->scenario = self::SCENARIO_STATE;
+        $this->state = $state;
+        return $this->save();
+    }
+
 }

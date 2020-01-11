@@ -14,6 +14,8 @@ use Yii;
  */
 class Word extends \yii\db\ActiveRecord
 {
+    const SCENARIO_STATE = 'state';
+
     /**
      * {@inheritdoc}
      */
@@ -35,6 +37,13 @@ class Word extends \yii\db\ActiveRecord
         ];
     }
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[static::SCENARIO_STATE] = ['state'];
+        return $scenarios;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,5 +55,12 @@ class Word extends \yii\db\ActiveRecord
             'ru' => 'Ru',
             'status' => 'Status',
         ];
+    }
+
+    public function setState($state)
+    {
+        $this->scenario = self::SCENARIO_STATE;
+        $this->state = $state;
+        return $this->save();
     }
 }
