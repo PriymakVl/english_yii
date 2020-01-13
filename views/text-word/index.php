@@ -10,11 +10,36 @@ $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 
+function setSession()
+{
+    $session = Yii::$app->session;
+    $session->open();
+    $session->set('page') = Yii::$app->request->get('page');
+    $session->set('per-page') = Yii::$app->request->get('per-page');
+}
+
 function create_link_state($item) {
-    $page = Yii::$app->request->get('page');
-    $per_page = Yii::$app->request->get('per-page');
-    if ($item->state == TextWord::STATE_NOT_LEARNED) return Html::a('не выучено', ['text-word/state', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page, 'state' => 1], ['class' => 'text-danger']);
-    return Html::a('выучено', ['text-word/state', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page, 'state' => 0], ['class' => 'text-success']);
+    setSession();
+    $params = ['text-word/state-index', 'id' => $item->id];
+    $params['state'] = $item->state == TextWord::STATE_NOT_LEARNED ? 1 : 0;
+    $style['class'] = $item->state == TextWord::STATE_NOT_LEARNED ? 'text-danger' : 'text-success';
+    $name = $item->state == TextWord::STATE_NOT_LEARNED ? 'не выучено' : 'выучено';
+    return Html::a($name, $params, $style);
+}
+
+function create_link_update()
+{
+    setSession();
+    $icon = '<span class="glyphicon glyphicon-pencil"></span>';
+    $params = ['/word/updateIndex', 'id' => $model->id_word]
+    return Html::a($icon, $params);
+}
+
+function create_link_delete($item) {
+    setSession();
+    $icon = '<span class="glyphicon glyphicon-pencil"></span>';
+    $params = ['/word/deleteIndex', 'id' => $item->id_word, 'page' => $page, 'per_page' => $per_page];
+    return Html::a($icon, $params);
 }
 ?>
 <div class="text-word-index">
@@ -53,9 +78,9 @@ function create_link_state($item) {
 
                 'headerOptions' => ['class' => 'text-info'], 'header' => 'Операции', 'template' => '{view} {update} {delete}', 
                 'buttons' => [
-                    'update' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['/word/update', 'id' => $model->id_word]);
-                    }
+                    'update' => function ($url, $model) { return create_link_update($model);}
+
+                   // 'delete' => function ($url, $model) { return create_link_delete($model);}
                 ],
 
             ],  

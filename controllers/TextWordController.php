@@ -11,6 +11,7 @@ use yii\data\Pagination;
 use app\models\TextWordSearch;
 use app\models\TextWord;
 use app\models\Text;
+use app\models\Word;
 
 
 /**
@@ -61,24 +62,41 @@ class TextWordController extends Controller
         return $this->render('create', ['model' => $model]);
     }
 
-    public function actionUpdate($id)
+    public function actionUpdate($id, $page, $per_page)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) $this->redirectAfterUpdate($model);
+        return $this->render('update', ['model' => $model,]);
     }
 
-    public function actionDelete($id)
+    private function redirectAfterUpdate($model)
     {
-        $obj = TextWord::findOne($id);
-        $obj->scenario = TextWord::SCENARIO_DELETE;
-        $obj->status = 0;
-        $obj->save();
-        return $this->redirect(['index', 'id_text' => $obj->id_text]);
+        $page = Yii::$app->session->get('page');
+        $per_page = Yii::$app->session->get('per_page');
+        $params = ['view', 'id' => $model->id, 'page' => $page, 'per_page' => $page];
+        if ($perpage) return $this->redirect();
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    public function actionDeleteIndex($id, $page, $perpage)
+    {
+        $item = $this->delete($id);
+        return $this->redirect(['index', 'id_text' => $obj->id_text, 'page' => $page, 'perpage' => $perpage]);
+    }
+
+    public function actionDeleteView($id)
+    {
+        $item = $this->delete($id);
+        return $this->redirect(['view', 'id' => $item->id_text]);
+    }
+
+    private function delete($id)
+    {
+        $item = TextWord::findOne($id);
+        $item->scenario = TextWord::SCENARIO_DELETE;
+        $item->status = 0;
+        $item->save();
+        return $item;
     }
 
     public function actionGuess($id_text)
@@ -107,19 +125,20 @@ class TextWordController extends Controller
 
     public function actionStateIndex($id, $state, $page, $per_page)
     {
-        $this->setState($id, $state);
+        $item = TextWord::findOne($id);
+        $this->setState($item, $state);
         $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page, 'per-page' => $per_page]);
     }
 
-    public function actionStateTeach($id, $id_text, $index)
+    public function actionStateTeach($id, $index)
     {
-        $this->setState($id, TextWord::STATE_LEARNED);
+        $item = TextWord::findOne($id);
+        $this->setState($item, TextWord::STATE_LEARNED);
         $this->redirect(['teach', 'id_text' => $id_text, 'index' => $index]);
     }
 
-    private function setState()
+    private function setState($item, $state)
     {
-        $item = TextWord::findOne($id);
         $item->setState($state);
         $word = Word::findOne($item->id_word);
         $word->setState($state);
