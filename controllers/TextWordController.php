@@ -62,14 +62,19 @@ class TextWordController extends Controller
         return $this->render('create', ['model' => $model]);
     }
 
-    public function actionUpdate($id, $page, $per_page)
+    public function actionBeforeUpdate($id_word, $page, $per_page)
     {
-        $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) $this->redirectAfterUpdate($model);
-        return $this->render('update', ['model' => $model,]);
+        $session = Yii::$app->session;
+        $session->open();
+        $session->set('page', $page);
+        $session->set('per_page', $per_page);
+        return $this->redirect(['/word/update', 'id' => $id_word, 'path' => 'test']);
+        //$model = $this->findModel($id);
+        // if ($model->load(Yii::$app->request->post()) && $model->save()) $this->redirectAfterUpdate($model);
+        // return $this->render('update', ['model' => $model,]);
     }
 
-    private function redirectAfterUpdate($model)
+    private function actionAfterUpdate($model)
     {
         $page = Yii::$app->session->get('page');
         $per_page = Yii::$app->session->get('per_page');
@@ -78,7 +83,7 @@ class TextWordController extends Controller
         return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    public function actionDeleteIndex($id, $page, $perpage)
+    public function actionDeleteIndex($id, $page, $per_page)
     {
         $item = $this->delete($id);
         return $this->redirect(['index', 'id_text' => $obj->id_text, 'page' => $page, 'perpage' => $perpage]);
@@ -142,6 +147,11 @@ class TextWordController extends Controller
         $item->setState($state);
         $word = Word::findOne($item->id_word);
         $word->setState($state);
+    }
+
+    public function actionUpdate($id_word, $page, $per_page)
+    {
+        debug();
     }
 
     protected function findModel($id, $direction)

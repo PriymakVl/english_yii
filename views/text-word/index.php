@@ -10,17 +10,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
 $this->params['breadcrumbs'][] = $this->title;
 
-function setSession()
-{
-    $session = Yii::$app->session;
-    $session->open();
-    $session->set('page') = Yii::$app->request->get('page');
-    $session->set('per-page') = Yii::$app->request->get('per-page');
-}
-
 function create_link_state($item) {
-    setSession();
-    $params = ['text-word/state-index', 'id' => $item->id];
+    $page = Yii::$app->request->get('page');
+    $per_page = Yii::$app->request->get('per-page');
+    $params = ['text-word/state-index', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page];
     $params['state'] = $item->state == TextWord::STATE_NOT_LEARNED ? 1 : 0;
     $style['class'] = $item->state == TextWord::STATE_NOT_LEARNED ? 'text-danger' : 'text-success';
     $name = $item->state == TextWord::STATE_NOT_LEARNED ? 'не выучено' : 'выучено';
@@ -29,16 +22,18 @@ function create_link_state($item) {
 
 function create_link_update()
 {
-    setSession();
+    $page = Yii::$app->request->get('page');
+    $per_page = Yii::$app->request->get('per-page');
     $icon = '<span class="glyphicon glyphicon-pencil"></span>';
-    $params = ['/word/updateIndex', 'id' => $model->id_word]
+    $params = ['/text-word/update', 'id_word' => $model->id_word, 'page' => $page, 'per_page' => $per_page];
     return Html::a($icon, $params);
 }
 
 function create_link_delete($item) {
-    setSession();
-    $icon = '<span class="glyphicon glyphicon-pencil"></span>';
-    $params = ['/word/deleteIndex', 'id' => $item->id_word, 'page' => $page, 'per_page' => $per_page];
+    $page = Yii::$app->request->get('page');
+    $per_page = Yii::$app->request->get('per-page');
+    $icon = '<span class="glyphicon glyphicon-trash"></span>';
+    $params = ['/text-word/delete-index', 'id' => $item->id_word, 'page' => $page, 'per_page' => $per_page];
     return Html::a($icon, $params);
 }
 ?>
@@ -78,9 +73,9 @@ function create_link_delete($item) {
 
                 'headerOptions' => ['class' => 'text-info'], 'header' => 'Операции', 'template' => '{view} {update} {delete}', 
                 'buttons' => [
-                    'update' => function ($url, $model) { return create_link_update($model);}
+                    'update' => function ($url, $model) { return create_link_update($model);},
 
-                   // 'delete' => function ($url, $model) { return create_link_delete($model);}
+                    'delete' => function ($url, $model) { return create_link_delete($model);}
                 ],
 
             ],  
