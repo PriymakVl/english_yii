@@ -5,14 +5,10 @@ namespace app\controllers;
 use Yii;
 use app\models\Word;
 use app\models\SearchWord;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * WordController implements the CRUD actions for Word model.
- */
-class WordController extends Controller
+class WordController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}
@@ -87,6 +83,7 @@ class WordController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if (isset($this->session['back'])) return $this->redirect(['/text-word/after-update', 'id_word' => $id]);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

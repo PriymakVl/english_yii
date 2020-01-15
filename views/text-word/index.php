@@ -12,28 +12,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
 function create_link_state($item) {
     $page = Yii::$app->request->get('page');
-    $per_page = Yii::$app->request->get('per-page');
-    $params = ['text-word/state-index', 'id' => $item->id, 'page' => $page, 'per_page' => $per_page];
+    $params = ['text-word/state-index', 'id' => $item->id, 'page' => $page];
     $params['state'] = $item->state == TextWord::STATE_NOT_LEARNED ? 1 : 0;
     $style['class'] = $item->state == TextWord::STATE_NOT_LEARNED ? 'text-danger' : 'text-success';
     $name = $item->state == TextWord::STATE_NOT_LEARNED ? 'не выучено' : 'выучено';
     return Html::a($name, $params, $style);
 }
 
-function create_link_update()
+function create_link_update($item)
 {
     $page = Yii::$app->request->get('page');
-    $per_page = Yii::$app->request->get('per-page');
     $icon = '<span class="glyphicon glyphicon-pencil"></span>';
-    $params = ['/text-word/update', 'id_word' => $model->id_word, 'page' => $page, 'per_page' => $per_page];
+    $params = ['/text-word/before-update', 'id_word' => $item->id_word, 'page' => $page];
     return Html::a($icon, $params);
 }
 
 function create_link_delete($item) {
     $page = Yii::$app->request->get('page');
-    $per_page = Yii::$app->request->get('per-page');
     $icon = '<span class="glyphicon glyphicon-trash"></span>';
-    $params = ['/text-word/delete-index', 'id' => $item->id_word, 'page' => $page, 'per_page' => $per_page];
+    $params = ['/text-word/delete-index', 'id' => $item->id_word, 'page' => $page];
     return Html::a($icon, $params);
 }
 ?>

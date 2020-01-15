@@ -3,7 +3,6 @@
 namespace app\controllers;
 
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -14,10 +13,7 @@ use app\models\Text;
 use app\models\Word;
 
 
-/**
- * TextWordController implements the CRUD actions for TextWord model.
- */
-class TextWordController extends Controller
+class TextWordController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}
@@ -62,25 +58,18 @@ class TextWordController extends Controller
         return $this->render('create', ['model' => $model]);
     }
 
-    public function actionBeforeUpdate($id_word, $page, $per_page)
+    public function actionBeforeUpdate($id_item, $id_word, $page = false)
     {
-        $session = Yii::$app->session;
-        $session->open();
-        $session->set('page', $page);
-        $session->set('per_page', $per_page);
-        return $this->redirect(['/word/update', 'id' => $id_word, 'path' => 'test']);
-        //$model = $this->findModel($id);
-        // if ($model->load(Yii::$app->request->post()) && $model->save()) $this->redirectAfterUpdate($model);
-        // return $this->render('update', ['model' => $model,]);
+        $this->session->set('page', $page);
+        $this->session->set('back', $page ? 'index' : 'view');
+        return $this->redirect(['/word/update', 'id' => $id_word]);
     }
 
-    private function actionAfterUpdate($model)
+    public function actionAfterUpdate()
     {
-        $page = Yii::$app->session->get('page');
-        $per_page = Yii::$app->session->get('per_page');
-        $params = ['view', 'id' => $model->id, 'page' => $page, 'per_page' => $page];
-        if ($perpage) return $this->redirect();
-        return $this->redirect(['view', 'id' => $model->id]);
+        $item
+        if ($this->session['back'] == 'index') $this->redirect(['index', 'page' => $this->session['page']]);
+        $this->redirect(['view');
     }
 
     public function actionDeleteIndex($id, $page, $per_page)
@@ -128,11 +117,11 @@ class TextWordController extends Controller
         return $this->render('teach', compact('text', 'item', 'index'));
     }
 
-    public function actionStateIndex($id, $state, $page, $per_page)
+    public function actionStateIndex($id, $state, $page)
     {
         $item = TextWord::findOne($id);
         $this->setState($item, $state);
-        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page, 'per-page' => $per_page]);
+        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page]);
     }
 
     public function actionStateTeach($id, $index)
@@ -147,11 +136,6 @@ class TextWordController extends Controller
         $item->setState($state);
         $word = Word::findOne($item->id_word);
         $word->setState($state);
-    }
-
-    public function actionUpdate($id_word, $page, $per_page)
-    {
-        debug();
     }
 
     protected function findModel($id, $direction)

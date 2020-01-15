@@ -6,14 +6,10 @@ use Yii;
 use app\models\Sentense;
 use app\models\SentenseSearch;
 use app\models\Text;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * SentenseController implements the CRUD actions for Sentense model.
- */
-class SentenseController extends Controller
+class SentenseController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}

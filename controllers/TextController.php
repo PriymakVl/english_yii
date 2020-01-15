@@ -5,14 +5,10 @@ namespace app\controllers;
 use Yii;
 use app\models\Text;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * TextController implements the CRUD actions for Text model.
- */
-class TextController extends Controller
+class TextController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}
