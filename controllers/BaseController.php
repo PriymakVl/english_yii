@@ -16,7 +16,7 @@ class BaseController extends \yii\web\Controller
         $this->session->open();
 	} 
 
-	public function setMessage($type, $text)
+	public function setMessage($text, $type = 'success')
 	{
 		Yii::$app->session->setFlash($type, $text);
 		return $this;

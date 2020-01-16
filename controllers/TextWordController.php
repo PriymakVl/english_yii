@@ -58,39 +58,34 @@ class TextWordController extends \app\controllers\BaseController
         return $this->render('create', ['model' => $model]);
     }
 
-    public function actionBeforeUpdate($id_item, $id_word, $page = false)
+    public function actionBeforeUpdate($id, $page = false)
     {
+        $item = TextWord::findOne($id);
+        $this->session->set('id', $id);
         $this->session->set('page', $page);
         $this->session->set('back', $page ? 'index' : 'view');
-        return $this->redirect(['/word/update', 'id' => $id_word]);
+        return $this->redirect(['/word/update', 'id' => $item->id_word]);
     }
 
     public function actionAfterUpdate()
     {
-        $item
-        if ($this->session['back'] == 'index') $this->redirect(['index', 'page' => $this->session['page']]);
-        $this->redirect(['view');
+        $item = TextWord::findOne($this->session['id']);
+        $back = $this->session['back'];
+        $page = $this->session['page'];
+        unset($this->session['id'], $this->session['page'], $this->session['back']);
+        $this->setMessage('Слово успешно отредактировано');
+        if ($back == 'index') return $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page]);
+        $this->redirect(['view', 'id' => $item->id]);
     }
 
-    public function actionDeleteIndex($id, $page, $per_page)
-    {
-        $item = $this->delete($id);
-        return $this->redirect(['index', 'id_text' => $obj->id_text, 'page' => $page, 'perpage' => $perpage]);
-    }
-
-    public function actionDeleteView($id)
-    {
-        $item = $this->delete($id);
-        return $this->redirect(['view', 'id' => $item->id_text]);
-    }
-
-    private function delete($id)
+    public function actionDelete($id, $page = false)
     {
         $item = TextWord::findOne($id);
         $item->scenario = TextWord::SCENARIO_DELETE;
-        $item->status = 0;
+        $item->status = STATUS_INACTIVE;
         $item->save();
-        return $item;
+        $this->setMessage('Слово успешно удалено');
+        return $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page ? $page : 1]);
     }
 
     public function actionGuess($id_text)
