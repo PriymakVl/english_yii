@@ -11,6 +11,7 @@ use app\models\TextWordSearch;
 use app\models\TextWord;
 use app\models\Text;
 use app\models\Word;
+use app\models\Sentense;
 
 
 class TextWordController extends \app\controllers\BaseController
@@ -109,7 +110,8 @@ class TextWordController extends \app\controllers\BaseController
     {
         $text = Text::findOne($id_text);
         $item = TextWord::getByIndex($id_text, $index);
-        return $this->render('teach', compact('text', 'item', 'index'));
+        $sentenses = Sentense::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
+        return $this->render('teach', compact('text', 'item', 'index', 'sentenses'));
     }
 
     public function actionStateIndex($id, $state, $page)
@@ -123,7 +125,7 @@ class TextWordController extends \app\controllers\BaseController
     {
         $item = TextWord::findOne($id);
         $this->setState($item, TextWord::STATE_LEARNED);
-        $this->redirect(['teach', 'id_text' => $id_text, 'index' => $index]);
+        $this->redirect(['teach', 'id_text' => $item->id_text, 'index' => $index]);
     }
 
     private function setState($item, $state)

@@ -16,6 +16,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     #answer {
         display: none;
     }
+    li[translate] {
+        cursor: pointer;
+    }
 </style>
 
 <div class="container">
@@ -25,7 +28,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     <p>
         <?= Html::a('Предыдущее', ['teach', 'id_text' => $text->id, 'index' => $index - 1], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Следущее', ['teach', 'id_text' => $text->id, 'index' => $index + 1], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Выучено', ['state', 'id' => $item->id, 'index' => $index], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Выучено', ['state-teach', 'id' => $item->id, 'index' => $index], ['class' => 'btn btn-primary']) ?>
     </p>
     
     <h2><?=$item->word->engl?></h2>
@@ -33,9 +36,23 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
 
     <h2 id="answer">Правильно: <span class="text-success"><?=$item->word->ru?></span></h2>
 
+    <div>
+        <h2>Предложения:</h2>
+        <ul>
+            <? foreach ($sentenses as $sentense): ?>
+                <li onclick="change_text(this);" translate="<?=$sentense->ru?>"><?=$sentense->engl?></li>
+            <? endforeach; ?>
+        </ul>
+    </div>
+
 </div>
 
 <!-- js script -->
 <script type="text/javascript">
-
+function change_text(li) {
+    text = li.innerText;
+    translate = li.getAttribute('translate');
+    li.innerText = translate;
+    li.setAttribute('translate', text);
+}
 </script>
