@@ -98,8 +98,8 @@ class TextController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $sentense = $this->findModel($id)->delete();
+        $this->setMessage("Текст успешно удален");
         return $this->redirect(['index']);
     }
 

@@ -8,6 +8,11 @@ use yii\grid\GridView;
 
 $this->title = 'Перечень текстов';
 // $this->params['breadcrumbs'][] = $this->title;
+
+function create_link_title($model) {
+    return Html::a($model->title, ['view', 'id' => $model->id]);
+}
+
 ?>
 <div class="text-index">
 
@@ -23,10 +28,10 @@ $this->title = 'Перечень текстов';
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            // 'id',
-            'title:ntext',
-            // 'created',
-            // 'status',
+            // 'title:ntext',
+            
+            ['attribute' => 'title', 'format' => 'raw', 'value' => function($model) {return create_link_title($model);}
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

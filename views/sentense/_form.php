@@ -12,9 +12,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'engl')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'engl')->textarea(['rows' => '3']) ?>
 
-    <?= $form->field($model, 'ru')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'ru')->textarea(['rows' => '3']) ?>
 
     <?= $form->field($model, 'id_text')->textInput() ?>
 

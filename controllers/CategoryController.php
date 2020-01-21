@@ -3,13 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Sentense;
-use app\models\SentenseSearch;
-use app\models\Text;
+use app\models\Category;
+use app\models\CategorySearch;
+use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-class SentenseController extends \app\controllers\BaseController
+/**
+ * CategoryController implements the CRUD actions for Category model.
+ */
+class CategoryController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -26,40 +29,42 @@ class SentenseController extends \app\controllers\BaseController
         ];
     }
 
-    public function actionIndex($id_text)
+    /**
+     * Lists all Category models.
+     * @return mixed
+     */
+    public function actionIndex()
     {
-        $text = Text::findOne($id_text);
-        $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
-        if (!$sentenses) Sentense::breakText($text);
-        $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
-        if (!$sentenses) throw new NotFoundHttpException('Предложения для текста не найдены');
-        return $this->render('index', compact('sentenses', 'text'));
+        $searchModel = new CategorySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Sentense model.
+     * Displays a single Category model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $direction = false)
+    public function actionView($id)
     {
-        if ($direction == 'next') $id++;
-        else if ($direction == 'previos') $id--;
-        $model = Sentense::findOne($id);
-        if (!$model) throw new NotFoundHttpException('Предложение не найдено');
-        $model->getAll()->getCurrentNumber()->getVariantsRu();
-        return $this->render('view', compact('model'));
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     /**
-     * Creates a new Sentense model.
+     * Creates a new Category model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Sentense();
+        $model = new Category();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -71,7 +76,7 @@ class SentenseController extends \app\controllers\BaseController
     }
 
     /**
-     * Updates an existing Sentense model.
+     * Updates an existing Category model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -91,7 +96,7 @@ class SentenseController extends \app\controllers\BaseController
     }
 
     /**
-     * Deletes an existing Sentense model.
+     * Deletes an existing Category model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -99,22 +104,21 @@ class SentenseController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $sentense = $this->findModel($id);
-        $sentense->delete();
-        $this->setMessage("Предложение успешно удалено");
-        return $this->redirect(['index', 'id_text' => $sentense->id_text]);
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Sentense model based on its primary key value.
+     * Finds the Category model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Sentense the loaded model
+     * @return Category the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Sentense::findOne($id)) !== null) {
+        if (($model = Category::findOne($id)) !== null) {
             return $model;
         }
 
