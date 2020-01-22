@@ -53,4 +53,19 @@ class Category extends \yii\db\ActiveRecord
     {
         return self::find()->select('name')->where(['parent_id' => 0])->asArray()->indexBy('id')->column();
     }
+
+    public function getChildren()
+    {
+        return self::findAll(['parent_id' => $this->id, 'status' => STATUS_ACTIVE]);
+    }
+
+    public function getTexts()
+    {
+        return $this->hasMany(Text::className(), ['cat_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
+    }
+
+    public function getParent()
+    {
+        return $this->hasOne(self::className(), ['parent_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
+    }
 }

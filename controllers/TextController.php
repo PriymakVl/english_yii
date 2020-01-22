@@ -29,10 +29,11 @@ class TextController extends \app\controllers\BaseController
      * Lists all Text models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($cat_id = false)
     {
+        $where = $cat_id ? ['status' => STATUS_ACTIVE, 'cat_id' => $cat_id] : ['status' => STATUS_ACTIVE];
         $dataProvider = new ActiveDataProvider([
-            'query' => Text::find(),
+            'query' => Text::find()->where($where),
         ]);
 
         return $this->render('index', [
