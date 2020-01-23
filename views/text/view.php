@@ -9,6 +9,8 @@ use yii\grid\GridView;
 
 $this->title = $model->title;
 
+$this->params['breadcrumbs'][] = '<a href="#">link</link>';
+// Html::a($model->category->name, ['/text', 'cat_id' => $model->category->id]);
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

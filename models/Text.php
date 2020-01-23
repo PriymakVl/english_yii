@@ -29,10 +29,10 @@ class Text extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            ['title', 'required'],
+            [['title', 'cat_id'], 'required'],
             [['engl', 'ru', 'title'], 'string'],
             [['created'], 'safe'],
-            [['status'], 'integer'],
+            [['status', 'cat_id'], 'integer'],
         ];
     }
 
@@ -48,6 +48,12 @@ class Text extends \yii\db\ActiveRecord
             'ru' => 'Русский',
             'created' => 'Добавлен',
             'status' => 'Status',
+            'cat_id' => 'Категория',
         ];
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'cat_id']);
     }
 }

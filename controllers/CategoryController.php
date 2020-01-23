@@ -8,6 +8,7 @@ use app\models\CategorySearch;
 use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * CategoryController implements the CRUD actions for Category model.
@@ -33,15 +34,14 @@ class CategoryController extends BaseController
      * Lists all Category models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($parent_id = false)
     {
-        $searchModel = new CategorySearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        if ($parent_id) $query = Category::find()->where(['parent_id' => $parent_id, 'status' => STATUS_ACTIVE]);
+        else $query = Category::find()->where(['parent_id' => 0, 'status' => STATUS_ACTIVE]);
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
+
+        return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider,]);
     }
 
     /**

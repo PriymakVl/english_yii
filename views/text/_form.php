@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Category;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Text */
@@ -11,6 +12,12 @@ use yii\widgets\ActiveForm;
 <div class="text-form">
 
     <?php $form = ActiveForm::begin(); ?>
+
+    <?php 
+		$items = Category::find()->select('name')->where(['status' => STATUS_ACTIVE])->asArray()->indexBy('id')->column();
+		$params = ['prompt' => 'Не выбрана'];
+		echo $form->field($model, 'cat_id')->dropDownList($items, $params);
+	?>
     
     <?= $form->field($model, 'title')->textInput() ?>
 
