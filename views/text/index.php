@@ -6,7 +6,8 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Перечень текстов';
+$this->title = $cat ? 'Перечень текстов категори: '.$cat->name : 'Перечень текстов';
+
 $this->params['breadcrumbs'][] = '';
 
 function create_link_title($model) {

@@ -7,6 +7,7 @@ use app\models\Word;
 use app\models\SearchWord;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 class WordController extends \app\controllers\BaseController
 {
@@ -31,11 +32,11 @@ class WordController extends \app\controllers\BaseController
      */
     public function actionIndex()
     {
-        $searchModel = new SearchWord();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params['query'] = Word::find()->where(['status' => STATUS_ACTIVE]);
+        $params['pagination'] = ['pageSize' => 10];
+        $dataProvider = new ActiveDataProvider($params);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -104,6 +105,12 @@ class WordController extends \app\controllers\BaseController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionAddVoice()
+    {
+        $model = new Word();
+        $this->render('voice', ['model' => $model]);
     }
 
     /**

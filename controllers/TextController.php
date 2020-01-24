@@ -31,13 +31,15 @@ class TextController extends \app\controllers\BaseController
      */
     public function actionIndex($cat_id = false)
     {
+        $cat = Category::findOne($cat_id);
+
         $where = $cat_id ? ['status' => STATUS_ACTIVE, 'cat_id' => $cat_id] : ['status' => STATUS_ACTIVE];
         $dataProvider = new ActiveDataProvider([
             'query' => Text::find()->where($where),
         ]);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider, 'cat' => $cat,
         ]);
     }
 

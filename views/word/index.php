@@ -3,23 +3,25 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-debug($id_text);
-
 $this->title = 'Слова';
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Тексты', 'url' => ['/text']];
 $this->params['breadcrumbs'][] = $this->title;
+
+function create_link_voice($model) {
+    // return '<i class="fas fa-volume-up"></i>';
+    if ($model->voice) return '<a href="#">озвучить</a>';
+    return 'нет';
+}
+
 ?>
 <div class="word-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?//= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Озвучка', ['add-voice'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -29,6 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'engl',
             'ru',
+             ['attribute' => 'voice', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
