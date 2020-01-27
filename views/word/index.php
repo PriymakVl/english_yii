@@ -20,7 +20,7 @@ function create_link_voice($model) {
 
     <p>
         <?= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Озвучка', ['add-voice'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Озвучка', ['/sound/create-file'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([

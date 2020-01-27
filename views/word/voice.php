@@ -8,7 +8,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Words', 'url' => ['index']];
 \yii\web\YiiAsset::register($this);
 
 ?>
-
 <?= Html::a('Создать файл', ['create-file'], ['class' => 'btn btn-primary']) ?>
 
 <h1><?= Html::encode($this->title) ?></h1>
@@ -19,10 +18,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Words', 'url' => ['index']];
 
 	<?php 
 
-	$items = ['word' => 'Слова', 'sentense' => 'Предложения'];
-	$params = ['prompt' => 'Не выбран'];
+		$items = ['word' => 'Слова', 'sentense' => 'Предложения'];
+		$params = ['prompt' => 'Не выбран'];
 
-	echo $form->field($model, 'voice')->dropDownList($items, $params);
+		echo $form->field($model, 'voice')->dropDownList($items, $params);
 
 	?>
 

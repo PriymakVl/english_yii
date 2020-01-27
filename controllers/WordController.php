@@ -110,7 +110,7 @@ class WordController extends \app\controllers\BaseController
     public function actionAddVoice()
     {
         $model = new Word();
-        $this->render('voice', ['model' => $model]);
+        return $this->render('voice', ['model' => $model]);
     }
 
     /**
