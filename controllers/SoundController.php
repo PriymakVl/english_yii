@@ -13,14 +13,33 @@ class SoundController extends \app\controllers\BaseController
         if (!Yii::$app->request->isPost) return $this->render('create-file', ['model' => $model]);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $file = $model->createFile();
+            $items = $model->getItemsForCreateSoundOfFile();
+            $this->giveFileToDownload($items);
         }
         
     }
 
-    public function actionAddFile()
+    private function giveFileToDownload($items) 
     {
-        return $this->render('add-file');
+        if (!$items) exit('нет ничего для озвучки');
+        header('HTTP/1.1 200 OK');
+        header("Content-Description: file transfer");
+        header("Content-transfer-encoding: binary");
+        header('Content-Disposition: attachment; filename="for_sounds.txt"');
+         
+        foreach ($items as $item) {
+            echo trim($item->engl), PHP_EOL, PHP_EOL, PHP_EOL;
+        }
+    }
+
+    public function actionAddSounds()
+    {
+        $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
+        if (!Yii::$app->request->isPost) return $this->render('add-sounds', ['model' => $model]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            debug();
+        }
+        return $this->render('add-sounds');
     }
 
     public function actionAddSentense()
