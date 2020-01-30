@@ -70,4 +70,38 @@ class Sound extends \yii\db\ActiveRecord
         if ($this->type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
         return Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
     }
+
+    public function addList()
+    {
+        $files = scandir('temp');
+        for ($i = 2; $i < count($files); $i++) {
+            $this->add($files[$i]);
+        }   
+        return $this;
+    }
+
+    public function add($file)
+    {
+        $str_arr = explode('.', $file);
+        $file_name = $str_arr[0];
+        $file_ext = $str_arr[1];
+        // $name = mb_convert_encoding($arr[0], "utf-8", "windows-1251");
+        if ($this->type == TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
+        else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
+        if (!$item) return;
+        $this->saveFile($item, $file_name, $file_ext);
+    }
+
+    private function saveFile($item, $file_name, $ext) 
+    {
+        $sound = (new self);
+        $sound->type = $this->type;
+        $sound->ext = $ext;
+        $sound->item_id = $item->id;
+        $sound->save();
+        rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->id.'.'.$ext);
+        $item->sound_id = $sound->id;
+        $item->save();
+        return true;
+    }
 }

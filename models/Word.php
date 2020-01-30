@@ -54,7 +54,7 @@ class Word extends \yii\db\ActiveRecord
             'engl' => 'Engl',
             'ru' => 'Ru',
             'status' => 'Status',
-            'voice' => 'Voice'
+            'saund' => 'Saund'
         ];
     }
 

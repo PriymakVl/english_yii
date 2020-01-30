@@ -9,7 +9,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 function create_link_voice($model) {
     // return '<i class="fas fa-volume-up"></i>';
-    if ($model->voice) return '<a href="#">озвучить</a>';
+    if ($model->sound_id) return '<a href="#">озвучить</a>';
     return 'нет';
 }
 
@@ -31,7 +31,7 @@ function create_link_voice($model) {
 
             'engl',
             'ru',
-             ['attribute' => 'voice', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
+             ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
