@@ -76,6 +76,7 @@ class Sound extends \yii\db\ActiveRecord
         $files = scandir('temp');
         for ($i = 2; $i < count($files); $i++) {
             $this->add($files[$i]);
+            debug();
         }   
         return $this;
     }

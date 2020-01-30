@@ -38,6 +38,7 @@ class SoundController extends \app\controllers\BaseController
         if (!Yii::$app->request->isPost) return $this->render('add-sounds', ['model' => $model]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->addList();
+            $this->setMessage('Звуковые файлы добавлены')->redirect('index');
         }
         return $this->render('add-sounds');
     }
