@@ -22,7 +22,7 @@ function create_link_name($model)
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать категорию', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Создать главную категорию', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -37,7 +37,24 @@ function create_link_name($model)
                 'value' => function($model) {return create_link_name($model);}
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn', 'template' => '{view}{update}{delete}{add}',
+
+                'header' => 'Действия', 'headerOptions' => ['style' => 'color:#337ab7; text-align:center;'],
+
+                'buttons' => [
+                    'add' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-plus" style="margin-left: 10px;"></span>', $url);
+
+                    },
+                ],
+
+                'urlCreator' => function ($action, $model, $key, $index) {
+                    if ($action === 'add') {
+                        $url ='create?parent_id='.$model->id;
+                        return $url;
+                    }
+                }
+            ],
         ],
     ]); ?>
 

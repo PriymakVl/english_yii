@@ -62,17 +62,15 @@ class CategoryController extends BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($parent_id = false)
     {
         $model = new Category();
-
+        $parent = $parent_id ? Category::findOne($parent_id) : null;
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model, 'parent' => $parent]);
     }
 
     /**
