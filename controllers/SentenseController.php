@@ -105,6 +105,12 @@ class SentenseController extends \app\controllers\BaseController
         return $this->redirect(['index', 'id_text' => $sentense->id_text]);
     }
 
+    public function actionAling($text_id)
+    {
+        Sentense::align($text_id);
+        return $this->back();
+    }
+
     /**
      * Finds the Sentense model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

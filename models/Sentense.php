@@ -117,4 +117,11 @@ class Sentense extends \yii\db\ActiveRecord
         }
         return $words;
     }
+
+    //shift by one in text array
+    public static function align($text_id)
+    {
+        $sentenses = self::findAll(['id_text' => $text_id, 'status' => STATUS_ACTIVE]);
+        debug($sentenses);
+    }
 }

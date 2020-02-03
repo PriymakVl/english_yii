@@ -68,4 +68,5 @@ class Category extends \yii\db\ActiveRecord
     {
         return $this->hasOne(self::className(), ['id' => 'parent_id'])->where(['status' => STATUS_ACTIVE]);
     }
+
 }

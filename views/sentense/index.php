@@ -16,6 +16,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word
 <div class="sentense-index">
 
     <h1><?= Html::encode($text->title) ?></h1>
+    <p>
+        <?= Html::a('Выровнять', ['align', 'text_id' => $sentenses[0]->id_text], ['class' => 'btn btn-primary']) ?>
+    </p>
 
     <table  class="table table-bordered table-striped">
         <tr>

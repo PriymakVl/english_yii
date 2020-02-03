@@ -56,4 +56,9 @@ class Text extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Category::className(), ['id' => 'cat_id']);
     }
+
+    public function getSentenses()
+    {
+        return $this->hasMany(Sentense::className(), ['text_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
+    }
 }

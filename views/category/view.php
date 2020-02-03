@@ -38,10 +38,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'name',
-            ['attribute' => 'parent_id',  
-             'value' => function($model) {return $model->parent ? $model->parent->name : 'нет';}],
+            ['attribute' => 'name',  'format' => 'raw',
+             'value' => function($model) { return Html::a($model->name, ['index', 'parent_id' => $model->id]); },
             ],
+            ['attribute' => 'parent_id',  
+             'value' => function($model) {return $model->parent ? $model->parent->name : 'нет';}
+            ],
+        ],
     ]) ?>
 
 </div>

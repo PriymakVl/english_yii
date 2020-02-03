@@ -65,6 +65,7 @@ class TextController extends \app\controllers\BaseController
     {
         $model = new Text();
         $cat = Category::findOne($cat_id);
+        if ($cat->children) return $this->setMessage('В этой категории уже есть подкатегории', 'error')->back();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -103,7 +104,7 @@ class TextController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $sentense = $this->findModel($id)->delete();
+        $this->findModel($id)->delete();
         $this->setMessage("Текст успешно удален");
         return $this->redirect(['index']);
     }
