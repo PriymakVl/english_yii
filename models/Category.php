@@ -66,6 +66,6 @@ class Category extends \yii\db\ActiveRecord
 
     public function getParent()
     {
-        return $this->hasOne(self::className(), ['parent_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
+        return $this->hasOne(self::className(), ['id' => 'parent_id'])->where(['status' => STATUS_ACTIVE]);
     }
 }

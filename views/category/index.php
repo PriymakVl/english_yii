@@ -17,6 +17,12 @@ function create_link_name($model)
     return $model->name;
 }
 ?>
+<style type="text/css">
+    td:nth-child(3) a {
+        margin-right: 10px;
+    }
+</style>
+
 <div class="category-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -24,8 +30,6 @@ function create_link_name($model)
     <p>
         <?= Html::a('Создать главную категорию', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -42,16 +46,32 @@ function create_link_name($model)
                 'header' => 'Действия', 'headerOptions' => ['style' => 'color:#337ab7; text-align:center;'],
 
                 'buttons' => [
+                    'delete' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url); 
+                    },
+                    'update' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url);
+                    },
+                    'view' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url);
+                    },
                     'add' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-plus" style="margin-left: 10px;"></span>', $url);
-
+                        return Html::a('<span class="glyphicon glyphicon-plus"></span>', $url);
                     },
                 ],
 
                 'urlCreator' => function ($action, $model, $key, $index) {
                     if ($action === 'add') {
-                        $url ='create?parent_id='.$model->id;
-                        return $url;
+                        return 'create?parent_id='.$model->id;
+                    }
+                    else if ($action === 'view') {
+                        return 'view?id='.$model->id;
+                    }
+                    else if ($action === 'update') {
+                        return 'update?id='.$model->id;
+                    }
+                    else if ($action === 'delete') {
+                        return 'delete?id='.$model->id;
                     }
                 }
             ],

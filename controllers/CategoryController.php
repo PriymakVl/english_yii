@@ -24,7 +24,7 @@ class CategoryController extends BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    // 'delete' => ['POST'],
                 ],
             ],
         ];
@@ -103,7 +103,7 @@ class CategoryController extends BaseController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        $this->setMessage("Категория успешно удалена");
         return $this->redirect(['index']);
     }
 

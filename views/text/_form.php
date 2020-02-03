@@ -13,11 +13,7 @@ use app\models\Category;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php 
-		$items = Category::find()->select('name')->where(['status' => STATUS_ACTIVE])->asArray()->indexBy('id')->column();
-		$params = ['prompt' => 'Не выбрана'];
-		echo $form->field($model, 'cat_id')->dropDownList($items, $params);
-	?>
+    <?= $form->field($model, 'cat_id')->textInput(['value' => $cat->id, 'readonly' => 'readonly'])->label('ID категории:'.$cat->name) ?>
     
     <?= $form->field($model, 'title')->textInput() ?>
 

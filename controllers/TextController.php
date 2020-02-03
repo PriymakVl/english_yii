@@ -7,6 +7,7 @@ use app\models\Text;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Category;
 
 class TextController extends \app\controllers\BaseController
 {
@@ -60,15 +61,16 @@ class TextController extends \app\controllers\BaseController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($cat_id)
     {
         $model = new Text();
+        $cat = Category::findOne($cat_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'model' => $model, 'cat' => $cat,
         ]);
     }
 

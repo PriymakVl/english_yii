@@ -5,10 +5,16 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Category */
+$parent = $model->parent ? $model->parent : null;
+$progenitor = $parent->parent ? $parent->parent : null;
+$root = $progenitor->parent ? $progenitor->parent : null;
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Категории', 'url' => ['index']];
+if ($root) $this->params['breadcrumbs'][] = ['label' => $root->name, 'url' => ['/category/view', 'id' => $root->id]];
+if ($progenitor) $this->params['breadcrumbs'][] = ['label' => $progenitor->name, 'url' => ['/category/view', 'id' => $progenitor->id]];
+if ($parent) $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['/category/view', 'id' => $parent->id]];
 $this->params['breadcrumbs'][] = $this->title;
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="category-view">
@@ -24,7 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Создать', ['create'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Создать подкатегорию', ['create', 'parent_id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить текст', ['/text/create', 'cat_id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
