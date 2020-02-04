@@ -105,7 +105,7 @@ class SentenseController extends \app\controllers\BaseController
         return $this->redirect(['index', 'id_text' => $sentense->id_text]);
     }
 
-    public function actionAling($text_id)
+    public function actionAlign($text_id)
     {
         Sentense::align($text_id);
         return $this->back();

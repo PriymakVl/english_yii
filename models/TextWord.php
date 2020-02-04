@@ -78,8 +78,9 @@ class TextWord extends \yii\db\ActiveRecord
         $word = new Word;
         $word->engl = strtolower(trim($words['engl'][$i]));
         //ru
+        $ru = trim($words['ru'][$i]);
         $ru = mb_convert_encoding($ru, "utf-8", "windows-1251");
-        $word->ru = mb_strtolower(trim($words['ru'][$i]));
+        $word->ru = mb_strtolower($ru);
 
         $res = $word->save();
         return Word::findOne(['engl' => trim($words['engl'][$i])]);
