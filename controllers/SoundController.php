@@ -34,14 +34,12 @@ class SoundController extends \app\controllers\BaseController
 
     public function actionAddSounds()
     {
-        debug();
         $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
         if (!Yii::$app->request->isPost) return $this->render('add-sounds', ['model' => $model]);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->addList();
-            $this->setMessage('Звуковые файлы добавлены')->redirect('index');
+            $this->setMessage('Звуковые файлы добавлены')->redirect('/word');
         }
-        return $this->render('add-sounds');
     }
 
     public function actionAddSentense()

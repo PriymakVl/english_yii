@@ -76,7 +76,7 @@ class Sound extends \yii\db\ActiveRecord
         $files = scandir('temp');
         for ($i = 2; $i < count($files); $i++) {
             $this->add($files[$i]);
-            debug();
+            debug($files[$i]);
         }   
         return $this;
     }
@@ -87,7 +87,7 @@ class Sound extends \yii\db\ActiveRecord
         $file_name = $str_arr[0];
         $file_ext = $str_arr[1];
         // $name = mb_convert_encoding($arr[0], "utf-8", "windows-1251");
-        if ($this->type == TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
+        if ($this->type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;
         $this->saveFile($item, $file_name, $file_ext);
@@ -97,7 +97,7 @@ class Sound extends \yii\db\ActiveRecord
     {
         $sound = (new self);
         $sound->type = $this->type;
-        $sound->ext = $ext;
+        $sound->ext = $ $ext;
         $sound->item_id = $item->id;
         $sound->save();
         rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->id.'.'.$ext);
