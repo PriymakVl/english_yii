@@ -118,10 +118,26 @@ class Sentense extends \yii\db\ActiveRecord
         return $words;
     }
 
-    //shift by one in text array
-    public static function align($text_id)
+    //shift by one row in text array
+    public static function align($text_id, $lang)
     {
         $sentenses = self::findAll(['id_text' => $text_id, 'status' => STATUS_ACTIVE]);
-        debug($sentenses);
+        $empty = false;
+        for ($i = 0, $count = count($sentenses); $i < $count; $i++) {
+            if ($empty) {
+                self::shiftSentense($i, $sentenses, $lang);
+                continue;
+            }
+            if (empty($sentenses[$i]->ru) || empty($sentenses[$i]->engl))  $empty = true;
+        }
     }
+
+    private static function shiftSentense($index, $sentenses, $lang)
+    {
+        $obj_empty = $sentenses[$index - 1];
+        $obj_source = $sentenses[$index];
+        if ($lang = 'ru') $obj_empty->ru = $obj_source->ru;
+        if ($lang = 'engl') $obj_empty->engl = $obj_source->engl;
+        $obj_empty->save();
+    } 
 }

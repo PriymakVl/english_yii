@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/word']];
 		?>
 
 	    <div class="form-group">
-	        <?= Html::submitButton('Добавить звуковые файлы', ['class' => 'btn btn-success']) ?>
+	        <?= Html::submitButton('Сгенерировать', ['class' => 'btn btn-success']) ?>
 	    </div>
 
     <?php ActiveForm::end(); ?>
