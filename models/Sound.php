@@ -76,6 +76,10 @@ class Sound extends \yii\db\ActiveRecord
         $files = scandir('temp');
         for ($i = 2; $i < count($files); $i++) {
             $this->add($files[$i]);
+<<<<<<< HEAD
+=======
+            debug($files[$i]);
+>>>>>>> 2ffc688172e2f4115eb465bc1a2b28f2ef9c1a09
         }   
         return $this;
     }
@@ -85,6 +89,10 @@ class Sound extends \yii\db\ActiveRecord
         $str_arr = explode('.', $file);
         $file_name = $str_arr[0];
         $file_ext = $str_arr[1];
+<<<<<<< HEAD
+=======
+        // $name = mb_convert_encoding($arr[0], "utf-8", "windows-1251");
+>>>>>>> 2ffc688172e2f4115eb465bc1a2b28f2ef9c1a09
         if ($this->type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;
@@ -97,7 +105,11 @@ class Sound extends \yii\db\ActiveRecord
         $new_file_name = (($last_id ? $last_id : 0) + 1) . '.' . $ext;
         $sound = (new self);
         $sound->type = $this->type;
+<<<<<<< HEAD
         $sound->filename = $new_file_name;
+=======
+        $sound->ext = $ $ext;
+>>>>>>> 2ffc688172e2f4115eb465bc1a2b28f2ef9c1a09
         $sound->item_id = $item->id;
         $sound->save();
         rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$new_file_name);
