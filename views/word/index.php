@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\models\Sound;
 
 $this->title = 'Слова';
 $this->params['breadcrumbs'][] = ['label' => 'Тексты', 'url' => ['/text']];
@@ -9,8 +10,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 function create_link_voice($model) {
     // return '<i class="fas fa-volume-up"></i>';
-    if ($model->sound_id) return '<a href="#">озвучить</a>';
-    return 'нет';
+    if (!$model->sound_id) return 'нет';
+    $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
+    if (!$sound) return 'нет';
+    return '<audio controls src="sounds/<?=$sound->filename?>"></audio>';
 }
 
 ?>
