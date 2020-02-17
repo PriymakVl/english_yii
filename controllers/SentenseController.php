@@ -8,6 +8,7 @@ use app\models\SentenseSearch;
 use app\models\Text;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 class SentenseController extends \app\controllers\BaseController
 {
@@ -26,14 +27,25 @@ class SentenseController extends \app\controllers\BaseController
         ];
     }
 
-    public function actionIndex($id_text)
+    public function actionIndex()
+    {
+        $params['query'] = Sentense::find()->where(['status' => STATUS_ACTIVE]);
+        $params['pagination'] = ['pageSize' => 5];
+        $dataProvider = new ActiveDataProvider($params);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionText($id_text)
     {
         $text = Text::findOne($id_text);
         $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
         if (!$sentenses) Sentense::breakText($text);
         $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
         if (!$sentenses) throw new NotFoundHttpException('Предложения для текста не найдены');
-        return $this->render('index', compact('sentenses', 'text'));
+        return $this->render('text', compact('sentenses', 'text'));
     }
 
     /**

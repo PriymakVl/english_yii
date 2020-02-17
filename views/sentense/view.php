@@ -39,6 +39,14 @@ function create_words($words) {
     return $list_words.'</ul>';
 }
 
+function create_link_voice($model) {
+    // return '<i class="fas fa-volume-up"></i>';
+    if (!$model->sound_id) return 'нет';
+    $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
+    if (!$sound) return 'нет';
+    return sprintf('<audio controls loop src="/sounds/%s"></audio>', $sound->filename);
+}
+
 ?>
 
 <style> 
@@ -77,6 +85,9 @@ function create_words($words) {
 
             ['attribute' => 'words', 'label' => 'Слова', 'format' => 'raw',
                 'value' => function($model) {return create_words($model->getWords());}, 
+            ],
+
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}
             ],
         ],
     ]) ?>

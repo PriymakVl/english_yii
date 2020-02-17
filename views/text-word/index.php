@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Word;
 use app\models\TextWord;
+use app\models\Sound;
 
 $this->title = 'Слова';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $id_text]];
@@ -34,6 +35,14 @@ function create_link_delete($item) {
     $options['data']['confirm'] = 'Вы действительно хотите удалить это слово?';
     $options['data']['method'] = ['post'];
     return Html::a($icon, $params, $options);
+}
+
+function create_link_voice($model) {
+    // return '<i class="fas fa-volume-up"></i>';
+    if (!$model->word->sound_id) return 'нет';
+    $sound = Sound::findOne(['id' => $model->word->sound_id, 'status' => STATUS_ACTIVE]);
+    if (!$sound) return 'нет';
+    return sprintf('<audio controls src="sounds/%s"></audio>', $sound->filename);
 }
 ?>
 <div class="text-word-index">
@@ -67,6 +76,8 @@ function create_link_delete($item) {
                 'value' => function($model) {return create_link_state($model);}, 
                 'filter' => [1 => 'выучено', 0 => 'не выучено'],
             ],
+
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
 
             ['class' => 'yii\grid\ActionColumn', 'contentOptions' => ['style' => 'width:100px; text-align:center;'],
 

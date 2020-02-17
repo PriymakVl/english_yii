@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Предложения', ['/sentense', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Предложения', ['/sentense/text', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Слова', ['/text-word', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
