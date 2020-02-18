@@ -65,27 +65,32 @@ class Sound extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-    public function getItemsForCreateSoundOfFile()
+    public function getItemsForCreateSoundOfFile($type)
     {
-        if ($this->type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
-        return Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
+        if ($type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
+        $items = Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
+        //удаляем переносы
+        foreach ($items as $item) {
+            $item->engl = str_replace("\r\n", " ", $item->engl);
+        }
+        return $items;
     }
 
-    public function addList()
+    public function addList($type)
     {
         $files = scandir('temp');
         for ($i = 2; $i < count($files); $i++) {
-            $this->add($files[$i]);
+            $this->add($files[$i], $type);
         }   
         return $this;
     }
 
-    public function add($file)
+    public function add($file, $type)
     {
         $str_arr = explode('.', $file);
         $file_name = $str_arr[0];
         $file_ext = $str_arr[1];
-        if ($this->type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
+        if ($type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;
         $this->saveFile($item, $file_name, $file_ext);

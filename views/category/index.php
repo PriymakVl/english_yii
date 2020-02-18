@@ -62,16 +62,16 @@ function create_link_name($model)
 
                 'urlCreator' => function ($action, $model, $key, $index) {
                     if ($action === 'add') {
-                        return 'category/create?parent_id='.$model->id;
+                        return 'create?parent_id='.$model->id;
                     }
                     else if ($action === 'view') {
-                        return 'category/view?id='.$model->id;
+                        return 'view?id='.$model->id;
                     }
                     else if ($action === 'update') {
-                        return 'category/update?id='.$model->id;
+                        return 'update?id='.$model->id;
                     }
                     else if ($action === 'delete') {
-                        return 'category/delete?id='.$model->id;
+                        return 'delete?id='.$model->id;
                     }
                 }
             ],

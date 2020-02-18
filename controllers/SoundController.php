@@ -7,16 +7,12 @@ use app\models\Sound;
 
 class SoundController extends \app\controllers\BaseController
 {
-    public function actionCreateFile()
+    public function actionCreateFile($type)
     {
         $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
-        if (!Yii::$app->request->isPost) return $this->render('create-file', ['model' => $model]);
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $items = $model->getItemsForCreateSoundOfFile();
-            $this->giveFileToDownload($items);
-        }
-        
+        $items = $model->getItemsForCreateSoundOfFile($type);
+        if (!$items) return $this->setMessage('Нет элементов', 'error')->back();
+        $this->giveFileToDownload($items);
     }
 
     private function giveFileToDownload($items) 
@@ -32,14 +28,11 @@ class SoundController extends \app\controllers\BaseController
         }
     }
 
-    public function actionAddSounds()
+    public function actionAddSounds($type)
     {
         $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
-        if (!Yii::$app->request->isPost) return $this->render('add-sounds', ['model' => $model]);
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model->addList();
-            $this->setMessage('Звуковые файлы добавлены')->redirect('/word');
-        }
+        $model->addList($type);
+        $this->setMessage('Звуковые файлы добавлены')->back();
     }
 
     public function actionAddSentense()

@@ -22,7 +22,7 @@ function create_link_voice($model) {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Создать файл для озвучки', ['/sound/create-file'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_SENTENSE], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds'], ['class' => 'btn btn-primary']) ?>
     </p>
 
