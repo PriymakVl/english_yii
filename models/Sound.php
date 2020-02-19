@@ -68,12 +68,7 @@ class Sound extends \yii\db\ActiveRecord
     public function getItemsForCreateSoundOfFile($type)
     {
         if ($type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
-        $items = Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
-        //удаляем переносы
-        foreach ($items as $item) {
-            $item->engl = str_replace("\r\n", " ", $item->engl);
-        }
-        return $items;
+        return Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
     }
 
     public function addList($type)
