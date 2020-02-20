@@ -20,7 +20,7 @@ function create_link_title($model) {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Добавить текст', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить текст', ['create', 'cat_id' => $cat->id], ['class' => 'btn btn-success']) ?>
     </p>
 
 

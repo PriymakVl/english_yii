@@ -82,9 +82,10 @@ class Sound extends \yii\db\ActiveRecord
 
     public function add($file, $type)
     {
-        $str_arr = explode('.', $file);
-        $file_name = $str_arr[0];
-        $file_ext = $str_arr[1];
+        // $str_arr = explode('.', $file);
+        $info = new \SplFileInfo($file);
+        $file_ext = $info->getExtension();
+        $file_name = $info->getBasename('.'.$file_ext);
         if ($type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;

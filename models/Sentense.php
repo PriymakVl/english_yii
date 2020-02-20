@@ -66,8 +66,10 @@ class Sentense extends \yii\db\ActiveRecord
     {
         for ($i = 0; $i < count($engl_str); $i++) {
             $obj = new self;
-            $obj->engl = str_replace("\r\n", " ", $engl_str[$i]);//delete line break
-            $obj->ru = str_replace("\r\n", " ", $ru_str[$i]);
+            $engl = str_replace("\r\n", " ", $engl_str[$i]);//delete line break
+            $ru = str_replace("\r\n", " ", $ru_str[$i]);
+            $obj->engl = trim($engl);
+            $obj->ru = trim($ru);
             $obj->id_text = $id_text;
             $obj->save();
         }
