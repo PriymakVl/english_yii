@@ -65,9 +65,10 @@ class Sound extends \yii\db\ActiveRecord
         return $scenarios;
     }
 
-    public function getItemsForCreateSoundOfFile($type)
+    public function getItemsForCreateSoundOfFile($type, $text_id)
     {
         if ($type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
+        if ($text_id) return Sentense::findAll(['sound_id' => null, 'id_text' => $text_id, 'status' => STATUS_ACTIVE]);
         return Sentense::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
     }
 
@@ -82,13 +83,13 @@ class Sound extends \yii\db\ActiveRecord
 
     public function add($file, $type)
     {
-        // $str_arr = explode('.', $file);
         $info = new \SplFileInfo($file);
         $file_ext = $info->getExtension();
         $file_name = $info->getBasename('.'.$file_ext);
         if ($type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;
+        $item->scenario = Sentense::SCENARIO_SOUND;
         $this->saveFile($item, $file_name, $file_ext);
     }
 
@@ -101,9 +102,11 @@ class Sound extends \yii\db\ActiveRecord
         $sound->filename = $new_file_name;
         $sound->item_id = $item->id;
         $sound->save();
+        debug($sound->id);
         rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$new_file_name);
         $item->sound_id = $sound->id;
         $item->save();
+        debug($item->id);
         return true;
     }
 }

@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
  */
 class Sentense extends \yii\db\ActiveRecord
 {
+    const SCENARIO_SOUND = 'sound';
 
     public $all; //array all of setneses text
     public $allQty; //count all sentenses of text
@@ -35,7 +36,7 @@ class Sentense extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_text', 'status'], 'integer'],
+            [['id_text', 'status', 'sound_id'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
         ];
     }
@@ -53,6 +54,13 @@ class Sentense extends \yii\db\ActiveRecord
             'status' => 'Status',
         ];
     }
+
+    public function scenarios()
+{
+    $scenarios = parent::scenarios();
+    $scenarios[static::SCENARIO_SOUND] = ['sound_id'];
+    return $scenarios;
+}
 
     public static function breakText($text)
     {
