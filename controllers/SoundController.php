@@ -10,9 +10,7 @@ class SoundController extends \app\controllers\BaseController
     public function actionCreateFile($type, $text_id = false)
     {
         $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
-        $model->file = 'tes';
         $model->save();
-        debug($model->id);
         $items = $model->getItemsForCreateSoundOfFile($type, $text_id);
         if (!$items) return $this->setMessage('Нет элементов', 'error')->back();
         $this->giveFileToDownload($items);

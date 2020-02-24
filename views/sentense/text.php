@@ -13,6 +13,14 @@ $this->title = 'Предложения';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
 $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $text->id]];
+
+function create_link_voice($model) {
+    // return '<i class="fas fa-volume-up"></i>';
+    if (!$model->sound_id) return 'нет';
+    $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
+    if (!$sound) return 'нет';
+    return sprintf('<audio controls src="sounds/%s"></audio>', $sound->filename);
+}
 ?>
 <div class="sentense-index">
 
@@ -38,7 +46,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word
                     <?= Html::a($number, ['sentense/view', 'id_text' => $text->id, 'id' => $sentense->id]) ?>
                 </td>
                 <td><?=$sentense->engl?></td>
-                <td><? debug($sentense->sound_id, false); ?></td>
+                <td>
+                    <?= create_link_voice($sentense); ?>
+                </td>
                 <td><?=$sentense->ru?></td>
             </tr>
             <? $number++; ?>

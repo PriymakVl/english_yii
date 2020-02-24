@@ -24,7 +24,7 @@ function create_link_voice($model) {
     <p>
         <?= Html::a('Добавить слово', ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Добавить озвучку', ['/sound/add-sounds'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= GridView::widget([

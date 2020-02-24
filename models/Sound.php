@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\NotFoundHttpException;
 use app\models\Word;
 use app\models\Sentense;
 
@@ -89,24 +90,22 @@ class Sound extends \yii\db\ActiveRecord
         if ($type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         else $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
         if (!$item) return;
-        $item->scenario = Sentense::SCENARIO_SOUND;
-        $this->saveFile($item, $file_name, $file_ext);
+        $this->saveFile($item, $file_name, $file_ext, $type);
     }
 
-    private function saveFile($item, $file_name, $ext) 
+    private function saveFile($item, $file_name, $ext, $type) 
     {
         $last_id = self::find()->select('id')->orderBy('id DESC')->column()[0];
         $new_file_name = (($last_id ? $last_id : 0) + 1) . '.' . $ext;
         $sound = (new self);
-        $sound->type = $this->type;
+        $sound->type = $type;
         $sound->filename = $new_file_name;
         $sound->item_id = $item->id;
         $sound->save();
-        debug($sound->id);
+        if (!$sound->save()) throw new NotFoundHttpException('ошибка при сохранении звука в базу');
         rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$new_file_name);
         $item->sound_id = $sound->id;
         $item->save();
-        debug($item->id);
         return true;
     }
 }
