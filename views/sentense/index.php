@@ -13,7 +13,7 @@ function create_link_voice($model) {
     if (!$model->sound_id) return 'нет';
     $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
     if (!$sound) return 'нет';
-    return sprintf('<audio controls src="sounds/%s"></audio>', $sound->filename);
+    return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
 }
 
 ?>

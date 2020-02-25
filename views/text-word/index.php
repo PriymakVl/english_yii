@@ -42,7 +42,7 @@ function create_link_voice($model) {
     if (!$model->word->sound_id) return 'нет';
     $sound = Sound::findOne(['id' => $model->word->sound_id, 'status' => STATUS_ACTIVE]);
     if (!$sound) return 'нет';
-    return sprintf('<audio controls src="sounds/%s"></audio>', $sound->filename);
+    return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
 }
 ?>
 <div class="text-word-index">
@@ -54,6 +54,8 @@ function create_link_voice($model) {
         <?= Html::a('Угадай', ['guess', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Написать', ['write', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Учить', ['teach', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_WORD, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -74,7 +76,8 @@ function create_link_voice($model) {
 
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
                 'value' => function($model) {return create_link_state($model);}, 
-                'filter' => [1 => 'выучено', 0 => 'не выучено'],
+                // 'filter' => [1 => 'выучено', 0 => 'не выучено']
+                'filter' => Html::activeDropDownList($searchModel, 'state', ArrayHelper::map(PostSection::find()->all(), 'id', 'title'), ['prompt' => '', 'class' => 'form-control form-control-sm'])
             ],
 
             ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
