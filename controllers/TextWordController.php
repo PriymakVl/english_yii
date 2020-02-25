@@ -33,12 +33,13 @@ class TextWordController extends \app\controllers\BaseController
 
     public function actionIndex($id_text)
     {
+        $text = Text::findOne($id_text);
         $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $searchModel = new TextWordSearch();
         $params['query'] = $query;
         $params['pagination'] = ['pageSize' => 8];
         $dataProvider = new ActiveDataProvider($params);
-        return $this->render('index', compact('searchModel', 'dataProvider', 'id_text'));
+        return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
     public function actionView($id, $direction = false)

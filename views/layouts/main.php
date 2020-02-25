@@ -21,6 +21,7 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
+    <script src="https://kit.fontawesome.com/5f29610ead.js" crossorigin="anonymous"></script>
     <?php $this->head() ?>
 </head>
 <body>

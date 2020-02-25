@@ -7,8 +7,8 @@ use app\models\TextWord;
 use app\models\Sound;
 
 $this->title = 'Слова';
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
 
 function create_link_state($item) {
@@ -47,9 +47,9 @@ function create_link_voice($model) {
 ?>
 <div class="text-word-index">
 
-    <h1><?//= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($text->title) ?></h1>
 
-    <p>
+    <p class="nav-horizontal">
         <?= Html::a('Добавить слова', ['create', 'id_text' => $id_text], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Угадай', ['guess', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Написать', ['write', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
@@ -57,6 +57,10 @@ function create_link_voice($model) {
         <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_WORD, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
     </p>
+
+    <div class="nav-vertical">
+        <i class="fas fa-graduation-cap" id="learned-page" title="выучено все"></i>
+    </div>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -76,8 +80,7 @@ function create_link_voice($model) {
 
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
                 'value' => function($model) {return create_link_state($model);}, 
-                // 'filter' => [1 => 'выучено', 0 => 'не выучено']
-                'filter' => Html::activeDropDownList($searchModel, 'state', ArrayHelper::map(PostSection::find()->all(), 'id', 'title'), ['prompt' => '', 'class' => 'form-control form-control-sm'])
+                'filter' => [1 => 'выучено', 0 => 'не выучено']
             ],
 
             ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],

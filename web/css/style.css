@@ -1,0 +1,15 @@
+.nav-vertical {
+	position: relative;
+}
+
+.nav-vertical .fa-graduation-cap {
+	font-size: 45px;
+	position: absolute;
+	left: -85px;
+	top: 0;
+}
+
+.nav-vertical .fa-graduation-cap:hover {
+	cursor: pointer;
+	color: green;
+}
