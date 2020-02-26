@@ -6,6 +6,8 @@ use app\models\Word;
 use app\models\TextWord;
 use app\models\Sound;
 
+$page = Yii::$app->request->get('page');
+
 $this->title = 'Слова';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $text->id]];
@@ -50,16 +52,18 @@ function create_link_voice($model) {
     <h1><?= Html::encode($text->title) ?></h1>
 
     <p class="nav-horizontal">
-        <?= Html::a('Добавить слова', ['create', 'id_text' => $id_text], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Угадай', ['guess', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Написать', ['write', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Учить', ['teach', 'id_text' => $id_text], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Добавить слова', ['create', 'id_text' => $text->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Угадай', ['guess', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Написать', ['write', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Учить', ['teach', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_WORD, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <div class="nav-vertical">
-        <i class="fas fa-graduation-cap" id="learned-page" title="выучено все"></i>
+        <a href="/text-word/state-page?id_text=<?=$text->id?>&page=<?=$page?>">
+            <i class="fas fa-graduation-cap" title="выучено все"></i>
+        </a>
     </div>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

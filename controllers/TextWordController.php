@@ -16,6 +16,7 @@ use app\models\Sentense;
 
 class TextWordController extends \app\controllers\BaseController
 {
+    private $pageSize = 8;
     /**
      * {@inheritdoc}
      */
@@ -37,7 +38,7 @@ class TextWordController extends \app\controllers\BaseController
         $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $searchModel = new TextWordSearch();
         $params['query'] = $query;
-        $params['pagination'] = ['pageSize' => 8];
+        $params['pagination'] = ['pageSize' => $this->pageSize];
         $dataProvider = new ActiveDataProvider($params);
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
@@ -121,6 +122,23 @@ class TextWordController extends \app\controllers\BaseController
         $this->setState($item, $state);
         $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page]);
     }
+    //for all word on page
+    public function actionStatePage($id_text, $page)
+    {
+        if (!$page || $page == 1) $offset = 0;
+        else $offset = ($page - 1) * $this->pageSize;
+        $items = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE])
+        ->limit($this->pageSize)->offset($offset)->all();
+        debug(count($items));
+        if ($items) {
+           foreach ($items as $item) {
+                $this->setState($item, TextWord::STATE_LEARNED);
+           } 
+        }
+        
+        $this->setState($item, $state);
+        $this->redirect(['index', 'id_text' => $id_text, 'page' => $page]);
+    }
 
     public function actionStateTeach($id, $index)
     {
@@ -128,10 +146,13 @@ class TextWordController extends \app\controllers\BaseController
         $this->setState($item, TextWord::STATE_LEARNED);
         $this->redirect(['teach', 'id_text' => $item->id_text, 'index' => $index]);
     }
-
+    //set state for all same words in texts and table words
     private function setState($item, $state)
     {
-        $item->setState($state);
+        $items = TextWord::findAll(['id_word' => $item->id_word]);
+        foreach ($items as $word) {
+            $word->setState($state);
+        }
         $word = Word::findOne($item->id_word);
         $word->setState($state);
     }

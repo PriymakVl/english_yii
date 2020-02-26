@@ -40,7 +40,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
         <h2>Предложения:</h2>
         <ul>
             <? foreach ($sentenses as $sentense): ?>
-                <li onclick="change_text(this);" translate="<?=$sentense->ru?>"><?=$sentense->engl?></li>
+                <li title="<?=$sentense->ru?>" onclick="change_text(this);" translate="<?=$sentense->ru?>">
+                    <?=$sentense->engl?>
+                </li>
             <? endforeach; ?>
         </ul>
     </div>
