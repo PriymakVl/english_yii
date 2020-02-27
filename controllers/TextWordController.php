@@ -39,7 +39,8 @@ class TextWordController extends \app\controllers\BaseController
         $searchModel = new TextWordSearch();
         $params['query'] = $query;
         $params['pagination'] = ['pageSize' => $this->pageSize];
-        $dataProvider = new ActiveDataProvider($params);
+        // $dataProvider = new ActiveDataProvider($params);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
@@ -129,14 +130,11 @@ class TextWordController extends \app\controllers\BaseController
         else $offset = ($page - 1) * $this->pageSize;
         $items = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE])
         ->limit($this->pageSize)->offset($offset)->all();
-        debug(count($items));
         if ($items) {
            foreach ($items as $item) {
                 $this->setState($item, TextWord::STATE_LEARNED);
            } 
         }
-        
-        $this->setState($item, $state);
         $this->redirect(['index', 'id_text' => $id_text, 'page' => $page]);
     }
 

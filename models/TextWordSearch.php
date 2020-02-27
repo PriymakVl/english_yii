@@ -57,10 +57,10 @@ class TextWordSearch extends TextWord
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'id_text' => $this->id_text,
-            'id_word' => $this->id_word,
-            'status' => $this->status,
+            // 'id' => $this->id,
+            // 'id_text' => $this->id_text,
+            // 'id_word' => $this->id_word,
+            // 'status' => $this->status,
             'state'=> $this->state,
         ]);
 
