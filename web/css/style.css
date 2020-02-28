@@ -2,14 +2,37 @@
 	position: relative;
 }
 
-.nav-vertical .fa-graduation-cap {
+.nav-vertical .fa-graduation-cap, .nav-vertical .fa-file-audio {
 	font-size: 45px;
 	position: absolute;
 	left: -85px;
 	top: 0;
 }
 
-.nav-vertical .fa-graduation-cap:hover {
+.nav-vertical .fa-file-audio {
+	font-size: 45px;
+	position: absolute;
+	left: -75px;
+	top: 60px;
+}
+
+.nav-vertical .fa-microphone-alt {
+	font-size: 45px;
+	position: absolute;
+	left: -75px;
+	top: 120px;
+}
+
+.nav-vertical .fa-plus-circle {
+	font-size: 45px;
+	position: absolute;
+	left: -80px;
+	top: 180px;
+}
+
+
+.nav-vertical .fa-graduation-cap:hover, .nav-vertical .fa-file-audio:hover, 
+.nav-vertical .fa-microphone-alt:hover, .nav-vertical .fa-plus-circle:hover {
 	cursor: pointer;
 	color: green;
 }

@@ -37,14 +37,14 @@ class TextWordSearch extends TextWord
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $id_text, $page_size)
     {
-        $query = TextWord::find();
+        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query, 'pagination' => ['pageSize' => $page_size],
         ]);
 
         $this->load($params);

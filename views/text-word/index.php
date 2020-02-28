@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\grid\GridView;
 use app\models\Word;
 use app\models\TextWord;
@@ -52,21 +53,26 @@ function create_link_voice($model) {
     <h1><?= Html::encode($text->title) ?></h1>
 
     <p class="nav-horizontal">
-        <?= Html::a('Добавить слова', ['create', 'id_text' => $text->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Угадай', ['guess', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Написать', ['write', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Учить', ['teach', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_WORD, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_WORD], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Озвучить', ['#'], ['class' => 'btn btn-primary', 'id' => 'words-sound' 'sounds' => TextWord::getSoundFiles()]) ?>
     </p>
 
     <div class="nav-vertical">
         <a href="/text-word/state-page?id_text=<?=$text->id?>&page=<?=$page?>">
             <i class="fas fa-graduation-cap" title="выучено все"></i>
         </a>
+        <a href="<?=Url::to(['/sound/create-file', 'text_id' => $text->id, 'type' => Sound::TYPE_WORD])?>">
+            <i class="fas fa-file-audio" title="создать файл озвучки"></i>
+        </a>
+        <a href="<?=Url::to(['/sound/add-sounds', 'type' => Sound::TYPE_WORD])?>">
+            <i class="fas fa-microphone-alt" title="добавить озвучку"></i>
+        </a>
+        <a href="<?=Url::to(['create', 'id_text' => $text->id])?>">
+            <i class="fas fa-plus-circle" title="добваит слова"></i>
+        </a>
     </div>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -84,7 +90,7 @@ function create_link_voice($model) {
 
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
                 'value' => function($model) {return create_link_state($model);}, 
-                'filter' => [1 => 'выучено', 0 => 'не выучено']
+                'filter' => ['' => 'все', 1 => 'выучено', 0 => 'не выучено']
             ],
 
             ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],

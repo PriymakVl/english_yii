@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -35,12 +36,12 @@ class TextWordController extends \app\controllers\BaseController
     public function actionIndex($id_text)
     {
         $text = Text::findOne($id_text);
-        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
         $searchModel = new TextWordSearch();
-        $params['query'] = $query;
-        $params['pagination'] = ['pageSize' => $this->pageSize];
-        // $dataProvider = new ActiveDataProvider($params);
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
+        // $array = ArrayHelper::toArray($dataProvider->getModels(),['app\models\Sale' => ['id','id_address', 'floor','grossarea', 'price']]);
+        $models = $dataProvider->getModels();
+        $result = ArrayHelper::map($array, 'id');
+        debug($result);
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
