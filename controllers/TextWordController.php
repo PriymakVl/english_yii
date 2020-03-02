@@ -35,13 +35,11 @@ class TextWordController extends \app\controllers\BaseController
 
     public function actionIndex($id_text)
     {
+        debug($this->session->get('id_words'), false);
         $text = Text::findOne($id_text);
         $searchModel = new TextWordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
-        // $array = ArrayHelper::toArray($dataProvider->getModels(),['app\models\Sale' => ['id','id_address', 'floor','grossarea', 'price']]);
-        $models = $dataProvider->getModels();
-        $result = ArrayHelper::map($array, 'id');
-        debug($result);
+        // $this->session->set('id_words',  ArrayHelper::getColumn($dataProvider->getModels(), 'id_word'));
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 

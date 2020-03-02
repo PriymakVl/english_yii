@@ -114,4 +114,9 @@ class TextWord extends \yii\db\ActiveRecord
         return $this->save();
     }
 
+    public function getSoundFiles()
+    {
+        return;
+    }
+
 }
