@@ -114,9 +114,16 @@ class TextWord extends \yii\db\ActiveRecord
         return $this->save();
     }
 
-    public function getSoundFiles()
+    public static function createSoundsString($id_text)
     {
-        return;
+        $items = TextWord::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        if (!items) return false;
+        foreach ($items as $item) {
+            if (!$item->word->sound_id) continue;
+            $word = $item->word;
+            $sounds_arr[] = $word->sound->filename.':'.$word->engl.':'.$word->ru;
+        }
+        return json_encode($sounds_arr);
     }
 
 }

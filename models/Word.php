@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Sound;
 
 /**
  * This is the model class for table "word".
@@ -63,5 +64,10 @@ class Word extends \yii\db\ActiveRecord
         $this->scenario = self::SCENARIO_STATE;
         $this->state = $state;
         return $this->save();
+    }
+
+    public function getSound()
+    {
+        return $this->hasOne(Sound::className(), ['id' => 'sound_id']);
     }
 }
