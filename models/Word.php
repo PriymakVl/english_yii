@@ -70,4 +70,19 @@ class Word extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Sound::className(), ['id' => 'sound_id']);
     }
+
+    public static function createSoundsString($state, $id_text = false)
+    {
+        if ($id_text) {
+            $ids = TextWord::find()->select(['id_word'])->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE, 'state' => $state])->column();
+            $words = $ids ? self::findAll($ids) : false;
+        }
+        else $words = self::findAll(['status' => STATUS_ACTIVE, 'state' => $state]);
+        if (!items) return false;
+        foreach ($words as $word) {
+            if (!$word->sound_id) continue;
+            $sounds_arr[] = $word->sound->filename.':'.$word->engl.':'.$word->ru;
+        }
+        return json_encode($sounds_arr);
+    }
 }

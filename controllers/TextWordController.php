@@ -117,7 +117,7 @@ class TextWordController extends \app\controllers\BaseController
     public function actionSounds($id_text) 
     {
         $state = TextWord::STATE_NOT_LEARNED;
-        $sounds_str = TextWord::createSoundsString($id_text, $state);
+        $sounds_str = Word::createSoundsString($state, $id_text);
         return $this->render('sounds', compact('sounds_str'));
     }
 
