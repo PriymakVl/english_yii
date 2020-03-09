@@ -56,7 +56,7 @@ function create_link_voice($model) {
         <?= Html::a('Угадай', ['guess', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Написать', ['write', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Учить', ['teach', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Озвучить', ['#'], ['class' => 'btn btn-primary', 'id' => 'words-sound' 'sounds' => TextWord::getSoundFiles()]) ?>
+        <?//= Html::a('Озвучить', ['#'], ['class' => 'btn btn-primary', 'id' => 'words-sound' 'sounds' => TextWord::getSoundFiles()]) ?>
     </p>
 
     <div class="nav-vertical">

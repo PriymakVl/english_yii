@@ -39,9 +39,9 @@ class TextWordController extends \app\controllers\BaseController
         $searchModel = new TextWordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
         // $array = ArrayHelper::toArray($dataProvider->getModels(),['app\models\Sale' => ['id','id_address', 'floor','grossarea', 'price']]);
-        $models = $dataProvider->getModels();
-        $result = ArrayHelper::map($array, 'id');
-        debug($result);
+        // $models = $dataProvider->getModels();
+        // $result = ArrayHelper::map($array, 'id');
+        // debug($result);
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
