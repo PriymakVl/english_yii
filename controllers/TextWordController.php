@@ -38,10 +38,6 @@ class TextWordController extends \app\controllers\BaseController
         $text = Text::findOne($id_text);
         $searchModel = new TextWordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
-        // $array = ArrayHelper::toArray($dataProvider->getModels(),['app\models\Sale' => ['id','id_address', 'floor','grossarea', 'price']]);
-        // $models = $dataProvider->getModels();
-        // $result = ArrayHelper::map($array, 'id');
-        // debug($result);
         return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
@@ -116,6 +112,13 @@ class TextWordController extends \app\controllers\BaseController
         $item = TextWord::getByIndex($id_text, $index);
         $sentenses = Sentense::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
         return $this->render('teach', compact('text', 'item', 'index', 'sentenses'));
+    }
+
+    public function actionSounds($id_text) 
+    {
+        $state = TextWord::STATE_NOT_LEARNED;
+        $sounds_str = Word::createSoundsString($state, $id_text);
+        return $this->render('sounds', compact('sounds_str'));
     }
 
     public function actionStateIndex($id, $state, $page)

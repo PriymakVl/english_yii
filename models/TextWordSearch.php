@@ -39,7 +39,7 @@ class TextWordSearch extends TextWord
      */
     public function search($params, $id_text, $page_size)
     {
-        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        $query = TextWord::find()->where(['id_text' => $id_text]);
 
         // add conditions that should always apply here
 
