@@ -31,7 +31,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
         <?= Html::a('Выучено', ['state-teach', 'id' => $item->id, 'index' => $index], ['class' => 'btn btn-primary']) ?>
     </p>
     
-    <h2><?=$item->word->engl?></h2>
+    <h2>
+        <?=$item->word->engl?>
+        &nbsp;&nbsp;&nbsp;
+        <? printf('<audio controls src="/sounds/%s"></audio>', $item->word->sound->filename); ?>
+    </h2>
+
     <a href="#" id="show" onclick="answer.style.display='block'">Показать перевод</a>
 
     <h2 id="answer">Правильно: <span class="text-success"><?=$item->word->ru?></span></h2>
