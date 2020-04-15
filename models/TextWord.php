@@ -57,9 +57,9 @@ class TextWord extends \yii\db\ActiveRecord
     {
         $words = $this->getWordsFromFiles();
         for ($i = 0; $i < count($words['engl']); $i++) {
-            $word = Word::findOne(['engl' => $words['engl'][$i], 'status' => 1]);
+            $word = Word::findOne(['engl' => $words['engl'][$i]]);
             if (!$word) $word = $this->addWord($words, $i);
-            $sql = sprintf("INSERT INTO `%s` (`id_text`, `id_word`) VALUES (%d, %d)", $this->tableName(), $this->id_text, $word->id);
+            $sql = sprintf("INSERT INTO `%s` (`id_text`, `id_word`, `state`) VALUES (%d, %d, %d)", $this->tableName(), $this->id_text, $word->id, $word->state);
             \Yii::$app->db->createCommand($sql)->execute();
         }
         return true;
@@ -112,6 +112,33 @@ class TextWord extends \yii\db\ActiveRecord
         $this->scenario = self::SCENARIO_STATE;
         $this->state = $state;
         return $this->save();
+    }
+
+    public function deleteWord()
+    {
+        $this->word->scenario = Word::SCENARIO_DELETE;
+        $this->word->status = STATUS_INACTIVE;
+        $this->word->save();
+
+        $items = self::findAll(['id_word' => $this->id_word, 'status' => STATUS_ACTIVE]);
+        if (!$items) return;
+        foreach ($items as $item) {
+            $item->scenario = TextWord::SCENARIO_DELETE;
+            $item->status = STATUS_INACTIVE;
+            $item->save();
+        }
+    }
+
+    public static function getStatistics($id_text)
+    {
+        $words = self::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        if (!$words) return;
+        $statistics = ['all' => count($words), 'learned' => 0, 'not_learned' => 0];
+        foreach ($words as $word) {
+            if ($word->state == self::STATE_LEARNED) $statistics['learned']++;
+            else $statistics['not_learned']++;
+        }
+        return (object)$statistics;
     }
 
 }

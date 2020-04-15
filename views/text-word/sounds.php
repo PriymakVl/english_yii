@@ -9,23 +9,32 @@
 
 
 <style type="text/css">
-  .well {
+  .view {
     width: 600px;
-    margin: 100px auto;
+    margin: 50px auto;
     font-size: 40px;
     text-align: center;
+    background: #d3d3d3;
+    display: none;
+    padding: 50px 0;
+  }
+  #stop {
+    display: none;
+  }
+  #learned {
+    position: fixed;
+    top: 50%;
+    right: 100px;
   }
 </style>
 
-<?= Html::a('Начать', ['#', 'data-sounds-str' => $sounds_str], ['id' => 'start', 'class' => 'btn btn-success']) ?>
+<?= Html::a('Начать', ['#'], ['id' => 'start', 'data-words-str' => $words_str, 'class' => 'btn btn-primary']) ?>
+<?= Html::a('Остановить', ['#'], ['id' => 'stop', 'id_text' => $id_text, 'class' => 'btn btn-primary']) ?>
 
-<? //printf('<a href="#" class="btn btn-success" id="sounds" data-sounds-str="%s">Начать</a>', $sounds_str) ?>
 
-
-<div data-sounds="<?=$sounds_str?>" id="sounds"></div>
-
-<div class="container">
-  <div class="well">
-    dddddd
-  </div>
+<div class="wrapper">
+  <div id="id_item" style="display: none;"></div>
+  <div class="view" id="engl">нет слова</div>
+  <button id="learned" class="btn btn-success">Выучено <span>(0)</span></button>
+  <div class="view" id="ru">нет слова</div>
 </div>

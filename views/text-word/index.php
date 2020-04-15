@@ -52,6 +52,12 @@ function create_link_voice($model) {
 
     <h1><?= Html::encode($text->title) ?></h1>
 
+    <ul>
+        <li>Всего слов: <?= $statistics->all ?></li>
+        <li>Выучено слов: <?= $statistics->learned ?></li>
+        <li>Не выучено слов: <?= $statistics->not_learned ?></li>
+    </ul>
+
     <p class="nav-horizontal">
         <?= Html::a('Угадай', ['guess', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Написать', ['write', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
@@ -70,7 +76,7 @@ function create_link_voice($model) {
             <i class="fas fa-microphone-alt" title="добавить озвучку"></i>
         </a>
         <a href="<?=Url::to(['create', 'id_text' => $text->id])?>">
-            <i class="fas fa-plus-circle" title="добваит слова"></i>
+            <i class="fas fa-plus-circle" title="добавить слова"></i>
         </a>
     </div>
 

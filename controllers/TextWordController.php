@@ -38,7 +38,8 @@ class TextWordController extends \app\controllers\BaseController
         $text = Text::findOne($id_text);
         $searchModel = new TextWordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
-        return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
+        $statistics = TextWord::getStatistics($id_text);
+        return $this->render('index', compact('searchModel', 'dataProvider', 'text', 'statistics'));
     }
 
     public function actionView($id, $direction = false)
@@ -82,9 +83,7 @@ class TextWordController extends \app\controllers\BaseController
     public function actionDelete($id, $page = false)
     {
         $item = TextWord::findOne($id);
-        $item->scenario = TextWord::SCENARIO_DELETE;
-        $item->status = STATUS_INACTIVE;
-        $item->save();
+        $item->deleteWord();
         $this->setMessage('Слово успешно удалено');
         return $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page ? $page : 1]);
     }
@@ -117,8 +116,8 @@ class TextWordController extends \app\controllers\BaseController
     public function actionSounds($id_text) 
     {
         $state = TextWord::STATE_NOT_LEARNED;
-        $sounds_str = Word::createSoundsString($state, $id_text);
-        return $this->render('sounds', compact('sounds_str'));
+        $words_str = Word::createSoundsString($state, $id_text);
+        return $this->render('sounds', compact('words_str', 'id_text'));
     }
 
     public function actionStateIndex($id, $state, $page)
@@ -147,6 +146,15 @@ class TextWordController extends \app\controllers\BaseController
         $item = TextWord::findOne($id);
         $this->setState($item, TextWord::STATE_LEARNED);
         $this->redirect(['teach', 'id_text' => $item->id_text, 'index' => $index]);
+    }
+
+    public function actionStateList($ids, $state = TextWord::STATE_LEARNED, $id_text) {
+        $ids = explode(',', rtrim($ids, ','));
+        $items = TextWord::findAll($ids);
+        foreach ($items as $item) {
+            $this->setState($item, $state);
+        }
+        $this->setMessage('Состояние слов изменено')->redirect(['sounds', 'id_text' => $id_text]);
     }
     //set state for all same words in texts and table words
     private function setState($item, $state)

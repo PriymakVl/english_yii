@@ -16,6 +16,7 @@ use app\models\Sound;
 class Word extends \yii\db\ActiveRecord
 {
     const SCENARIO_STATE = 'state';
+    const SCENARIO_DELETE = 'delete';
 
     /**
      * {@inheritdoc}
@@ -42,6 +43,7 @@ class Word extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
         $scenarios[static::SCENARIO_STATE] = ['state'];
+        $scenarios[static::SCENARIO_DELETE] = ['status'];
         return $scenarios;
     }
 
@@ -79,10 +81,11 @@ class Word extends \yii\db\ActiveRecord
         }
         else $words = self::findAll(['status' => STATUS_ACTIVE, 'state' => $state]);
         if (!items) return false;
+        $words_str = '';
         foreach ($words as $word) {
             if (!$word->sound_id) continue;
-            $sounds_arr[] = $word->sound->filename.':'.$word->engl.':'.$word->ru;
+            $words_str .= $word->sound->filename.':'.$word->engl.':'.$word->ru.':'.$word->id.',';
         }
-        return json_encode($sounds_arr);
+        return $words_str;
     }
 }
