@@ -20,6 +20,7 @@ class Sound extends \yii\db\ActiveRecord
 {
 
     const SCENARIO_FILE = 'file';
+    const SCENARIO_CREATE = 'create';
     const TYPE_WORD = 1;
     const TYPE_SENTENSE = 2;
 
@@ -63,6 +64,7 @@ class Sound extends \yii\db\ActiveRecord
         $scenarios = parent::scenarios();
 
         $scenarios[static::SCENARIO_FILE] = ['type'];
+        $scenarios[static::SCENARIO_CREATE] = ['type', 'filename', 'item_id'];
         return $scenarios;
     }
 
@@ -95,17 +97,25 @@ class Sound extends \yii\db\ActiveRecord
 
     private function saveFile($item, $file_name, $ext, $type) 
     {
-        $last_id = self::find()->select('id')->orderBy('id DESC')->column()[0];
-        $new_file_name = (($last_id ? $last_id : 0) + 1) . '.' . $ext;
-        $sound = (new self);
-        $sound->type = $type;
-        $sound->filename = $new_file_name;
-        $sound->item_id = $item->id;
-        $sound->save();
-        if (!$sound->save()) throw new NotFoundHttpException('ошибка при сохранении звука в базу');
-        rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$new_file_name);
-        $item->sound_id = $sound->id;
+        $item->sound_id = self::create($type, $file_name, $ext, $item->id);
         $item->save();
         return true;
+    }
+
+    public static function create($type, $file_name, $ext, $item_id)
+    {
+        $sound = new self(['scenario' => self::SCENARIO_CREATE]);
+        $sound->type = $type;
+        $sound->filename = self::getSoundName($ext);
+        $sound->item_id = $item_id;
+        if (!$sound->save()) throw new NotFoundHttpException('ошибка при сохранении звука в базу');
+        rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->filename);
+        return $sound->id;
+    }
+
+    private static function getSoundName($ext)
+    {
+        $last_id = self::find()->select('id')->orderBy('id DESC')->column()[0];
+        return (($last_id ? $last_id : 0) + 1) . '.' . $ext;
     }
 }

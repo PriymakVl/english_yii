@@ -1,10 +1,12 @@
 $(document).ready(function() {
 
-    learned_ids = '';
-    learned_qty = 0;
+    var learned_ids = '';
+    var learned_qty = 0;
+    var id_text;
 
     $('#start').click(function(event) {
         event.preventDefault();
+        id_text = get_params_url('id_text');
         $(this).hide();
         $('#stop').show();
         let words = this.dataset.wordsStr.split(',');
@@ -28,7 +30,7 @@ $(document).ready(function() {
     });
 
     $('#learned').click(function() {
-        learned_ids += $('#id_item').text() + ',';
+        learned_ids += $('#id_word').text() + ',';
         learned_qty++;
         $(this).find('span').text('(' + learned_qty + ')');
     });
@@ -41,7 +43,7 @@ function play_all(delay, words)
     setInterval(function(){
         document.querySelectorAll('.view').forEach(item => {item.style.display = 'none'});
         let arr = words[i].split(':');
-        $('#id_item').text(arr[3]);//id item for change state
+        $('#id_word').text(arr[3]);//id item for change state
         sound = new Audio('/web/sounds/' + arr[0]);
         sound.play();
         setTimeout(show_text_box, 3000, 'engl', arr[1]);
@@ -51,7 +53,7 @@ function play_all(delay, words)
             if (learned_ids) {
                 let id_text = $(this).attr('id_text');
                 let add_learned = confirm('Добавить слова в выученные');
-                if (add_learned) return location.href = '/text-word/state-list?ids' + learned_ids + '&id_text' + id_text;
+                if (add_learned) return location.href = '/text-word/state-list?ids=' + learned_ids + '&id_text=' + id_text;
             }
             else return alert('Слова пройдены');
         }

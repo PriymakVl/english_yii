@@ -33,7 +33,7 @@ class Word extends \yii\db\ActiveRecord
     {
         return [
             [['engl', 'ru'], 'required'],
-            [['status'], 'integer'],
+            [['status', 'state'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
             [['engl'], 'unique'],
         ];
@@ -76,11 +76,13 @@ class Word extends \yii\db\ActiveRecord
     public static function createSoundsString($state, $id_text = false)
     {
         if ($id_text) {
-            $ids = TextWord::find()->select(['id_word'])->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE, 'state' => $state])->column();
+            $ids = TextWord::find()->select('id_word')->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE, 'state' => $state])->column();
+
+            // debug($ids);
             $words = $ids ? self::findAll($ids) : false;
         }
         else $words = self::findAll(['status' => STATUS_ACTIVE, 'state' => $state]);
-        if (!items) return false;
+        if (!$words) return false;
         $words_str = '';
         foreach ($words as $word) {
             if (!$word->sound_id) continue;

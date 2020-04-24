@@ -40,6 +40,7 @@ class TextWord extends \yii\db\ActiveRecord
         return [
             [['file_ru', 'file_engl'], 'required'],
             [['file_ru', 'file_engl'], 'file', 'skipOnEmpty' => false, 'extensions' => 'txt'],
+            [['status', 'state'], 'integer'],
         ];
     }
 

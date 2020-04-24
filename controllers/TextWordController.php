@@ -150,18 +150,23 @@ class TextWordController extends \app\controllers\BaseController
 
     public function actionStateList($ids, $state = TextWord::STATE_LEARNED, $id_text) {
         $ids = explode(',', rtrim($ids, ','));
-        $items = TextWord::findAll($ids);
-        foreach ($items as $item) {
-            $this->setState($item, $state);
+        $words = Word::findAll($ids);
+        foreach ($words as $word) {
+            $word->setState($state);
+            $items = TextWord::findAll(['id_word' => $word->id]);
+            foreach ($items as $item) {
+                $item->setState($state);
+            }
         }
         $this->setMessage('Состояние слов изменено')->redirect(['sounds', 'id_text' => $id_text]);
     }
+
     //set state for all same words in texts and table words
     private function setState($item, $state)
     {
         $items = TextWord::findAll(['id_word' => $item->id_word]);
-        foreach ($items as $word) {
-            $word->setState($state);
+        foreach ($items as $elem) {
+            $elem->setState($state);
         }
         $word = Word::findOne($item->id_word);
         $word->setState($state);

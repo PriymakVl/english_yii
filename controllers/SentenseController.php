@@ -92,8 +92,7 @@ class SentenseController extends \app\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) && $model->updateSentense()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

@@ -9,7 +9,7 @@ $words = $model->getWords();
 $this->title = 'Предложение №'.$model->currentNum. ' всего предложений: '.$model->allQty;
 
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['index', 'id_text' => $model->id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['text', 'id_text' => $model->id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $model->id_text]];
 
 \yii\web\YiiAsset::register($this);

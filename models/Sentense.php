@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "sentense".
@@ -17,10 +18,12 @@ use yii\web\NotFoundHttpException;
 class Sentense extends \yii\db\ActiveRecord
 {
     const SCENARIO_SOUND = 'sound';
+    const SCENARIO_UPDATE = 'update';
 
     public $all; //array all of setneses text
     public $allQty; //count all sentenses of text
     public $currentNum;
+    public $sound;
 
     /**
      * {@inheritdoc}
@@ -38,6 +41,7 @@ class Sentense extends \yii\db\ActiveRecord
         return [
             [['id_text', 'status', 'sound_id'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
+            [['sound'], 'file',  'extensions' => 'wav, mp3'], //'skipOnEmpty' => false,
         ];
     }
 
@@ -59,6 +63,7 @@ class Sentense extends \yii\db\ActiveRecord
 {
     $scenarios = parent::scenarios();
     $scenarios[static::SCENARIO_SOUND] = ['sound_id'];
+    $scenarios[static::SCENARIO_UPDATE] = ['id_text, status, engl, ru'];
     return $scenarios;
 }
 
@@ -150,4 +155,13 @@ class Sentense extends \yii\db\ActiveRecord
         if ($lang = 'engl') $obj_empty->engl = $obj_source->engl;
         $obj_empty->save();
     } 
+
+    public function updateSentense()
+    {
+        if ($this->validate()) {
+            $this->sound = UploadedFile::getInstance($this, 'sound');
+            if ($this->sound) $this->sound_id = Sound::create(Sound::TYPE_SENTENSE, $this->sound->baseName, $this->sound->extension, $this->id);
+        }
+        return $this->save();
+    }
 }

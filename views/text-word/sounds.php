@@ -4,6 +4,11 @@
 
 	$this->registerJsFile('@web/js/sounds.js', ['depends' => 'yii\web\YiiAsset']);
 
+$this->title = 'Озвучка слов';
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'id_text' => $id_text]];
+
  ?>
 
 

@@ -88,9 +88,10 @@ function create_link_voice($model) {
 
             ['attribute' => 'engl', 'label' => 'Английские', 'format' => 'raw',
                 'value' => function($model) {return Word::findOne($model->id_word)->engl;}, 
+                // 'filter' => true,
             ],
 
-            ['attribute' => 'engl', 'label' => 'Русские', 'format' => 'raw',
+            ['attribute' => 'ru', 'label' => 'Русские', 'format' => 'raw',
                 'value' => function($model) {return Word::findOne($model->id_word)->ru;}, 
             ],
 

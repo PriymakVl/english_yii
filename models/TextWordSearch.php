@@ -62,6 +62,7 @@ class TextWordSearch extends TextWord
             // 'id_word' => $this->id_word,
             // 'status' => $this->status,
             'state'=> $this->state,
+            'engl' => $this->engl,
         ]);
 
         return $dataProvider;
