@@ -36,3 +36,7 @@
 	cursor: pointer;
 	color: green;
 }
+
+.red {
+	color: #f00;
+}

@@ -161,6 +161,13 @@ class TextWordController extends \app\controllers\BaseController
         $this->setMessage('Состояние слов изменено')->redirect(['sounds', 'id_text' => $id_text]);
     }
 
+    public function actionRepeat($text_id)
+    {
+        $state = TextWord::STATE_NOT_LEARNED;
+        $items = TextWord::findAll(['id_text' => $text_id, 'state' => $state, 'status' => STATUS_ACTIVE]);
+        return $this->render('repeat', compact('items', 'text_id'));
+    }
+
     //set state for all same words in texts and table words
     private function setState($item, $state)
     {

@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
+use app\models\Sound;
 
 /**
  * This is the model class for table "sentense".
@@ -23,7 +24,7 @@ class Sentense extends \yii\db\ActiveRecord
     public $all; //array all of setneses text
     public $allQty; //count all sentenses of text
     public $currentNum;
-    public $sound;
+    public $soundfile;
 
     /**
      * {@inheritdoc}
@@ -95,26 +96,6 @@ class Sentense extends \yii\db\ActiveRecord
          return $this;
     }
 
-    public function getCurrentNumber()
-    {
-        $this->currentNum = 1;
-        foreach ($this->all as $item) {
-            if ($item->id == $this->id) return $this;
-            $this->currentNum++;
-        }
-        return $this;
-    }
-
-    public function getVariantsRu($count = 2)
-    {
-        $this->variantsRu[$this->id] = $this->ru; 
-        for ($i = 1; $i < $count; $i++) {
-            $item = $this->getRandom();
-            $this->variantsRu[$item->id] = $item->ru;
-        }
-        shuffle($this->variantsRu);
-    }
-
     private function getRandom()
     {
         $num = rand(1, $this->allQty);
@@ -127,41 +108,75 @@ class Sentense extends \yii\db\ActiveRecord
         $items = explode(' ', $this->engl);
         $words = [];
         foreach ($items as $item) {
-            $word = Word::findOne(['engl' => trim($item), 'status' => 1]);
+            $word = Word::findOne(['engl' => trim($item), 'status' => STATUS_ACTIVE]);
             if ($word) $words[] = $word;
         }
         return $words;
     }
 
-    //shift by one row in text array
-    public static function align($text_id, $lang)
+    public function getPhrases()
     {
-        $sentenses = self::findAll(['id_text' => $text_id, 'status' => STATUS_ACTIVE]);
-        $empty = false;
-        for ($i = 0, $count = count($sentenses); $i < $count; $i++) {
-            if ($empty) {
-                self::shiftSentense($i, $sentenses, $lang);
-                continue;
-            }
-            if (empty($sentenses[$i]->ru) || empty($sentenses[$i]->engl))  $empty = true;
-        }
+        return $this->hasMany(Phrase::className(), ['id_sentense' => 'id'])->where(['status' => STATUS_ACTIVE]);
     }
 
-    private static function shiftSentense($index, $sentenses, $lang)
+    public function shiftUpLanguage($lang)
     {
-        $obj_empty = $sentenses[$index - 1];
-        $obj_source = $sentenses[$index];
-        if ($lang = 'ru') $obj_empty->ru = $obj_source->ru;
-        if ($lang = 'engl') $obj_empty->engl = $obj_source->engl;
-        $obj_empty->save();
+        $sentenses = self::findAll(['id_text' => $this->id_text, 'status' => STATUS_ACTIVE]);
+        for ($i = 0, $count = count($sentenses); $i < $count; $i++) {
+            if ($sentenses[$i]->id == $this->id) $sentenses_shift = array_slice($sentenses, $i);
+        }
+        $this->shiftUp($lang, $sentenses_shift);
+    }
+
+    private static function shiftUp($lang, $sentenses)
+    {
+        for ($i = 0, $count = count($sentenses); $i < $count; $i++) {
+            $key = $i + 1;
+            if ($i == $count - 1) $sentenses[$i]->status = STATUS_INACTIVE;
+            else {
+                if ($lang == 'engl') $sentenses[$i]->engl = $sentenses[$key]->engl;
+                else $sentenses[$i]->ru = $sentenses[$key]->ru;
+            }
+            $sentenses[$i]->save(false);
+        }
     } 
 
     public function updateSentense()
     {
         if ($this->validate()) {
-            $this->sound = UploadedFile::getInstance($this, 'sound');
-            if ($this->sound) $this->sound_id = Sound::create(Sound::TYPE_SENTENSE, $this->sound->baseName, $this->sound->extension, $this->id);
+            $this->soundfile = UploadedFile::getInstance($this, 'soundfile');
+            if ($this->soundfile) $this->sound_id = Sound::create(Sound::TYPE_SENTENSE, $this->soundfile->baseName, $this->soundfile->extension, $this->id);
         }
         return $this->save();
     }
+
+    public function getSound()
+    {
+        return $this->hasOne(Sound::className(), ['id' => 'sound_id']);    
+    }
+
+    public static function getNeighbor($id, $direction)
+    {
+        $sentense = self::findOne($id);
+        if (!$sentense) return false;
+        $sentenses_text = self::findAll(['id_text' => $sentense->id_text, 'status' => STATUS_ACTIVE]);
+        foreach ($sentenses_text as $key => $value) {
+            if ($value->id == $sentense->id) {
+                if ($direction == 'next' && $key == count($sentenses_text) - 1) return $sentenses_text[0];
+                if ($direction == 'next') return $sentenses_text[++$key];
+                if ($direction == 'prev' && $key == 0) return $sentenses_text[count($sentenses_text) - 1];
+                if ($direction == 'prev') return $sentenses_text[--$key];
+            }
+        }
+        throw new NotFoundHttpException('Не найдено предложения'); 
+    }
+
+    public function delete()
+    {
+        $this->status = STATUS_INACTIVE;
+        $this->save(false);
+        return $this;
+    }
+
+
 }

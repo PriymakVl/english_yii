@@ -6,6 +6,7 @@ use Yii;
 use app\models\Sentense;
 use app\models\SentenseSearch;
 use app\models\Text;
+use app\models\Phrase;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -29,13 +30,7 @@ class SentenseController extends \app\controllers\BaseController
 
     public function actionIndex()
     {
-        $params['query'] = Sentense::find()->where(['status' => STATUS_ACTIVE]);
-        $params['pagination'] = ['pageSize' => 5];
-        $dataProvider = new ActiveDataProvider($params);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
     }
 
     public function actionText($id_text)
@@ -56,12 +51,11 @@ class SentenseController extends \app\controllers\BaseController
      */
     public function actionView($id, $direction = false)
     {
-        if ($direction == 'next') $id++;
-        else if ($direction == 'previos') $id--;
-        $model = Sentense::findOne($id);
+        if ($direction) $model = Sentense::getNeighbor($id, $direction);
+        else $model = Sentense::findOne($id);
         if (!$model) throw new NotFoundHttpException('Предложение не найдено');
-        $model->getAll()->getCurrentNumber()->getVariantsRu();
-        return $this->render('view', compact('model'));
+        $phrase = new Phrase();
+        return $this->render('view', compact('model', 'phrase'));
     }
 
     /**
@@ -112,14 +106,14 @@ class SentenseController extends \app\controllers\BaseController
     {
         $sentense = $this->findModel($id);
         $sentense->delete();
-        $this->setMessage("Предложение успешно удалено");
-        return $this->redirect(['index', 'id_text' => $sentense->id_text]);
+        return $this->setMessage("Предложение успешно удалено")->redirect(['text', 'id_text' => $sentense->id_text]);
     }
 
-    public function actionAlign($text_id, $lang)
+    public function actionShift($id, $lang)
     {
-        Sentense::align($text_id, $lang);
-        return $this->back();
+        $sentense = Sentense::findOne($id);
+        $sentense->shiftUpLanguage($lang);
+        return $this->redirect(['view', 'id' => $sentense->id]);
     }
 
     /**

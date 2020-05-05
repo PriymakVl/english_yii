@@ -43,6 +43,7 @@ AppAsset::register($this);
             ['label' => 'Категории', 'url' => ['/category']],
             ['label' => 'Тексты', 'url' => ['/text/index']],
             ['label' => 'Предложения', 'url' => ['/sentense']],
+            ['label' => 'Фразы', 'url' => ['/phrase']],
             ['label' => 'Слова', 'url' => ['/word']],
             // ['label' => 'Contact', 'url' => ['/site/contact']],
             // Yii::$app->user->isGuest ? (

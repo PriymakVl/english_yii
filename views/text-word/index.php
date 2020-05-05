@@ -11,7 +11,8 @@ $page = Yii::$app->request->get('page');
 
 $this->title = 'Слова';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense', 'id_text' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense/text', 'id_text' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
 
 function create_link_state($item) {
@@ -63,6 +64,7 @@ function create_link_voice($model) {
         <?= Html::a('Написать', ['write', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Учить', ['teach', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Озвучить', ['sounds', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Повторять', ['repeat', 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <div class="nav-vertical">

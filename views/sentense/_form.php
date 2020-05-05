@@ -20,7 +20,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'status')->textInput(['readonly' => true]) ?>
 
-    <?= $form->field($model, 'sound')->fileInput()->label('Файл озвучки') ?>
+    <?= $form->field($model, 'soundfile')->fileInput()->label('Файл озвучки') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

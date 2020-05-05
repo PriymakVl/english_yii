@@ -8,8 +8,7 @@ $this->title = 'Предложения';
 $this->params['breadcrumbs'][] = ['label' => 'Тексты', 'url' => ['/text']];
 $this->params['breadcrumbs'][] = $this->title;
 
-function create_link_voice($model) {
-    // return '<i class="fas fa-volume-up"></i>';
+function create_sound_player($model) {
     if (!$model->sound_id) return 'нет';
     $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
     if (!$sound) return 'нет';
@@ -34,7 +33,7 @@ function create_link_voice($model) {
 
             'engl',
             'ru',
-            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}],
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_sound_player($model);}],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

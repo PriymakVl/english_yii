@@ -12,13 +12,14 @@ $this->title = 'Предложения';
 
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
 $this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $text->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $text->id]];
 
-function create_link_voice($model) {
-    // return '<i class="fas fa-volume-up"></i>';
-    if (!$model->sound_id) return 'нет';
+
+function create_sound_player($model) {
+    if (!$model->sound_id) return '<span class="red">нет</span>';
     $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
-    if (!$sound) return 'нет';
+    if (!$sound) return '<span class="red">нет</span>';
     return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
 }
 ?>
@@ -26,8 +27,6 @@ function create_link_voice($model) {
 
     <h1><?= Html::encode($text->title) ?></h1>
     <p>
-        <?= Html::a('Выровнять ru', ['align', 'text_id' => $sentenses[0]->id_text, 'lang' => 'ru'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Выровнять engl', ['align', 'text_id' => $sentenses[0]->id_text, 'lang' => 'engl'], ['class' => 'btn btn-primary']) ?>
          <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => Sound::TYPE_SENTENSE, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_SENTENSE], ['class' => 'btn btn-primary']) ?>
     </p>
@@ -43,11 +42,11 @@ function create_link_voice($model) {
         <? foreach ($sentenses as $sentense): ?>
             <tr>
                 <td>
-                    <?= Html::a($number, ['sentense/view', 'id_text' => $text->id, 'id' => $sentense->id]) ?>
+                    <?= Html::a($number, ['sentense/view', 'id' => $sentense->id]) ?>
                 </td>
                 <td><?=$sentense->engl?></td>
                 <td>
-                    <?= create_link_voice($sentense); ?>
+                    <?= create_sound_player($sentense); ?>
                 </td>
                 <td><?=$sentense->ru?></td>
             </tr>

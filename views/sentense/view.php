@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\Sound;
+use yii\widgets\ActiveForm;
 
 $words = $model->getWords();
 
@@ -10,50 +11,50 @@ $this->title = 'Предложение №'.$model->currentNum. ' всего п�
 
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['text', 'id_text' => $model->id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $model->id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $model->id_text]];
 
 \yii\web\YiiAsset::register($this);
 
-function create_ru($ru)
-{
-    return sprintf('<a href="#" str="%s" onclick="show_ru(this);">Показать перевод</a>', $ru); 
-}
-
-function create_variants_ru($model)
-{
-    $variants_str = '<a href="#" onclick="show_variants(this);">Показать варианты</a><div id="variants_ru">';
-    $number = 1;
-    foreach ($model->variantsRu as $id => $text) {
-        $str = sprintf('<a href="#" id_variant="%s" id_sentense="%s" onclick="check_variant(this);">%s</a><br><br>', $id, $model->id, $text); 
-        $variants_str .= '<span class="variant_ru">' . $number . ') ' . $str . '</span>';
-        $number++;
-    }
-    return $variants_str.'</div>'; 
-}
-
 function create_words($words) {
-    if (!$words) return false;
-    $list_words = '<a href="#" onclick="show_words(this);">Показать слова</a><ul id="words" style="display:none;">';
+    if (!$words) return '<span class="red">нет</span>';
+    $list_words = '<span id="toggle-words" onclick="show_words();">Список слов</span><ul id="list-words" class="hidden">';
     foreach ($words as $word) {
         $list_words .= sprintf('<li><span>%s</span>&nbsp;&nbsp;=&nbsp;&nbsp;<span>%s<span></li>', $word->engl, $word->ru);
     }
     return $list_words.'</ul>';
 }
 
-function create_link_voice($model) {
-    // return '<i class="fas fa-volume-up"></i>';
-    if (!$model->sound_id) return 'нет';
+function create_phrases($phrases) {
+    if (!$phrases) return '<span class="red">нет</span>';
+    $list_phrases = '<ul>';
+    foreach ($phrases as $phrase) {
+        $list_phrases .= sprintf('<li>%s</li>', $phrase->engl);
+    }
+    return $list_phrases.'</ul>';
+}
+
+function create_sound_player($model) {
+    if (!$model->sound_id) return '<span class="red">нет</span>';
     $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
-    if (!$sound) return 'нет';
+    if (!$sound) return '<span class="red">нет</span>';
     return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
 }
 
 ?>
 
-<style> 
-#variants_ru {
-    display: none;
-}
+<style>
+    #toggle-words {
+        text-decoration: underline;
+        font-size: 1.2em;
+    }
+    #toggle-words {
+        cursor: pointer;
+    }
+    .hidden {
+        display: none;
+    }
+    .
 </style>
 
 <div class="sentense-view">
@@ -69,57 +70,56 @@ function create_link_voice($model) {
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Previous', ['view', 'id' => $model->id, 'id_text' => $model->id_text, 'direction' => 'previous'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Next', ['view', 'id' => $model->id, 'id_text' => $model->id_text, 'direction' => 'next'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Previous', ['view', 'id' => $model->id, 'direction' => 'prev'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Next', ['view', 'id' => $model->id, 'direction' => 'next'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Shift up engl', ['shift', 'id' => $model->id, 'lang' => 'engl'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Shift up ru', ['shift', 'id' => $model->id, 'lang' => 'ru'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'engl',
-            ['attribute' => 'ru', 'label' => 'Перевод', 'format' => 'raw',
-                'value' => function($model) {return create_ru($model->ru);}, 
-            ],
-            ['attribute' => 'variantsRu', 'label' => 'Варианты ответов', 'format' => 'raw',
-                'value' => function($model) {return create_variants_ru($model);}, 
-            ],
+            'ru',
 
+            ['attribute' => 'phrases', 'label' => 'Фразы', 'format' => 'raw',
+                'value' => function($model) {return create_phrases($model->phrases);}, 
+            ],
+ 
             ['attribute' => 'words', 'label' => 'Слова', 'format' => 'raw',
                 'value' => function($model) {return create_words($model->getWords());}, 
             ],
 
-            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_sound_player($model);}
             ],
         ],
     ]) ?>
 
+    <h2>Форма для добавления фраз</h2>
+
+    <?php $form = ActiveForm::begin(['action' => '/phrase/create']); ?>
+
+        <?= $form->field($phrase, 'engl')->textarea(['rows' => '1']) ?>
+
+        <?= $form->field($phrase, 'ru')->textarea(['rows' => '1']) ?>
+
+        <?= $form->field($phrase, 'id_text')->hiddenInput(['value' => $model->id_text])->label(false) ?>
+
+        <?= $form->field($phrase, 'id_sentense')->hiddenInput(['value' => $model->id])->label(false) ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        </div>
+
+    <?php ActiveForm::end(); ?>
+
+
 </div>
 
 <!-- js scripts  -->
-<script type="text/javascript">
-
-function show_ru(link) {
-    let str = link.getAttribute('str');
-    let parent = link.parentNode;
-    parent.innerText = str;
-    link.style.display = 'none';
-    return false;
-}
-
-function show_variants(link) {
-    document.getElementById('variants_ru').style.display = 'block';
-    link.style.display = 'none';
-}
-
-function check_variant(link) {
-    let id_variant = link.getAttribute('id_variant');
-    let id_sentense = link.getAttribute('id_sentense');
-    if (id_sentense == id_variant) alert('Верно');
-    else alert('Ошибка');
-}
-
-function show_words(link) {
-    document.getElementById('words').style.display = 'block';
-    link.style.display = 'none';
-}
+<script>
+    function show_words() {
+        words = document.getElementById('list-words');
+        words.classList.toggle('hidden');
+    }
 </script>

@@ -9,9 +9,7 @@ class SoundController extends \app\controllers\BaseController
 {
     public function actionCreateFile($type, $text_id = false)
     {
-        $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
-        $model->save();
-        $items = $model->getItemsForCreateSoundOfFile($type, $text_id);
+        $items = Sound::getItemsForCreateSoundOfFile($type, $text_id);
         if (!$items) return $this->setMessage('Нет элементов', 'error')->back();
         $this->giveFileToDownload($items);
     }
@@ -31,8 +29,7 @@ class SoundController extends \app\controllers\BaseController
 
     public function actionAddSounds($type)
     {
-        $model = new Sound(['scenario' => Sound::SCENARIO_FILE]);
-        $model->addList($type);
+        Sound::addList($type);
         $this->setMessage('Звуковые файлы добавлены')->back();
     }
 
