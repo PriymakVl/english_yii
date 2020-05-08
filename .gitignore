@@ -33,6 +33,8 @@ tests/_support/_generated
 /.vagrant
 
 /config/db.php
+#setup for hosting
+/config/host_db.php
 
 /web/sounds/*
 
