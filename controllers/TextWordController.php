@@ -13,11 +13,12 @@ use app\models\TextWord;
 use app\models\Text;
 use app\models\Word;
 use app\models\Sentense;
+use app\models\Phrase;
 
 
 class TextWordController extends \app\controllers\BaseController
 {
-    private $pageSize = 8;
+    private $pageSize = 5;
     /**
      * {@inheritdoc}
      */
@@ -110,7 +111,8 @@ class TextWordController extends \app\controllers\BaseController
         $text = Text::findOne($id_text);
         $item = TextWord::getByIndex($id_text, $index);
         $sentenses = Sentense::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
-        return $this->render('teach', compact('text', 'item', 'index', 'sentenses'));
+        $phrases = Phrase::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
+        return $this->render('teach', compact('text', 'item', 'index', 'sentenses', 'phrases'));
     }
 
     public function actionSounds($id_text) 
@@ -165,6 +167,7 @@ class TextWordController extends \app\controllers\BaseController
     {
         $state = TextWord::STATE_NOT_LEARNED;
         $items = TextWord::findAll(['id_text' => $text_id, 'state' => $state, 'status' => STATUS_ACTIVE]);
+        shuffle($items);
         return $this->render('repeat', compact('items', 'text_id'));
     }
 

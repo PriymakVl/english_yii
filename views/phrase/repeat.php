@@ -2,7 +2,7 @@
 
 	use yii\helpers\Html;
 
-	$this->registerJsFile('@web/js/repeat_words.js', ['depends' => 'yii\web\YiiAsset']);
+	$this->registerJsFile('@web/js/repeat_card.js', ['depends' => 'yii\web\YiiAsset']);
 
 $this->title = 'Повторение слов';
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $text_id]];
@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
   }
 
   .card {
-    width: 260px;
+    width: 550px;
     margin: 10px 0;
     padding: 10px;
     background: #d3d3d3;
@@ -31,9 +31,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
   }
   .card__content {
       width: 95%;
-      text-align: center;
-      font-size: 24px;
-      text-transform: capitalize;
+      font-size: 20px;
   }
   .card__content:hover {
     text-decoration: underline;
@@ -43,21 +41,24 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     flex-direction: column;
     justify-content: space-between;
   }
+  .card__action i:first-child {
+    margin-bottom: 5px;
+  }
   .card__delete:hover, .card__play:hover {
     color: red;
   }
 </style>
-
+<h1>Повторение фраз</h1>
 <a href="#" id="turn_ru" class = "btn btn-primary">Russian</a>
 <a href="#" id="turn_engl" class = "btn btn-primary">English</a>
 
 
 <div class="wrapper">
-  <? if ($items): ?>
-    <?php foreach ($items as $item): ?>
-      <div class="card" sound="<?= $item->word->sound->filename ?>">
-        <div class="card__content" ru="<?= $item->word->ru ?>" engl="<?= $item->word->engl ?>" >
-          <?= $item->word->engl ?>
+  <? if ($phrases): ?>
+    <?php foreach ($phrases as $phrase): ?>
+      <div class="card" sound="<?= $phrase->sound->filename ?>">
+        <div class="card__content" ru="<?= $phrase->ru ?>" engl="<?= $phrase->engl ?>" >
+          <?= $phrase->engl ?>
         </div>
         <div class="card__action">
           <i class="far fa-trash-alt card__delete"></i>

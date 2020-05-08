@@ -32,6 +32,7 @@ function create_sound_player($model) {
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => Sound::TYPE_PHRASE], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить фразы', ['add-from-files', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Озвучить', ['sounds', 'id_text' => $text->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Повторять', ['repeat', 'id_text' => $text->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <? if ($phrases): ?>

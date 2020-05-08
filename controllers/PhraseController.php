@@ -153,6 +153,13 @@ class PhraseController extends BaseController
         return $this->render('sounds', compact('phrases_str', 'id_text'));
     }
 
+    public function actionRepeat($id_text)
+    {
+        $phrases = Phrase::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        shuffle($phrases);
+        return $this->render('repeat', compact('phrases', 'id_text'));
+    }
+
     /**
      * Finds the Phrase model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

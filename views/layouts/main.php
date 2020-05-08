@@ -36,42 +36,48 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => [
-            // ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Категории', 'url' => ['/category']],
-            ['label' => 'Тексты', 'url' => ['/text/index']],
-            ['label' => 'Предложения', 'url' => ['/sentense']],
-            ['label' => 'Фразы', 'url' => ['/phrase']],
-            ['label' => 'Слова', 'url' => ['/word']],
-            // ['label' => 'Contact', 'url' => ['/site/contact']],
-            // Yii::$app->user->isGuest ? (
-            //     ['label' => 'Login', 'url' => ['/site/login']]
-            // ) : (
-            //     '<li>'
-            //     . Html::beginForm(['/site/logout'], 'post')
-            //     . Html::submitButton(
-            //         'Logout (' . Yii::$app->user->identity->username . ')',
-            //         ['class' => 'btn btn-link logout']
-            //     )
-            //     . Html::endForm()
-            //     . '</li>'
-            // )
-        ],
-    ]);
+
+    if (!Yii::$app->user->isGuest) {
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav navbar-right'],
+            'items' => [
+                // ['label' => 'Home', 'url' => ['/site/index']],
+                ['label' => 'Категории', 'url' => ['/category']],
+                ['label' => 'Тексты', 'url' => ['/text/index']],
+                ['label' => 'Предложения', 'url' => ['/sentense']],
+                ['label' => 'Фразы', 'url' => ['/phrase']],
+                ['label' => 'Слова', 'url' => ['/word']],
+                // ['label' => 'Contact', 'url' => ['/site/contact']],
+                Yii::$app->user->isGuest ? (
+                    ['label' => 'Login', 'url' => ['/site/login']]
+                ) : (
+                    '<li>'
+                    . Html::beginForm(['/site/logout'], 'post')
+                    . Html::submitButton(
+                        'Logout (' . Yii::$app->user->identity->username . ')',
+                        ['class' => 'btn btn-link logout']
+                    )
+                    . Html::endForm()
+                    . '</li>'
+                )
+            ],
+        ]);
+    }
+
     NavBar::end();
     ?>
-
+    
     <div class="container">
-        <?= Breadcrumbs::widget([
-            'homeLink' => ['label' => 'Категории', 'url' => '/category',],
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
+        <? if (!Yii::$app->user->isGuest): ?>
+            <?= Breadcrumbs::widget([
+                'homeLink' => ['label' => 'Категории', 'url' => '/category',],
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            ]) ?>
+        <? endif; ?>
         <?= Alert::widget() ?>
         <?= $content ?>
     </div>
-</div>
+</div> <!-- /.wrap -->
 
 <footer class="footer">
     <div class="container">

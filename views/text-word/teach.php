@@ -22,11 +22,11 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     .hidden {
         display: none;
     }
-/*    li[translate] {
-        cursor: pointer;
-    }*/
     .table {
         margin-top: 30px;
+    }
+    .fa-globe-americas:hover {
+        color: red;
     }
 </style>
 
@@ -49,6 +49,34 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
 
     <h2 id="answer" class="hidden">Перевод: </h2>
 
+    <? if ($phrases): ?>
+        <? $num = 1; ?>
+        <table class="table table-bordered table-striped table-responsive">
+            <tr>
+                <th>#</th>
+                <th>Фразы</th>
+                <th>Озвучка</th>
+            </tr>
+            <? foreach ($phrases as $phrase): ?>
+                <tr style="font-size: 1.2em;cursor:pointer;">
+                    <td><?= $num; ?></td>
+                    <td title="<?=$phrase->ru?>">
+                        <i class="fas fa-globe-americas" onclick="change_text(this);"></i>
+                        <span><?=$phrase->engl?></span>
+                    </td>
+                    <td>
+                        <? if($phrase->sound_id): ?>
+                            <? printf('<audio controls src="/sounds/%s"></audio>', $phrase->sound->filename); ?>
+                        <? else: ?>
+                            <span class="red">нет</span>
+                        <? endif; ?>
+                    </td>
+                </tr>
+                <? $num++; ?>
+            <? endforeach; ?>
+        </table>
+    <? endif; ?>
+
     <? if ($sentenses): ?>
         <? $num = 1; ?>
         <table class="table table-bordered table-striped table-responsive">
@@ -58,9 +86,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
                 <th>Озвучка</th>
             </tr>
             <? foreach ($sentenses as $sentense): ?>
-                <tr style="font-size: 1.2em;">
+                <tr style="font-size: 1.2em;cursor:pointer;">
                     <td><?= $num; ?></td>
-                    <td title="<?=$sentense->ru?>" ondblclick="change_text(this);" translate="<?=$sentense->ru?>"><?=$sentense->engl?></td>
+                    <td title="<?=$sentense->ru?>">
+                         <i class="fas fa-globe-americas" onclick="change_text(this);"></i>
+                        <span><?=$sentense->engl?></span>
+                    </td>
                     <td>
                         <? if($sentense->sound_id): ?>
                             <? printf('<audio controls src="/sounds/%s"></audio>', $sentense->sound->filename); ?>
@@ -77,11 +108,12 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
 
 <!-- js script -->
 <script type="text/javascript">
-function change_text(li) {
-    text = li.innerText;
-    translate = li.getAttribute('translate');
-    li.innerText = translate;
-    li.setAttribute('translate', text);
+function change_text(icon) {
+    let parent = icon.parentNode;
+    text = parent.innerText;
+    translate = parent.getAttribute('title');
+    parent.children[1].innerText = translate;
+    parent.setAttribute('title', text);
 }
 
 </script>

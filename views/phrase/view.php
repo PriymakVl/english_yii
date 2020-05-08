@@ -9,9 +9,9 @@ use app\models\Sound;
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['text/view', 'id' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['sentense/text', 'id_text' => $model->id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense/text', 'id_text' => $model->id_text]];
 $this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['text', 'id_text' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['text-word', 'id_text' => $model->id_text]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $model->id_text]];
 
 \yii\web\YiiAsset::register($this);
 
