@@ -30,7 +30,7 @@ class Text extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'cat_id'], 'required'],
-            [['engl', 'ru', 'title'], 'string'],
+            [['engl', 'ru', 'title', 'ref'], 'string'],
             [['created'], 'safe'],
             [['status', 'cat_id'], 'integer'],
         ];

@@ -83,7 +83,6 @@ class Sound extends \yii\db\ActiveRecord
         for ($i = 2; $i < count($files); $i++) {
             self::add($files[$i], $type);
         }   
-        return $this;
     }
 
     public static function add($file, $type)

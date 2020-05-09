@@ -9,7 +9,7 @@ $(document).ready(function() {
         id_text = get_params_url('id_text');
         $(this).hide();
         $('#stop').show();
-        let words = this.dataset.wordsStr.split(',');
+        let words = this.dataset.wordsStr.split(';');
         if (!words) return alert('Нет слов');
         // $('.well').text(word_arr[2]).show();
         // var delay = prompt('Укажите задержку между словами в секундах не более 30 сек', 5);

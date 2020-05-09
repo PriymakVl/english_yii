@@ -87,7 +87,7 @@ class Phrase extends \yii\db\ActiveRecord
         $phrases_str = '';
         foreach ($phrases as $phrase) {
             if (!$phrase->sound_id) continue;
-            $phrases_str .= $phrase->sound->filename.':'.$phrase->engl.':'.$phrase->ru.':'.$phrase->id.',';
+            $phrases_str .= $phrase->sound->filename.':'.$phrase->engl.':'.$phrase->ru.':'.$phrase->id.';';
         }
         return $phrases_str;
     }

@@ -23,7 +23,8 @@ class SoundController extends \app\controllers\BaseController
         header('Content-Disposition: attachment; filename="for_sounds.txt"');
          
         foreach ($items as $item) {
-            echo trim($item->engl), PHP_EOL, PHP_EOL, PHP_EOL;
+            // echo trim($item->engl), PHP_EOL, PHP_EOL, PHP_EOL;
+            echo trim($item->engl), "\r\n", "\r\n", "\r\n";
         }
     }
 

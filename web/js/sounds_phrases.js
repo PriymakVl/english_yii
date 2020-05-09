@@ -9,7 +9,7 @@ $(document).ready(function() {
         id_text = get_params_url('id_text');
         $(this).hide();
         $('#stop').show();
-        let phrases = this.dataset.phrases.split(',');
+        let phrases = this.dataset.phrases.split(';');
         if (!phrases) return alert('Нет фраз');
         play_all(15000, phrases);
     });

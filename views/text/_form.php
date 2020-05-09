@@ -15,7 +15,9 @@ use app\models\Category;
 
     <?= $form->field($model, 'cat_id')->textInput(['value' => $cat->id, 'readonly' => 'readonly'])->label('ID категории:'.$cat->name) ?>
     
-    <?= $form->field($model, 'title')->textInput() ?>
+    <?= $form->field($model, 'title')->textInput()->label('Заголовок') ?>
+
+    <?= $form->field($model, 'ref')->textInput()->label('Источник') ?>
 
     <?= $form->field($model, 'engl')->textarea(['rows' => 6]) ?>
 
