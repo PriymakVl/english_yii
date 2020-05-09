@@ -29,7 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Предложения', ['/sentense/text', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Фразы', ['/phrase/text', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Слова', ['/text-word', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <a href="<?= $model->ref ?> " class="btn btn-primary" target="_blank">Источник</a>
+        <?php if ($model->ref): ?>
+            <a href="<?= $model->ref ?> " class="btn btn-primary" target="_blank">Источник</a>
+        <?php endif; ?>
     </p>
 
     <?= DetailView::widget([
