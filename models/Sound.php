@@ -99,7 +99,9 @@ class Sound extends \yii\db\ActiveRecord
 
     private static function saveFile($item, $file_name, $ext, $type) 
     {
-        $item->sound_id = self::create($type, $file_name, $ext, $item->id);
+        $sound = self::create($type, $file_name, $ext, $item->id);
+        $item->sound_id = $sound->id;
+        rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->filename);
         return $item->save(false);
     }
 
@@ -111,8 +113,7 @@ class Sound extends \yii\db\ActiveRecord
         $sound->filename = self::getSoundName($ext);
         $sound->item_id = $item_id;
         if (!$sound->save(false)) throw new NotFoundHttpException('ошибка при сохранении звука в базу');
-        rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->filename);
-        return $sound->id;
+        return $sound;
     }
 
     private static function getSoundName($ext)

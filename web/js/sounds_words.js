@@ -50,12 +50,12 @@ function play_all(delay, words)
         setTimeout(show_text_box, 6000, 'ru', arr[2]);
         i++;
         if (i == words.length) {
-            if (learned_ids) {
-                let id_text = $(this).attr('id_text');
-                let add_learned = confirm('Добавить слова в выученные');
-                if (add_learned) return location.href = '/text-word/state-list?ids=' + learned_ids + '&id_text=' + id_text;
-            }
-            else return alert('Слова пройдены');
+            // if (learned_ids) {
+            //     let id_text = $(this).attr('id_text');
+            //     let add_learned = confirm('Добавить слова в выученные');
+            //     if (add_learned) return location.href = '/text-word/state-list?ids=' + learned_ids + '&id_text=' + id_text;
+            // }
+            return alert('Слова пройдены');
         }
     }, delay);
 }

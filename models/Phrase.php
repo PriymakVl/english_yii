@@ -65,9 +65,11 @@ class Phrase extends \yii\db\ActiveRecord
 
     public function updatePhrase()
     {
-        if ($this->validate()) {
-            $this->soundfile = UploadedFile::getInstance($this, 'soundfile');
-            if ($this->soundfile) $this->sound_id = Sound::create(Sound::TYPE_PHRASE, $this->soundfile->baseName, $this->soundfile->extension, $this->id);
+        if ($this->validate()) $this->soundfile = UploadedFile::getInstance($this, 'soundfile');
+        if ($this->soundfile) {
+            $sound = Sound::create(Sound::TYPE_PHRASE, $this->soundfile->baseName, $this->soundfile->extension, $this->id);
+            $this->sound_id = $sound->id;
+            $this->soundfile->saveAs('sounds/' . $sound->filename);
         }
         return $this->save();
     }

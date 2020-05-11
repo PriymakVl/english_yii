@@ -86,7 +86,7 @@ class Word extends \yii\db\ActiveRecord
         $words_str = '';
         foreach ($words as $word) {
             if (!$word->sound_id) continue;
-            $words_str .= $word->sound->filename.':'.$word->engl.':'.$word->ru.':'.$word->id.',';
+            $words_str .= $word->sound->filename.':'.$word->engl.':'.$word->ru.':'.$word->id.';';
         }
         return $words_str;
     }
