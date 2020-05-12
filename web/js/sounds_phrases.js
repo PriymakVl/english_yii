@@ -37,6 +37,7 @@ function play_phrase(phrases)
     setTimeout(show_text_box, 5000, 'engl', arr[1]);
     setTimeout(show_text_box, 10000, 'ru', arr[2]);
     index++;
+    show_statistics(phrases);
     if (index == phrases.length) return alert('Фрафзы  пройдены');
 }
 
@@ -44,5 +45,11 @@ function show_text_box(id, value) {
     let box = document.getElementById(id);
     box.style.display = 'block';
     box.innerText = value;
+}
+
+function show_statistics(phrases) {
+    phrase_all.innerText = phrases.length;
+    phrase_sounded.innerText = index;
+    phrase_rest.innerText = phrases.length - index;
 }
 

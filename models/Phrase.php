@@ -23,10 +23,14 @@ class Phrase extends \yii\db\ActiveRecord
     const STATE_NOT_LEANED = 0;
     const STATE_LEANED = 1;
     const STATE_ALL = 2;
+    const DELIMITER_PUNCTUATION_MARKS = 1;
+    const DELIMITER_LINE_BREAK = 2;
+    const SCENARIO_FILES = 'files';
 
     public $soundfile;
     public $file_ru;
     public $file_engl;
+    public $delimeter; //delimeter sentensis in upload files
 
     /**
      * {@inheritdoc}
@@ -42,10 +46,18 @@ class Phrase extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_text', 'id_sentense', 'status'], 'integer'],
+            [['id_text', 'id_sentense', 'status', 'delimeter'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
             [['engl', 'ru'], 'filter', 'filter' => 'trim'],
+            [['file_ru', 'file_engl'], 'file', 'skipOnEmpty' => false, 'extensions' => 'txt'],
         ];
+    }
+
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios[static::SCENARIO_FILES] = ['delimeter', 'file_ru', 'file_engl', 'id_text'];
+        return $scenarios;
     }
 
     /**
@@ -60,6 +72,7 @@ class Phrase extends \yii\db\ActiveRecord
             'id_text' => 'Id Text',
             'id_sentense' => 'Id Sentense',
             'status' => 'Status',
+            'delimeter' => 'Разделители между фразами',
         ];
     }
 
@@ -116,8 +129,8 @@ class Phrase extends \yii\db\ActiveRecord
     private function add($engl, $ru, $id_text)
     {
         $obj = new self;
-        $obj->engl = $engl;
-        $obj->ru = $ru;
+        $obj->engl = htmlspecialchars($engl);
+        $obj->ru = htmlspecialchars($ru);
         $obj->id_text = $id_text;
         $obj->save(false);
     }

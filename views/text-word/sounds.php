@@ -32,6 +32,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     top: 50%;
     right: 100px;
   }
+  .statistics {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    padding: 20px;
+    background: #e5e5e5;
+    font-size: 20px;
+  }
 </style>
 
 <?= Html::a('Начать', ['#'], ['id' => 'start', 'data-words-str' => $words_str, 'class' => 'btn btn-primary']) ?>
@@ -44,3 +52,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
   <button id="learned" class="btn btn-success">Выучено <span>(0)</span></button>
   <div class="view" id="ru">нет слова</div>
 </div>
+
+<div class="statistics">
+  <p>Всего слов:  <span id="word_all"></span></p>
+  <p>Озвучено:  <span id="word_sounded"></span></p>
+  <p>Осталось:  <span id="word_rest"></span></p>
+</div>
+

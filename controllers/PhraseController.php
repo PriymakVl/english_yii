@@ -11,6 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
+use yii\web\UploadedFile;
 
 /**
  * PhraseController implements the CRUD actions for Phrase model.
@@ -88,12 +89,14 @@ class PhraseController extends BaseController
         throw new NotFoundHttpException('Ошибка при добавлении фразы');
     }
 
-    public function actionAddFromFiles($id_text = false)
+    public function actionAddFromFiles($id_text)
     {
-        $model = new Phrase();
-        if ($id_text)  return $this->render('add_files', compact('model', 'id_text'));
-        $model->load(Yii::$app->request->post());
-        debug($model->id_text);
+        $model = new Phrase(['scenario' => Phrase::SCENARIO_FILES]); 
+        if (!$model->load(Yii::$app->request->post())) return $this->render('add_files', compact('model', 'id_text'));
+        if (!$model->validate()) throw new NotFoundHttpException('Validate not');
+        // $model->file_ru = UploadedFile::getInstance($model, 'file_ru');
+        // $model->file_engl = UploadedFile::getInstance($model, 'file_engl');
+        debug($model);
         $model->addFromFiles();
         return $this->redirect(['index', 'id_text' => $model->id_text]);
     }

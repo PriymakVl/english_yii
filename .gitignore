@@ -39,3 +39,6 @@ tests/_support/_generated
 /web/sounds/*
 
 /web/temp/*
+
+#setup ftp sublime editor
+sftp-config.json

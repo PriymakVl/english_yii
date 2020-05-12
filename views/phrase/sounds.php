@@ -24,6 +24,14 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word
   #learned {
     position: fixed; top: 50%; right: 100px;
   }
+  .statistics {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    padding: 20px;
+    background: #e5e5e5;
+    font-size: 20px;
+  }
 </style>
 
 <h1>Озвучка фраз</h1>
@@ -35,4 +43,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word
   <div class="view" id="engl">not phrase</div>
   <!-- <button id="learned" class="btn btn-success">Выучено <span>(0)</span></button> -->
   <div class="view" id="ru">нет фразы</div>
+</div>
+
+<div class="statistics">
+  <p>Всего фраз:  <span id="phrase_all"></span></p>
+  <p>Озвучено:  <span id="phrase_sounded"></span></p>
+  <p>Осталось:  <span id="phrase_rest"></span></p>
 </div>

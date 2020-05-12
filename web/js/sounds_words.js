@@ -49,6 +49,7 @@ function play_all(delay, words)
         setTimeout(show_text_box, 3000, 'engl', arr[1]);
         setTimeout(show_text_box, 6000, 'ru', arr[2]);
         i++;
+        show_statistics(i, words)
         if (i == words.length) {
             // if (learned_ids) {
             //     let id_text = $(this).attr('id_text');
@@ -64,4 +65,10 @@ function show_text_box(id, value) {
     let box = document.getElementById(id);
     box.style.display = 'block';
     box.innerText = value;
+}
+
+function show_statistics(i, words) {
+    word_all.innerText = words.length;
+    word_sounded.innerText = i;
+    word_rest.innerText = words.length - i;
 }
