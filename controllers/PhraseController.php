@@ -89,16 +89,15 @@ class PhraseController extends BaseController
         throw new NotFoundHttpException('Ошибка при добавлении фразы');
     }
 
-    public function actionAddFromFiles($id_text)
+    public function actionAddFromFiles($id_text = false)
     {
         $model = new Phrase(['scenario' => Phrase::SCENARIO_FILES]); 
-        if (!$model->load(Yii::$app->request->post())) return $this->render('add_files', compact('model', 'id_text'));
-        if (!$model->validate()) throw new NotFoundHttpException('Validate not');
-        // $model->file_ru = UploadedFile::getInstance($model, 'file_ru');
-        // $model->file_engl = UploadedFile::getInstance($model, 'file_engl');
-        debug($model);
+        if (!Yii::$app->request->isPost) return $this->render('add_files', compact('model', 'id_text'));
+        $model->load(Yii::$app->request->post());
+        $model->file_ru = UploadedFile::getInstance($model, 'file_ru');
+        $model->file_engl = UploadedFile::getInstance($model, 'file_engl');
         $model->addFromFiles();
-        return $this->redirect(['index', 'id_text' => $model->id_text]);
+        return $this->setMessage('Фразы добавлены')->redirect(['text', 'id_text' => $model->id_text]);
     }
 
     /**

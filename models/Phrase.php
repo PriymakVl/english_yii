@@ -56,6 +56,7 @@ class Phrase extends \yii\db\ActiveRecord
     public function scenarios()
     {
         $scenarios = parent::scenarios();
+        $scenarios[static::SCENARIO_FILES] = ['delimeter', 'id_text'];
         $scenarios[static::SCENARIO_FILES] = ['delimeter', 'file_ru', 'file_engl', 'id_text'];
         return $scenarios;
     }
@@ -109,27 +110,28 @@ class Phrase extends \yii\db\ActiveRecord
 
     public function addFromFiles()
     {
-        $phrases['ru'] = $this->getFromFiles('ru');
-        $phrases['engl'] = $this->getFromFiles('engl');
-        debug($phrases['engl']);
+        if (!$this->validate()) throw new NotFoundHttpException('Validate not');
+        $phrases['ru'] = $this->getFromFile($this->file_ru->tempName);
+        $phrases['engl'] = $this->getFromFile($this->file_engl->tempName);
         for ($i = 0; $i < count($phrases['engl']); $i++) {
             $phrase = self::findOne(['engl' => $phrases['engl'][$i], 'id_text' => $this->id_text]);
             if ($phrase) continue;
-            $this->add($phrases['engl'], $phrases['ru'], $this->id_text);
+            $this->add($phrases['engl'][$i], $phrases['ru'][$i], $this->id_text);
         }
     }
 
-    private function getFromFile($lang)
+    private function getFromFile($filename)
     {
-        $file = UploadedFile::getInstance($this, 'file_'.$lang);
-        if (!$file) throw new \yii\web\NotFoundHttpException('ошибка при чтении файла');
-        return file($file_ru->tempName);
+        if ($this->delimeter == self::DELIMITER_PUNCTUATION_MARKS) throw new NotFoundHttpException('деление по знакам препинания не реализовано');
+        return file($filename);
+        // array_walk($phrases, str_replace('', ''', subject))
     }
 
     private function add($engl, $ru, $id_text)
     {
         $obj = new self;
         $obj->engl = htmlspecialchars($engl);
+        $ru = mb_convert_encoding($ru, "utf-8", "windows-1251");
         $obj->ru = htmlspecialchars($ru);
         $obj->id_text = $id_text;
         $obj->save(false);

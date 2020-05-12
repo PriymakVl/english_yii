@@ -90,11 +90,18 @@ class Sound extends \yii\db\ActiveRecord
         $info = new \SplFileInfo($file);
         $file_ext = $info->getExtension();
         $file_name = $info->getBasename('.'.$file_ext);
-        if ($type == self::TYPE_WORD) $item = Word::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
-        else if ($type == self::TYPE_SENTENSE) $item = Sentense::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
-        else $item = Phrase::findOne(['engl' => $file_name, 'status' => STATUS_ACTIVE]);
+        $item = self::getStringItem($type, $file_name);
         if (!$item) return;
         self::saveFile($item, $file_name, $file_ext, $type);
+    }
+
+    private static function getStringItem($type, $string)
+    {
+        if ($type == self::TYPE_WORD) return Word::findOne(['engl' => $string, 'status' => STATUS_ACTIVE]);
+        $pos_end_space = strripos($string, ' ');
+        $string = substr($string, 0, $pos_end_space);
+        if ($type == self::TYPE_SENTENSE) return Sentense::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
+        return Phrase::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
     }
 
     private static function saveFile($item, $file_name, $ext, $type) 
