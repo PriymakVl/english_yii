@@ -3,10 +3,9 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Phrase;
+use app\modules\string\models\SubString;
 use app\models\Text;
-use app\models\PhraseSearch;
-use app\controllers\BaseController;
+use app\modules\string\models\SubStringSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -16,7 +15,7 @@ use yii\web\UploadedFile;
 /**
  * PhraseController implements the CRUD actions for Phrase model.
  */
-class PhraseController extends BaseController
+class SubStringController extends \app\controlles\BaseController
 {
     /**
      * {@inheritdoc}

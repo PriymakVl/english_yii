@@ -3,10 +3,10 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Sentense;
-use app\models\SentenseSearch;
+use app\modules\string\models\String;
+use app\modules\string\models\StringSearch;
 use app\models\Text;
-use app\models\Phrase;
+use app\modules\string\models\SubString;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;

@@ -4,34 +4,30 @@ namespace app\models;
 
 use Yii;
 use yii\web\UploadedFile;
-use app\models\Word;
-use app\models\Sentense;
+use app\modules\word\models\Word;
+use app\modules\string\models\String;
 
-class TextWord extends \yii\db\ActiveRecord
+class WordText extends \app\models\ModelApp
 {
-    const SCENARIO_CREATE = 'create';
-    const SCENARIO_DELETE = 'delete';
-    const SCENARIO_STATE = 'state';
-    const STATE_NOT_LEARNED = 0;
-    const STATE_LEARNED = 1;
+    // const SCENARIO_CREATE = 'create';
+    // const SCENARIO_DELETE = 'delete';
+    // const SCENARIO_STATE = 'state';
 
     public $file_ru;
     public $file_engl;
-    public $ru;
-    public $engl;
     public $sentenses;
 
     public static function tableName()
     {
-        return 'text_word';
+        return 'word_text';
     }
 
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios[static::SCENARIO_CREATE] = ['file_ru', 'file_engl'];
-        $scenarios[static::SCENARIO_DELETE] = ['status'];
-        $scenarios[static::SCENARIO_STATE] = ['state'];
+        // $scenarios[static::SCENARIO_CREATE] = ['file_ru', 'file_engl'];
+        // $scenarios[static::SCENARIO_DELETE] = ['status'];
+        // $scenarios[static::SCENARIO_STATE] = ['state'];
         return $scenarios;
     }
 

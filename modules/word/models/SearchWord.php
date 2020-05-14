@@ -1,15 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\modules\word\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\TextWord;
 
-/**
- * TextWordSearch represents the model behind the search form of `app\models\TextWord`.
- */
-class TextWordSearch extends TextWord
+class SearchWord extends \app\modules\word\models\Word
 {
     /**
      * {@inheritdoc}
@@ -17,7 +13,8 @@ class TextWordSearch extends TextWord
     public function rules()
     {
         return [
-            [['id', 'id_text', 'id_word', 'status', 'state'], 'integer'],
+            [['id', 'status'], 'integer'],
+            [['engl', 'ru'], 'safe'],
         ];
     }
 
@@ -37,14 +34,14 @@ class TextWordSearch extends TextWord
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $id_text, $page_size)
+    public function search($params)
     {
-        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+        $query = Word::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query, 'pagination' => ['pageSize' => $page_size],
+            'query' => $query,
         ]);
 
         $this->load($params);
@@ -57,13 +54,12 @@ class TextWordSearch extends TextWord
 
         // grid filtering conditions
         $query->andFilterWhere([
-            // 'id' => $this->id,
-            // 'id_text' => $this->id_text,
-            // 'id_word' => $this->id_word,
-            // 'status' => $this->status,
-            'state'=> $this->state,
-            'engl' => $this->engl,
+            'id' => $this->id,
+            'status' => $this->status,
         ]);
+
+        $query->andFilterWhere(['like', 'engl', $this->engl])
+            ->andFilterWhere(['like', 'ru', $this->ru]);
 
         return $dataProvider;
     }

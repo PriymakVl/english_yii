@@ -16,7 +16,7 @@ use app\models\Sound;
  * @property int|null $id_text
  * @property int|null $status
  */
-class Sentense extends \yii\db\ActiveRecord
+class String extends \app\models\ModelApp
 {
     const SCENARIO_SOUND = 'sound';
     const SCENARIO_UPDATE = 'update';

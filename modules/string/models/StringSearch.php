@@ -1,15 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\modules\string\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Word;
 
-/**
- * SearchWord represents the model behind the search form of `app\models\Word`.
- */
-class SearchWord extends Word
+class StringSearch extends \app\modules\string\models\String
 {
     /**
      * {@inheritdoc}
@@ -17,7 +13,7 @@ class SearchWord extends Word
     public function rules()
     {
         return [
-            [['id', 'status'], 'integer'],
+            [['id', 'id_text', 'status'], 'integer'],
             [['engl', 'ru'], 'safe'],
         ];
     }
@@ -40,7 +36,7 @@ class SearchWord extends Word
      */
     public function search($params)
     {
-        $query = Word::find();
+        $query = Sentense::find();
 
         // add conditions that should always apply here
 
@@ -59,6 +55,7 @@ class SearchWord extends Word
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'id_text' => $this->id_text,
             'status' => $this->status,
         ]);
 

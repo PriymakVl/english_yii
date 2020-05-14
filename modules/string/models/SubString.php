@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\string\models;
 
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -17,7 +17,7 @@ use app\models\Sound;
  * @property int|null $id_sentense
  * @property int|null $status
  */
-class Phrase extends \yii\db\ActiveRecord
+class SubString extends \app\modules\string\models\String
 {
 
     const STATE_NOT_LEANED = 0;

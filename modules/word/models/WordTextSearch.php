@@ -4,12 +4,8 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Phrase;
 
-/**
- * PhraseSearch represents the model behind the search form of `app\models\Phrase`.
- */
-class PhraseSearch extends Phrase
+class WordTextSearch extends app\modules\word\models\WordText
 {
     /**
      * {@inheritdoc}
@@ -17,8 +13,7 @@ class PhraseSearch extends Phrase
     public function rules()
     {
         return [
-            [['id', 'id_text', 'id_sentense', 'status'], 'integer'],
-            [['engl', 'ru'], 'safe'],
+            [['id', 'id_text', 'id_word', 'status', 'state'], 'integer'],
         ];
     }
 
@@ -38,14 +33,14 @@ class PhraseSearch extends Phrase
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $id_text, $page_size)
     {
-        $query = Phrase::find();
+        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query, 'pagination' => ['pageSize' => $page_size],
         ]);
 
         $this->load($params);
@@ -58,14 +53,13 @@ class PhraseSearch extends Phrase
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'id_text' => $this->id_text,
-            'id_sentense' => $this->id_sentense,
-            'status' => $this->status,
+            // 'id' => $this->id,
+            // 'id_text' => $this->id_text,
+            // 'id_word' => $this->id_word,
+            // 'status' => $this->status,
+            'state'=> $this->state,
+            'engl' => $this->engl,
         ]);
-
-        $query->andFilterWhere(['like', 'engl', $this->engl])
-            ->andFilterWhere(['like', 'ru', $this->ru]);
 
         return $dataProvider;
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\word\controllers;
 
 use Yii;
-use app\models\Word;
-use app\models\SearchWord;
+use app\modules\word\models\Word;
+use app\modules\word\models\SearchWord;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;

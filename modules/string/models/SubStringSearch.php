@@ -4,12 +4,8 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Sentense;
 
-/**
- * SentenseSearch represents the model behind the search form of `app\models\Sentense`.
- */
-class SentenseSearch extends Sentense
+class SubStringSearch extends \app\modules\string\models\SubString
 {
     /**
      * {@inheritdoc}
@@ -17,7 +13,7 @@ class SentenseSearch extends Sentense
     public function rules()
     {
         return [
-            [['id', 'id_text', 'status'], 'integer'],
+            [['id', 'id_text', 'id_sentense', 'status'], 'integer'],
             [['engl', 'ru'], 'safe'],
         ];
     }
@@ -40,7 +36,7 @@ class SentenseSearch extends Sentense
      */
     public function search($params)
     {
-        $query = Sentense::find();
+        $query = Phrase::find();
 
         // add conditions that should always apply here
 
@@ -60,6 +56,7 @@ class SentenseSearch extends Sentense
         $query->andFilterWhere([
             'id' => $this->id,
             'id_text' => $this->id_text,
+            'id_sentense' => $this->id_sentense,
             'status' => $this->status,
         ]);
 

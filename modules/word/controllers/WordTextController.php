@@ -8,15 +8,14 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
-use app\models\TextWordSearch;
-use app\models\TextWord;
+use app\modules\word\models\TextWordSearch;
+use app\modules\word\models\TextWord;
 use app\models\Text;
-use app\models\Word;
-use app\models\Sentense;
-use app\models\Phrase;
+use app\modules\word\models\Word;
+use app\modules\string\models\String;
 
 
-class TextWordController extends \app\controllers\BaseController
+class WordTextController extends \app\controllers\BaseController
 {
     private $pageSize = 5;
     /**

@@ -53,6 +53,14 @@ $config = [
         ],
         
     ],
+    'modules' => [
+        'word' => [
+            'class' => 'app\modules\word\Module',
+        ],
+        'string' => [
+            'class' => 'app\modules\string\Module',
+        ],
+    ],
     'params' => $params,
 ];
 
