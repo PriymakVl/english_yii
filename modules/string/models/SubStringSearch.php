@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\string\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -13,7 +13,7 @@ class SubStringSearch extends \app\modules\string\models\SubString
     public function rules()
     {
         return [
-            [['id', 'id_text', 'id_sentense', 'status'], 'integer'],
+            [['id', 'text_id', 'str_id', 'status'], 'integer'],
             [['engl', 'ru'], 'safe'],
         ];
     }
@@ -36,7 +36,9 @@ class SubStringSearch extends \app\modules\string\models\SubString
      */
     public function search($params)
     {
-        $query = Phrase::find();
+        $where = ['status' => STATUS_ACTIVE];
+        if (isset($params['text_id'])) $where['text_id'] = $params['text_id'];
+        $query = SubString::find()->where($where);
 
         // add conditions that should always apply here
 
@@ -53,12 +55,7 @@ class SubStringSearch extends \app\modules\string\models\SubString
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'id_text' => $this->id_text,
-            'id_sentense' => $this->id_sentense,
-            'status' => $this->status,
-        ]);
+        // $query->andFilterWhere([]);
 
         $query->andFilterWhere(['like', 'engl', $this->engl])
             ->andFilterWhere(['like', 'ru', $this->ru]);

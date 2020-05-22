@@ -49,6 +49,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'word-text/add-from-files' => 'word/word-text/add-from-files',
+                'word-text/<action:\w+>' => 'word/word-text/<action>',
+                'word-text' => 'word/word-text/index',
+                'word/set-state' => 'word/word/set-state',
+                'word/<action:\w+>' => 'word/word/<action>',
+                'string' => 'string/string/index',
+                'string/<action:\w+>' => 'string/string/<action>',
+                'substring' => 'string/sub-string/index',
+                'substring/<action:\w+>' => 'string/sub-string/<action>',
             ],
         ],
         

@@ -1,21 +1,20 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\string\controllers;
 
 use Yii;
-use app\modules\string\models\SubString;
+use app\modules\string\models\{SubString, SubStringSearch};
 use app\models\Text;
-use app\modules\string\models\SubStringSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
-use yii\data\Pagination;
 use yii\web\UploadedFile;
+use yii\helpers\Url;
 
 /**
  * PhraseController implements the CRUD actions for Phrase model.
  */
-class SubStringController extends \app\controlles\BaseController
+class SubStringController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}
@@ -38,7 +37,7 @@ class SubStringController extends \app\controlles\BaseController
      */
     public function actionIndex()
     {
-        $searchModel = new PhraseSearch();
+        $searchModel = new SubstringSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,12 +46,6 @@ class SubStringController extends \app\controlles\BaseController
         ]);
     }
 
-    /**
-     * Displays a single Phrase model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id)
     {
         return $this->render('view', [
@@ -60,11 +53,6 @@ class SubStringController extends \app\controlles\BaseController
         ]);
     }
 
-    /**
-     * Creates a new Phrase model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionCreateForm()
     {
         $model = new Phrase();
@@ -99,21 +87,14 @@ class SubStringController extends \app\controlles\BaseController
         return $this->setMessage('Фразы добавлены')->redirect(['text', 'id_text' => $model->id_text]);
     }
 
-    /**
-     * Updates an existing Phrase model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->updatePhrase()) {
+        if ($model->load(Yii::$app->request->post()) && $model->edit()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
+        
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -133,32 +114,30 @@ class SubStringController extends \app\controlles\BaseController
         return $this->redirect(['index']);
     }
 
-    public function actionText($id_text)
+    public function actionText($text_id)
     {
-        $text = Text::findOne($id_text);
-        $query = Phrase::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
-        $countQuery = clone $query;
-        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 5]);
-        $phrases = $query->offset($pages->offset)
-            ->limit($pages->limit)
-            ->all();
-        return $this->render('text', [
-            'phrases' => $phrases, 'pages' => $pages, 'text' => $text,
-        ]);
+        Url::remember();
+        $searchModel = new SubstringSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 5;
+        $text = Text::findOne($text_id);
+        // $text->countStatistics($text->substrings);
+        return $this->render('text', compact('text', 'searchModel', 'dataProvider'));
     }
 
-    public function actionSounds($id_text = false, $state = false)
+    public function actionSounds($text_id)
     {
-        $state = $state ? $state : Phrase::STATE_ALL;
-        $phrases_str = Phrase::createSoundsString($state, $id_text);
-        return $this->render('sounds', compact('phrases_str', 'id_text'));
+        $text = Text::findOne($text_id);
+        $sounds_str = $text->createSoundsString($text->substrings);
+        return $this->render('sounds', compact('sounds_str', 'text'));
     }
 
-    public function actionRepeat($id_text)
+    public function actionRepeat($text_id)
     {
-        $phrases = Phrase::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
-        shuffle($phrases);
-        return $this->render('repeat', compact('phrases', 'id_text'));
+        $text = Text::findOne($text_id);
+        $substrings = $text->substrings;
+        if ($substrings) shuffle($substrings);
+        return $this->render('repeat', compact('substrings', 'text'));
     }
 
     /**
@@ -170,7 +149,7 @@ class SubStringController extends \app\controlles\BaseController
      */
     protected function findModel($id)
     {
-        if (($model = Phrase::findOne($id)) !== null) {
+        if (($model = SubString::findOne($id)) !== null) {
             return $model;
         }
 

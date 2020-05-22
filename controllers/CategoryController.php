@@ -3,8 +3,7 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Category;
-use app\models\CategorySearch;
+use app\models\{Category, CategorySearch, TextSearch};
 use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -31,17 +30,16 @@ class CategoryController extends BaseController
     }
 
     /**
-     * Lists all Category models.
+     * Lists Category models.
      * @return mixed
      */
-    public function actionIndex($parent_id = false)
+    public function actionIndex()
     {
-        if ($parent_id) $query = Category::find()->where(['parent_id' => $parent_id, 'status' => STATUS_ACTIVE]);
-        else $query = Category::find()->where(['parent_id' => 0, 'status' => STATUS_ACTIVE]);
-
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
-
-        return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $dataProvider,]);
+        $searchModel = new CategorySearch();
+        $pageSize = 10;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $pageSize);
+        $parent = Category::findOne(Yii::$app->request->get('parent_id'));
+        return $this->render('index', compact('parent', 'searchModel', 'dataProvider'));
     }
 
     /**
@@ -105,6 +103,15 @@ class CategoryController extends BaseController
         $this->findModel($id)->delete();
         $this->setMessage("Категория успешно удалена");
         return $this->redirect(['index']);
+    }
+
+    public function actionTexts($cat_id)
+    {
+        $cat = $this->findModel($cat_id);
+        $searchModel = new TextSearch();
+        $pageSize = 10;
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $pageSize);
+        return $this->render('texts', compact('cat', 'searchModel', 'dataProvider'));
     }
 
     /**

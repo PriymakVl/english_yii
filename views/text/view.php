@@ -3,14 +3,17 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use app\helpers\BreadcrumbsHelper;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Text */
 
 $this->title = $model->title;
 
-$this->params['breadcrumbs'][] = ['label' => $model->category->name, 'url' => ['/category', 'cat_id' => $model->category->id]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'] = BreadcrumbsHelper::create($model->category, false);
+$this->params['breadcrumbs'][] = ['label' => $model->category->name, 'url' => '/category/texts?cat_id='.$model->category->id];
+// debug($this->params);
+
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="text-view">
@@ -26,9 +29,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Предложения', ['/sentense/text', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Фразы', ['/phrase/text', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Слова', ['/text-word', 'id_text' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Предложения', ['/string/text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Фразы', ['/substring/text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Слова', ['/word-text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?php if ($model->ref): ?>
             <a href="<?= $model->ref ?> " class="btn btn-primary" target="_blank">Источник</a>
         <?php endif; ?>

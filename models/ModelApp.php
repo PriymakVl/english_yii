@@ -3,22 +3,17 @@
 namespace app\models;
 
 use Yii;
-use app\models\Sound;
+use yii\web\UploadedFile;
+use app\models\{Sound, State};
 use yii\web\NotFoundHttpException;
 
 class ModelApp extends \yii\db\ActiveRecord
 {
+
     public function remove()
     {
         $this->status = STATUS_INACTIVE;
         if (!$this->save(false)) throw new NotFoundHttpException('error remove item class ModelBase.php');
-        return $this;
-    }
-
-    public function setState($state)
-    {
-        $this->state = $state;
-        if (!$this->save(false)) throw new NotFoundHttpException('error set state item class ModelBase.php');
         return $this;
     }
 
@@ -37,4 +32,28 @@ class ModelApp extends \yii\db\ActiveRecord
         }
         return $sounds_str;
     }
+
+    public function getState()
+    {   
+        return State::get($this);
+    }
+
+    public function setState()
+    {
+        State::set($this);
+    }
+
+    public function getClassName()
+    {
+        $path = get_called_class();
+        $pos_end_delimeter = strrpos($path, '\\');
+        return substr($path, $pos_end_delimeter + 1);
+    }
+
+    protected function getStringsFromFile($filename)
+    {
+        $file = UploadedFile::getInstance($this, $filename);
+        return file($file->tempName);
+    }
+
 }

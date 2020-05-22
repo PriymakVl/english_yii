@@ -3,8 +3,8 @@
 namespace app\modules\word\controllers;
 
 use Yii;
-use app\modules\word\models\Word;
-use app\modules\word\models\SearchWord;
+use yii\helpers\Url;
+use app\modules\word\models\{Word, SearchWord, WordText};
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -20,7 +20,7 @@ class WordController extends \app\controllers\BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    // 'delete' => ['POST'],
                 ],
             ],
         ];
@@ -102,9 +102,21 @@ class WordController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $word = Word::findOne($id);
+        $word->remove();
+        $items = WordText::findAll(['word_id' => $word->id]);
+        if ($items) array_walk($items, function($item) {$item->remove();});
+        return $this->setMessage('Слово удалено')->redirect(Url::previous());
+    }
 
-        return $this->redirect(['index']);
+    public function actionSetState($id)
+    {
+        $word = Word::findOne($id);
+        $word->setState();
+        if(Yii::$app->request->isAjax){
+            return 'Состояние слова изменено!';
+        }
+        return $this->setMessage('Состояние слова изменено')->redirect(Url::previous());
     }
 
     public function actionAddVoice()

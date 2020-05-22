@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\word\models;
+namespace app\modules\string\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
-class WordTextSearch extends \app\modules\word\models\WordText
+class FullStringSearch extends \app\modules\string\models\FullString
 {
     /**
      * {@inheritdoc}
@@ -13,7 +13,8 @@ class WordTextSearch extends \app\modules\word\models\WordText
     public function rules()
     {
         return [
-            [['id', 'text_id', 'word_id', 'status'], 'integer'],
+            [['id', 'id_text', 'status'], 'integer'],
+            [['engl', 'ru'], 'safe'],
         ];
     }
 
@@ -34,18 +35,16 @@ class WordTextSearch extends \app\modules\word\models\WordText
      * @return ActiveDataProvider
      */
     public function search($params)
-    {  
-        $where = ['status' => STATUS_ACTIVE];
-        if (isset($params['text_id'])) $where['text_id'] = $params['text_id'];
-        $query = WordText::find()->where($where);
-        
+    {
+        $query = Sentense::find();
+
         // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
         $this->load($params);
-
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -54,8 +53,14 @@ class WordTextSearch extends \app\modules\word\models\WordText
         }
 
         // grid filtering conditions
-        //   $query->andFilterWhere([
-        // ]);
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'id_text' => $this->id_text,
+            'status' => $this->status,
+        ]);
+
+        $query->andFilterWhere(['like', 'engl', $this->engl])
+            ->andFilterWhere(['like', 'ru', $this->ru]);
 
         return $dataProvider;
     }

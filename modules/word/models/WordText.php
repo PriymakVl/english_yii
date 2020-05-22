@@ -1,42 +1,34 @@
 <?php
 
-namespace app\models;
+namespace app\modules\word\models;
 
 use Yii;
 use yii\web\UploadedFile;
+use yii\helpers\ArrayHelper;
 use app\modules\word\models\Word;
-use app\modules\string\models\String;
+use app\modules\string\models\FullString;
 
-class WordText extends \app\models\ModelApp
+class WordText extends \app\modules\word\models\BaseWord
 {
-    // const SCENARIO_CREATE = 'create';
-    // const SCENARIO_DELETE = 'delete';
-    // const SCENARIO_STATE = 'state';
-
-    public $file_ru;
-    public $file_engl;
-    public $sentenses;
+    const SCENARIO_ADD_FILES = 'files';
 
     public static function tableName()
     {
-        return 'word_text';
+        return 'words_text';
     }
 
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        // $scenarios[static::SCENARIO_CREATE] = ['file_ru', 'file_engl'];
-        // $scenarios[static::SCENARIO_DELETE] = ['status'];
-        // $scenarios[static::SCENARIO_STATE] = ['state'];
+        $scenarios[static::SCENARIO_ADD_FILES] = ['file_ru', 'file_engl', 'text_id'];
         return $scenarios;
     }
 
     public function rules()
     {
         return [
-            [['file_ru', 'file_engl'], 'required'],
             [['file_ru', 'file_engl'], 'file', 'skipOnEmpty' => false, 'extensions' => 'txt'],
-            [['status', 'state'], 'integer'],
+            [['status', 'text_id'], 'integer'],
         ];
     }
 
@@ -50,92 +42,28 @@ class WordText extends \app\models\ModelApp
         ];
     }
 
-    public function saveWords()
+    public function addFromFiles($text_id)
     {
-        $words = $this->getWordsFromFiles();
-        for ($i = 0; $i < count($words['engl']); $i++) {
-            $word = Word::findOne(['engl' => $words['engl'][$i]]);
-            if (!$word) $word = $this->addWord($words, $i);
-            $sql = sprintf("INSERT INTO `%s` (`id_text`, `id_word`, `state`) VALUES (%d, %d, %d)", $this->tableName(), $this->id_text, $word->id, $word->state);
-            \Yii::$app->db->createCommand($sql)->execute();
+        $words['ru'] = $this->getStringsFromFile('file_ru');
+        $words['engl'] = $this->getStringsFromFile('file_engl');
+
+        for ($i = 0, $count = count($words['engl']); $i < $count; $i++) {
+            $word_id = Word::getIdByName($words['engl'][$i], $words['ru'][$i]);
+            if ($word_id === false) continue;
+            self::add($word_id, $text_id);
         }
         return true;
     }
 
-    private function getWordsFromFiles()
-    {
-        $file_ru = UploadedFile::getInstance($this, 'file_ru');
-        $words['ru'] = file($file_ru->tempName);
-        $file_engl = UploadedFile::getInstance($this, 'file_engl');
-        $words['engl'] = file($file_engl->tempName);
-        return $words;
-    }
-
-    private function addWord($words, $i) {
-        $word = new Word;
-        $word->engl = strtolower(trim($words['engl'][$i]));
-        //ru
-        $ru = trim($words['ru'][$i]);
-        $ru = mb_convert_encoding($ru, "utf-8", "windows-1251");
-        $word->ru = mb_strtolower($ru);
-
-        $res = $word->save();
-        return Word::findOne(['engl' => trim($words['engl'][$i])]);
-    }
-
-    public function getSentenses()
-    {
-        $word = Word::findOne($this->id_word);
-        if (!$word) return false;
-        return Sentense::find()->where(['like', 'engl', $word->engl])->all();
+    private static function add($word_id, $text_id) {
+        $item = new self;
+        $item->word_id = $word_id;
+        $item->text_id = $text_id;
+        if(!$item->save(false)) throw new NotFoundHttpException('error add class WordText.');
     }
 
     public function getWord()
     {
-        return $this->hasOne(Word::className(), ['id' => 'id_word']);
+        return $this->hasOne(Word::className(), ['id' => 'word_id']);
     }
-
-    public static function getByIndex($id_text, $index, $learned = true)
-    {
-        $params = ['id_text' => $id_text, 'status' => STATUS_ACTIVE, 'state' => self::STATE_NOT_LEARNED];
-        if (!$learned) unset($params['state']);
-        $items = TextWord::findAll($params);
-        $index = isset($items[$index]) ? $index : 0;
-        return $items[$index];
-    }
-
-    public function setState($state)
-    {
-        $this->scenario = self::SCENARIO_STATE;
-        $this->state = $state;
-        return $this->save();
-    }
-
-    public function deleteWord()
-    {
-        $this->word->scenario = Word::SCENARIO_DELETE;
-        $this->word->status = STATUS_INACTIVE;
-        $this->word->save();
-
-        $items = self::findAll(['id_word' => $this->id_word, 'status' => STATUS_ACTIVE]);
-        if (!$items) return;
-        foreach ($items as $item) {
-            $item->scenario = TextWord::SCENARIO_DELETE;
-            $item->status = STATUS_INACTIVE;
-            $item->save();
-        }
-    }
-
-    public static function getStatistics($id_text)
-    {
-        $words = self::findAll(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
-        if (!$words) return;
-        $statistics = ['all' => count($words), 'learned' => 0, 'not_learned' => 0];
-        foreach ($words as $word) {
-            if ($word->state == self::STATE_LEARNED) $statistics['learned']++;
-            else $statistics['not_learned']++;
-        }
-        return (object)$statistics;
-    }
-
 }

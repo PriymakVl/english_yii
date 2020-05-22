@@ -38,14 +38,17 @@ class CategorySearch extends Category
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params, $pageSize)
     {
-        $query = Category::find();
+        $parent_id = $params['parent_id'] ?? PARENT_ID_CORE;
+
+        if ($params['CategorySearch']) $query = Category::find();
+        else $query = Category::find()->where(['parent_id' => $parent_id]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query, 'pagination' => ['pageSize' => $pageSize,],
         ]);
 
         $this->load($params);
@@ -58,13 +61,10 @@ class CategorySearch extends Category
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'parent_id' => $this->parent_id,
-            'status' => $this->status,
+            'status' => STATUS_ACTIVE,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
-
         return $dataProvider;
     }
 }

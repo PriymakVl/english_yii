@@ -2,13 +2,20 @@
 
 use yii\helpers\Html;
 use app\models\Word;
+use app\helpers\BreadcrumbsHelper;
 
 $this->title = 'Учить слово';
 
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $item->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense/text', 'id_text' => $item->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'id_text' => $item->id_text]];
+$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
+$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'text_id' => $text->id]];
 
+$words_all = count($words);
+$words_passed = $index;
+$words_rest = $words_all - $words_passed;
 
 ?>
 
@@ -34,22 +41,28 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <ul class="statistics">
+        <li>Всего слов: <span><?= $words_all ?></span></li>
+        <li>Пройдено слов: <span><?= $words_passed ?></span></li>
+        <li>Осталось слов: <span><?= $words_rest ?></span></li>
+    </ul>
+
     <p>
-        <?= Html::a('Prev', ['teach', 'id_text' => $text->id, 'index' => $index - 1], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Next', ['teach', 'id_text' => $text->id, 'index' => $index + 1], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Learned', ['state-teach', 'id' => $item->id, 'index' => $index], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Update', ['/word/update', 'id' => $item->word->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Prev', ['teach', 'text_id' => $text->id, 'index' => $index - 1], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Next', ['teach', 'text_id' => $text->id, 'index' => $index + 1], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Learned', ['/word/set-state', 'id' => $word->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Update', ['/word/update', 'id' => $word->id], ['class' => 'btn btn-primary']) ?>
     </p>
     
-    <h2 title="<?= $item->word->ru ?>">
-        <span onclick="translate_word.classList.toggle('hidden');"><?=$item->word->engl?></span>
-        <span class="text-success hidden" id="translate_word"><?=$item->word->ru?></span>
-        <? printf('<audio controls src="/sounds/%s"></audio>', $item->word->sound->filename); ?>
+    <h2 title="<?= $word->ru ?>">
+        <span onclick="translate_word.classList.toggle('hidden');"><?=$word->engl?></span>
+        <span class="text-success hidden" id="translate_word"><?=$word->ru?></span>
+        <? printf('<audio controls src="/sounds/%s"></audio>', $word->sound->filename); ?>
     </h2>
 
     <h2 id="answer" class="hidden">Перевод: </h2>
 
-    <? if ($phrases): ?>
+    <? if ($word->substrings): ?>
         <? $num = 1; ?>
         <table class="table table-bordered table-striped table-responsive">
             <tr>
@@ -57,16 +70,16 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
                 <th>Фразы</th>
                 <th>Озвучка</th>
             </tr>
-            <? foreach ($phrases as $phrase): ?>
+            <? foreach ($word->substrings as $substr): ?>
                 <tr style="font-size: 1.2em;cursor:pointer;">
                     <td><?= $num; ?></td>
-                    <td title="<?=$phrase->ru?>">
+                    <td title="<?=$substr->ru?>">
                         <i class="fas fa-globe-americas" onclick="change_text(this);"></i>
-                        <span><?=$phrase->engl?></span>
+                        <span><?=$substr->engl?></span>
                     </td>
                     <td>
-                        <? if($phrase->sound_id): ?>
-                            <? printf('<audio controls src="/sounds/%s"></audio>', $phrase->sound->filename); ?>
+                        <? if($substr->sound_id): ?>
+                            <? printf('<audio controls src="/sounds/%s"></audio>', $substr->sound->filename); ?>
                         <? else: ?>
                             <span class="red">нет</span>
                         <? endif; ?>
@@ -77,7 +90,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
         </table>
     <? endif; ?>
 
-    <? if ($sentenses): ?>
+    <? if ($word->strings): ?>
         <? $num = 1; ?>
         <table class="table table-bordered table-striped table-responsive">
             <tr>
@@ -85,16 +98,16 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
                 <th>Предложения</th>
                 <th>Озвучка</th>
             </tr>
-            <? foreach ($sentenses as $sentense): ?>
+            <? foreach ($word->strings as $str): ?>
                 <tr style="font-size: 1.2em;cursor:pointer;">
                     <td><?= $num; ?></td>
-                    <td title="<?=$sentense->ru?>">
+                    <td title="<?=$str->ru?>">
                          <i class="fas fa-globe-americas" onclick="change_text(this);"></i>
-                        <span><?=$sentense->engl?></span>
+                        <span><?=$str->engl?></span>
                     </td>
                     <td>
-                        <? if($sentense->sound_id): ?>
-                            <? printf('<audio controls src="/sounds/%s"></audio>', $sentense->sound->filename); ?>
+                        <? if($str->sound_id): ?>
+                            <? printf('<audio controls src="/sounds/%s"></audio>', $str->sound->filename); ?>
                         <? else: ?>
                             <span class="red">нет</span>
                         <? endif; ?>

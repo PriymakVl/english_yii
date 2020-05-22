@@ -2,18 +2,20 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
+use app\helpers\BreadcrumbsHelper;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CategorySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Категории';
-$this->params['breadcrumbs'][] = '';
+$this->params['breadcrumbs'] = BreadcrumbsHelper::create($parent);
 
 function create_link_name($model)
 {
     if ($model->children) return Html::a($model->name, ['index', 'parent_id' => $model->id]);
-    if ($model->texts) return Html::a($model->name, ['/text', 'cat_id' => $model->id]);
+    if ($model->texts) return Html::a($model->name, ['texts', 'cat_id' => $model->id]);
     return $model->name;
 }
 ?>

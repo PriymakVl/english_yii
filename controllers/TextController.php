@@ -104,9 +104,10 @@ class TextController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-        $this->setMessage("Текст успешно удален");
-        return $this->redirect(['index']);
+        // $this->findModel($id)->delete();
+        // $this->setMessage("Текст успешно удален");
+        // return $this->redirect(['index']);
+        throw new NotFoundHttpException('The method does not exist.');
     }
 
     /**

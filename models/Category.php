@@ -12,14 +12,14 @@ use Yii;
  * @property int $parent_id
  * @property int|null $status
  */
-class Category extends \yii\db\ActiveRecord
+class Category extends \app\models\ModelApp
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'category';
+        return 'categories';
     }
 
     /**
@@ -49,10 +49,10 @@ class Category extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getMainForSelect()
-    {
-        return self::find()->select('name')->where(['parent_id' => 0])->asArray()->indexBy('id')->column();
-    }
+    // public function getMainForSelect()
+    // {
+    //     return self::find()->select('name')->where(['parent_id' => 0])->asArray()->indexBy('id')->column();
+    // }
 
     public function getChildren()
     {

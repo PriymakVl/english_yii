@@ -3,17 +3,15 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\Sound;
-
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\SentenseSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+use app\helpers\BreadcrumbsHelper;
 
 $this->title = 'Предложения';
 
+$this->params['breadcrumbs'] = breadcrumbsHelper::create($text->category, false);
+$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/texts', 'cat_id' => $text->category->id]];
 $this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'text_id' => $text->id]];
 
 
 function create_sound_player($model) {
@@ -39,16 +37,16 @@ function create_sound_player($model) {
             <th>Русский</th>
         </tr>
         <? $number = 1; ?>
-        <? foreach ($sentenses as $sentense): ?>
+        <? foreach ($strings as $str): ?>
             <tr>
                 <td>
-                    <?= Html::a($number, ['sentense/view', 'id' => $sentense->id]) ?>
+                    <?= Html::a($number, ['sentense/view', 'id' => $str->id]) ?>
                 </td>
-                <td><?=$sentense->engl?></td>
+                <td><?=$str->engl?></td>
                 <td>
-                    <?= create_sound_player($sentense); ?>
+                    <?= create_sound_player($str); ?>
                 </td>
-                <td><?=$sentense->ru?></td>
+                <td><?=$str->ru?></td>
             </tr>
             <? $number++; ?>
         <? endforeach; ?>

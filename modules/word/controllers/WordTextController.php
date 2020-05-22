@@ -1,23 +1,19 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\word\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
+use yii\helpers\{ArrayHelper, Url};
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\data\ActiveDataProvider;
-use yii\data\Pagination;
-use app\modules\word\models\TextWordSearch;
-use app\modules\word\models\TextWord;
+use yii\data\{ActiveDataProvider, Pagination};
 use app\models\Text;
-use app\modules\word\models\Word;
-use app\modules\string\models\String;
+use app\modules\word\models\ {Word, WordText, WordTextSearch};
+use app\modules\string\models\ {FullString, Substring};
 
 
 class WordTextController extends \app\controllers\BaseController
 {
-    private $pageSize = 5;
     /**
      * {@inheritdoc}
      */
@@ -27,165 +23,107 @@ class WordTextController extends \app\controllers\BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    // 'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
-    public function actionIndex($id_text)
+    public function actionIndex($text_id)
     {
-        $text = Text::findOne($id_text);
-        $searchModel = new TextWordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $id_text, $this->pageSize);
-        $statistics = TextWord::getStatistics($id_text);
-        return $this->render('index', compact('searchModel', 'dataProvider', 'text', 'statistics'));
+        Url::remember();
+        $searchModel = new WordTextSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 5;
+        $text = Text::findOne($text_id);
+        $text->countStatistics($text->words);
+        return $this->render('index', compact('searchModel', 'dataProvider', 'text'));
     }
 
-    public function actionView($id, $direction = false)
+    public function actionView($id)
     {
-        return $this->render('view', ['model' => $this->findModel($id, $direction)]);
+        $model = $this->findModel($id);
+        return $this->redirect(['/word/view', 'id' => $model->word->id]);
     }
 
-    public function actionCreate($id_text)
+    public function actionCreate($text_id)
     {
-        $model = new TextWord(['scenario' => TextWord::SCENARIO_CREATE]);
-        $model->id_text = $id_text;
+        Url::remember();
+        return $this->redirect(['/word/create', 'text_id' => $text_id]);
+    }
+
+    public function actionUpdate($id)
+    {
+        Url::remember();
+        $model = $this->findModel($id);
+        $this->redirect(['/word/update', 'id' => $model->word_id]);
+    }
+
+    public function actionDelete($id)
+    {
+        Url::remember();
+        $model = $this->findModel($id);
+        return $this->redirect(['/word/delete', 'id' => $model->word->id]);
+    }
+
+    public function actionAddFromFiles($text_id = false)
+    {
+        $model = new WordText(['scenario' => WordText::SCENARIO_ADD_FILES]);
 
         if (Yii::$app->request->isPost) {
-            if ($model->saveWords()) {
-                return $this->redirect(['index', 'id_text' => $id_text]);
+            $text_id = ArrayHelper::getValue(Yii::$app->request->post(), 'WordText.text_id');
+            if ($model->addFromFiles($text_id)) {
+                return $this->redirect(['index', 'text_id' => $text_id]);
             }
         }
-        return $this->render('create', ['model' => $model]);
+        return $this->render('form_files', ['model' => $model, 'text_id' => $text_id]);
     }
 
-    public function actionBeforeUpdate($id, $page = false)
+    // public function actionGuess($id_text)
+    // {
+    //     $text = Text::findOne($id_text);
+    //     $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
+    //     $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
+    //     $words = $query->offset($pages->offset)->limit($pages->limit)->all();
+    //     $engl = $words; $ru = $words; shuffle($ru);
+    //     return $this->render('guess', compact('engl', 'ru', 'pages', 'text'));
+    // }
+
+    // public function actionWrite($id_text, $index = 0)
+    // {
+    //     $text = Text::findOne($id_text);
+    //     $item = TextWord::getByIndex($id_text, $index);
+    //     return $this->render('write', compact('text', 'item', 'index'));
+    // }
+
+    public function actionTeach($text_id, $index = 0)
     {
-        $item = TextWord::findOne($id);
-        $this->session->set('id', $id);
-        $this->session->set('page', $page);
-        $this->session->set('back', $page ? 'index' : 'view');
-        return $this->redirect(['/word/update', 'id' => $item->id_word]);
+        Url::remember();
+        $text = Text::findOne($text_id);
+        $words = $text->sortItems($text->words, TYPE_NOT_LEARNED);
+        if ($index < 0) $index = count($words);
+        if ($index == count($words)) $index = 0;
+        $word = $words[$index] ?? $words[$index + 1];
+        return $this->render('teach', compact('text', 'word', 'words', 'index'));
     }
 
-    public function actionAfterUpdate()
+    public function actionSounds($text_id) 
     {
-        $item = TextWord::findOne($this->session['id']);
-        $back = $this->session['back'];
-        $page = $this->session['page'];
-        unset($this->session['id'], $this->session['page'], $this->session['back']);
-        $this->setMessage('Слово успешно отредактировано');
-        if ($back == 'index') return $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page]);
-        $this->redirect(['view', 'id' => $item->id]);
-    }
-
-    public function actionDelete($id, $page = false)
-    {
-        $item = TextWord::findOne($id);
-        $item->deleteWord();
-        $this->setMessage('Слово успешно удалено');
-        return $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page ? $page : 1]);
-    }
-
-    public function actionGuess($id_text)
-    {
-        $text = Text::findOne($id_text);
-        $query = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE]);
-        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
-        $words = $query->offset($pages->offset)->limit($pages->limit)->all();
-        $engl = $words; $ru = $words; shuffle($ru);
-        return $this->render('guess', compact('engl', 'ru', 'pages', 'text'));
-    }
-
-    public function actionWrite($id_text, $index = 0)
-    {
-        $text = Text::findOne($id_text);
-        $item = TextWord::getByIndex($id_text, $index);
-        return $this->render('write', compact('text', 'item', 'index'));
-    }
-
-    public function actionTeach($id_text, $index = 0)
-    {
-        $text = Text::findOne($id_text);
-        $item = TextWord::getByIndex($id_text, $index);
-        $sentenses = Sentense::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
-        $phrases = Phrase::find()->where(['id_text' => $id_text])->andWhere(['like', 'engl', $item->word->engl])->all();
-        return $this->render('teach', compact('text', 'item', 'index', 'sentenses', 'phrases'));
-    }
-
-    public function actionSounds($id_text) 
-    {
-        $state = TextWord::STATE_NOT_LEARNED;
-        $words_str = Word::createSoundsString($state, $id_text);
-        return $this->render('sounds', compact('words_str', 'id_text'));
-    }
-
-    public function actionStateIndex($id, $state, $page)
-    {
-        $item = TextWord::findOne($id);
-        $this->setState($item, $state);
-        $this->redirect(['index', 'id_text' => $item->id_text, 'page' => $page]);
-    }
-    //for all word on page
-    public function actionStatePage($id_text, $page)
-    {
-        if (!$page || $page == 1) $offset = 0;
-        else $offset = ($page - 1) * $this->pageSize;
-        $items = TextWord::find()->where(['id_text' => $id_text, 'status' => STATUS_ACTIVE])
-        ->limit($this->pageSize)->offset($offset)->all();
-        if ($items) {
-           foreach ($items as $item) {
-                $this->setState($item, TextWord::STATE_LEARNED);
-           } 
-        }
-        $this->redirect(['index', 'id_text' => $id_text, 'page' => $page]);
-    }
-
-    public function actionStateTeach($id, $index)
-    {
-        $item = TextWord::findOne($id);
-        $this->setState($item, TextWord::STATE_LEARNED);
-        $this->redirect(['teach', 'id_text' => $item->id_text, 'index' => $index]);
-    }
-
-    public function actionStateList($ids, $state = TextWord::STATE_LEARNED, $id_text) {
-        $ids = explode(',', rtrim($ids, ','));
-        $words = Word::findAll($ids);
-        foreach ($words as $word) {
-            $word->setState($state);
-            $items = TextWord::findAll(['id_word' => $word->id]);
-            foreach ($items as $item) {
-                $item->setState($state);
-            }
-        }
-        $this->setMessage('Состояние слов изменено')->redirect(['sounds', 'id_text' => $id_text]);
+        $text = Text::findOne($text_id);
+        $words = $text->sortItems($text->words, TYPE_NOT_LEARNED);
+        $sounds_str = $text->createSoundsString($words);
+        return $this->render('sounds', compact('sounds_str', 'text'));
     }
 
     public function actionRepeat($text_id)
     {
-        $state = TextWord::STATE_NOT_LEARNED;
-        $items = TextWord::findAll(['id_text' => $text_id, 'state' => $state, 'status' => STATUS_ACTIVE]);
-        shuffle($items);
-        return $this->render('repeat', compact('items', 'text_id'));
+        $text = Text::findOne($text_id);
+        $words = $text->sortItems($text->words, STATE_NOT_LEARNED);
+        return $this->render('repeat', compact('words', 'text'));
     }
 
-    //set state for all same words in texts and table words
-    private function setState($item, $state)
+    protected function findModel($id)
     {
-        $items = TextWord::findAll(['id_word' => $item->id_word]);
-        foreach ($items as $elem) {
-            $elem->setState($state);
-        }
-        $word = Word::findOne($item->id_word);
-        $word->setState($state);
-    }
-
-    protected function findModel($id, $direction)
-    {
-        if ($direction == 'next') $id++;
-        else if ($direction == 'previos') $id--;
-        
         if (($model = TextWord::findOne($id)) !== null) {
             return $model;
         }

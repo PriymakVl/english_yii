@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\string\models;
 
 use Yii;
 use yii\web\NotFoundHttpException;
@@ -16,7 +16,7 @@ use app\models\Sound;
  * @property int|null $id_text
  * @property int|null $status
  */
-class String extends \app\models\ModelApp
+class FullString extends \app\modules\string\models\BaseString
 {
     const SCENARIO_SOUND = 'sound';
     const SCENARIO_UPDATE = 'update';
@@ -31,7 +31,7 @@ class String extends \app\models\ModelApp
      */
     public static function tableName()
     {
-        return 'sentense';
+        return 'strings';
     }
 
     /**
@@ -148,11 +148,6 @@ class String extends \app\models\ModelApp
             if ($this->soundfile) $this->sound_id = Sound::create(Sound::TYPE_SENTENSE, $this->soundfile->baseName, $this->soundfile->extension, $this->id);
         }
         return $this->save();
-    }
-
-    public function getSound()
-    {
-        return $this->hasOne(Sound::className(), ['id' => 'sound_id']);    
     }
 
     public static function getNeighbor($id, $direction)

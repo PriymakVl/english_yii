@@ -2,18 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\helpers\BreadcrumbsHelper;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Category */
-$parent = $model->parent ? $model->parent : null;
-$progenitor = $parent->parent ? $parent->parent : null;
-$root = $progenitor->parent ? $progenitor->parent : null;
-
-$this->title = $model->name;
-if ($root) $this->params['breadcrumbs'][] = ['label' => $root->name, 'url' => ['/category/view', 'id' => $root->id]];
-if ($progenitor) $this->params['breadcrumbs'][] = ['label' => $progenitor->name, 'url' => ['/category/view', 'id' => $progenitor->id]];
-if ($parent) $this->params['breadcrumbs'][] = ['label' => $parent->name, 'url' => ['/category/view', 'id' => $parent->id]];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'] = BreadcrumbsHelper::create($model);
 
 \yii\web\YiiAsset::register($this);
 ?>

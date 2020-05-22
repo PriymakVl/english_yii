@@ -15,6 +15,8 @@ define('STATE_ALL', 2);
 define("TYPE_WORD", 1);
 define("TYPE_SUBSTRING", 2);
 define("TYPE_STRING", 3);
+//for get core items models
+define("PARENT_ID_CORE", 0);
 
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';

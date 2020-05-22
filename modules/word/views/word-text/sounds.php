@@ -5,10 +5,13 @@
 	$this->registerJsFile('@web/js/sounds_words.js', ['depends' => 'yii\web\YiiAsset']);
 
 $this->title = 'Озвучка слов';
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/sentense/text', 'id_text' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'id_text' => $id_text]];
+
+$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
+$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $text->id]];
+$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'text_id' => $text->id]];
 
  ?>
 
@@ -32,7 +35,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
     top: 50%;
     right: 100px;
   }
-  .statistics {
+  .statistics_sounds {
     position: fixed;
     left: 10px;
     top: 50%;
@@ -42,8 +45,8 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
   }
 </style>
 
-<?= Html::a('Начать', ['#'], ['id' => 'start', 'data-words-str' => $words_str, 'class' => 'btn btn-primary']) ?>
-<?= Html::a('Остановить', ['#'], ['id' => 'stop', 'id_text' => $id_text, 'class' => 'btn btn-primary']) ?>
+<?= Html::a('Начать', ['#'], ['id' => 'start', 'data-sounds-str' => $sounds_str, 'class' => 'btn btn-primary']) ?>
+<?= Html::a('Остановить', ['#'], ['id' => 'stop', 'text_id' => $text->id, 'class' => 'btn btn-primary']) ?>
 
 
 <div class="wrapper">
@@ -53,7 +56,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'i
   <div class="view" id="ru">нет слова</div>
 </div>
 
-<div class="statistics">
+<div class="statistics_sounds">
   <p>Всего слов:  <span id="word_all"></span></p>
   <p>Озвучено:  <span id="word_sounded"></span></p>
   <p>Осталось:  <span id="word_rest"></span></p>

@@ -1,17 +1,15 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\string\controllers;
 
 use Yii;
-use app\modules\string\models\String;
-use app\modules\string\models\StringSearch;
+use app\modules\string\models\{FullString, FullStringSearch, SubString};
 use app\models\Text;
-use app\modules\string\models\SubString;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 
-class SentenseController extends \app\controllers\BaseController
+class StringController extends \app\controllers\BaseController
 {
     /**
      * {@inheritdoc}
@@ -33,14 +31,17 @@ class SentenseController extends \app\controllers\BaseController
 
     }
 
-    public function actionText($id_text)
+    public function actionText($text_id)
     {
-        $text = Text::findOne($id_text);
-        $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
-        if (!$sentenses) Sentense::breakText($text);
-        $sentenses = Sentense::findAll(['id_text' => $id_text, 'status' => 1]);
-        if (!$sentenses) throw new NotFoundHttpException('Предложения для текста не найдены');
-        return $this->render('text', compact('sentenses', 'text'));
+        $text = Text::findOne($text_id);
+        $strings = FullString::findAll(['text_id' => $text_id, 'status' => STATUS_ACTIVE]);
+        return $this->render('text', compact('strings', 'text'));
+    }
+
+    public function actionBreakText($text_id)
+    {
+        debug($text_id);
+        // if (!$) Sentense::breakText($text);
     }
 
     /**

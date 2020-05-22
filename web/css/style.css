@@ -40,3 +40,18 @@
 .red {
 	color: #f00;
 }
+
+.green {
+	color: green;
+}
+
+.statistics {
+    display: flex;
+    list-style: none;
+}
+.statistics li {
+    margin-right: 15px;
+}
+.statistics span {
+    color: red;
+}
