@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\modules\text\models\Text;
 
 /**
  * This is the model class for table "category".

@@ -74,7 +74,7 @@ class SiteController extends Controller
     {
         if (!Yii::$app->user->isGuest) {
             //return $this->goHome();
-            return $this->redirect('/category');
+            return $this->redirect('/categories');
         }
 
         $model = new LoginForm();

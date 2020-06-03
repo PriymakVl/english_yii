@@ -10,13 +10,16 @@ use app\helpers\BreadcrumbsHelper;
 
 $this->title = $model->title;
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($model->category, false);
-$this->params['breadcrumbs'][] = ['label' => $model->category->name, 'url' => '/category/texts?cat_id='.$model->category->id];
-// debug($this->params);
+$bc_cat = BreadcrumbsHelper::category($model->category);
+$bc_text = BreadcrumbsHelper::text($model->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, $bc_text);
+
 
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="text-view">
+    
+    <p>Категория: <b><?= $model->category->name ?></b></p>
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -37,15 +40,19 @@ $this->params['breadcrumbs'][] = ['label' => $model->category->name, 'url' => '/
         <?php endif; ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'engl:ntext',
-            'ru:ntext',
-            ['attribute' => 'cat_id', 'value' => function($model) {return $model->category->name;}],
-
-        ],
-    ]) ?>
+     <table class="table table-striped table-bordered">
+            <tr>
+                <th>Engl</th>
+                <th>Ru</th>
+            </tr>
+            <tr>
+                <td>
+                    <?= str_replace("\r\n", '<br><br>', $model->engl) ?>
+                </td>
+                <td>
+                    <?= str_replace("\r\n", '<br><br>', $model->ru) ?>
+                </td>
+            </tr>
+        </table>
 
 </div>

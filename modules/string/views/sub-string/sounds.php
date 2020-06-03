@@ -1,17 +1,15 @@
 <?php 
 
 	use yii\helpers\Html;
+  use app\helpers\BreadcrumbsHelper;
 
 	$this->registerJsFile('@web/js/sounds_strings.js', ['depends' => 'yii\web\YiiAsset']);
 
 $this->title = 'Озвучка фраз';
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
-$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['word-text/index', 'text_id' => $text->id]];
+$bc_cat = BreadcrumbsHelper::category($text->category);
+$bc_text = BreadcrumbsHelper::text($text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 
 ?>
 
@@ -27,18 +25,10 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['word-text/
   #learned {
     position: fixed; top: 50%; right: 100px;
   }
-  .statistics {
-    position: fixed;
-    left: 10px;
-    top: 50%;
-    padding: 20px;
-    background: #e5e5e5;
-    font-size: 20px;
-  }
 </style>
 
 <h1>Озвучка фраз</h1>
-<a href="#" id="start" data-phrases="<?= $phrases_str ?>" class="btn btn-primary">Начать</a>
+<a href="#" id="start" data-strings="<?= $sounds_str ?>" class="btn btn-primary">Начать</a>
 <a href="#" id="stop" id_text="<?= $id_text ?>" class="btn btn-primary">Остановить</a>
 
 <div class="wrapper">
@@ -48,9 +38,9 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['word-text/
   <div class="view" id="ru">нет фразы</div>
 </div>
 
-<div class="statistics">
-  <p>Всего фраз:  <span id="str_all"></span></p>
-  <p>Озвучено:  <span id="str_sounded"></span></p>
-  <p>Осталось:  <span id="str_rest"></span></p>
+<div class="statistics_sounds">
+  <p>Всего фраз:  <span id="str_all"><?= count($text->substrings) ?></span></p>
+  <p>Озвучено:  <span id="str_sounded">0</span></p>
+  <p>Осталось:  <span id="str_rest">0</span></p>
 </div>
 

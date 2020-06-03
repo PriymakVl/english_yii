@@ -1,19 +1,17 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\text\controllers;
 
 use Yii;
-use app\models\{Category, CategorySearch};
-use app\modules\text\{Text, TextSearch};
+use app\modules\text\models\{SubText, SubTextSearch, Text};
 use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\data\ActiveDataProvider;
 
 /**
- * CategoryController implements the CRUD actions for Category model.
+ * SubTextController implements the CRUD actions for SubText model.
  */
-class CategoryController extends BaseController
+class SubTextController extends BaseController
 {
     /**
      * {@inheritdoc}
@@ -24,34 +22,29 @@ class CategoryController extends BaseController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    // 'delete' => ['POST'],
+                    'delete' => ['POST'],
                 ],
             ],
         ];
     }
 
     /**
-     * Lists Category models.
+     * Lists all SubText models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CategorySearch();
+        $searchModel = new SubTextSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        return $this->render('index', compact('searchModel', 'dataProvider'));
-    }
 
-    public function actionCategories($parent_id = PARENT_ID_CORE)
-    {
-        $parent = $parent_id ? $parent = Category::findOne(['id' => $parent_id]) : null;
-        if (!$parent) $categories = Category::findAll(['parent_id' => PARENT_ID_CORE]);
-        else if ($parent->texts) return $this->redirect(['text/category', 'cat_id' => $parent->id]);
-        else $categories = $parent->children;
-        return $this->render('categories', compact('parent', 'categories'));
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Category model.
+     * Displays a single SubText model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -64,23 +57,25 @@ class CategoryController extends BaseController
     }
 
     /**
-     * Creates a new Category model.
+     * Creates a new SubText model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($parent_id = false)
+    public function actionCreate($text_id)
     {
-        $model = new Category();
-        $parent = $parent_id ? Category::findOne($parent_id) : null;
+        $model = new SubText();
+        $text = Text::findOne(['id' => $text_id]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('create', ['model' => $model, 'parent' => $parent]);
+        return $this->render('create', [
+            'model' => $model, 'text' => $text,
+        ]);
     }
 
     /**
-     * Updates an existing Category model.
+     * Updates an existing SubText model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -100,7 +95,7 @@ class CategoryController extends BaseController
     }
 
     /**
-     * Deletes an existing Category model.
+     * Deletes an existing SubText model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -108,21 +103,28 @@ class CategoryController extends BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-        $this->setMessage("Категория успешно удалена");
-        return $this->redirect(['index']);
+        $subtext = $this->findModel($id);
+        $subtext->remove();
+        return $this->redirect(['text', 'text_id' => $subtext->text_id]);
+    }
+
+    public function actionText($text_id)    
+    {
+        $text = Text::findOne(['id' => $text_id]);
+        $subtexts = SubText::findAll(['text_id' => $text_id, 'status' => STATUS_ACTIVE]);
+        return $this->render('text', compact('text', 'subtexts'));
     }
 
     /**
-     * Finds the Category model based on its primary key value.
+     * Finds the SubText model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Category the loaded model
+     * @return SubText the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Category::findOne($id)) !== null) {
+        if (($model = SubText::findOne($id)) !== null) {
             return $model;
         }
 

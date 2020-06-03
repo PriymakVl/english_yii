@@ -56,8 +56,13 @@ $config = [
                 'word/<action:\w+>' => 'word/word/<action>',
                 'string' => 'string/string/index',
                 'string/<action:\w+>' => 'string/string/<action>',
-                'substring' => 'string/sub-string/index',
+                'substring/add-from-string' => 'string/sub-string/add-from-string',
                 'substring/<action:\w+>' => 'string/sub-string/<action>',
+                'substring' => 'string/sub-string/index',
+
+                'text/<action:\w+>' => 'text/text/<action>',
+                'sub-text/<action:\w+>' => 'text/sub-text/<action>',
+                'categories' => 'category/categories',
             ],
         ],
         
@@ -68,6 +73,9 @@ $config = [
         ],
         'string' => [
             'class' => 'app\modules\string\Module',
+        ],
+        'text' => [
+            'class' => 'app\modules\text\Module',
         ],
     ],
     'params' => $params,

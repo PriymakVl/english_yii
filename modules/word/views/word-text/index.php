@@ -24,11 +24,6 @@ function create_link_state($model) {
     return Html::a($name, $params, $style);
 }
 
-function create_link_voice($model) {
-    if ($model->word->sound) return sprintf('<audio controls src="/sounds/%s"></audio>', $model->word->sound->filename);
-    return '<span class="text-danger">нет</span>';
-}
-
 ?>
 
 <div class="text-word-index">
@@ -53,7 +48,7 @@ function create_link_voice($model) {
         <a href="/text-word/state-page?text_id=<?=$text->id?>&page=<?=$page?>">
             <i class="fas fa-graduation-cap" title="выучено все"></i>
         </a>
-        <a href="<?=Url::to(['/sound/create-file', 'text_id' => $text->id, 'type' => TYPE_WORD])?>">
+        <a href="<?=Url::to(['/sound/create-file-strings', 'text_id' => $text->id, 'type' => TYPE_WORD])?>">
             <i class="fas fa-file-audio" title="создать файл озвучки"></i>
         </a>
         <a href="<?=Url::to(['/sound/add-sounds', 'type' => TYPE_WORD])?>">
@@ -81,8 +76,8 @@ function create_link_voice($model) {
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
                 'value' => function($model) {return create_link_state($model);}, 
             ],
-
-            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_link_voice($model);}], 
+ 
+            ['attribute' => 'sound', 'format' => 'raw', 'value' => function($model) {return $model->word->getSoundPlayer();}], 
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

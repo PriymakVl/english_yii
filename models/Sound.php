@@ -4,9 +4,8 @@ namespace app\models;
 
 use Yii;
 use yii\web\NotFoundHttpException;
-use app\models\Word;
-use app\models\Sentense;
-use app\models\Phrase;
+use app\modules\string\models\{FullString, Substring};
+use app\modules\word\models\{Word};
 
 /**
  * This is the model class for table "sound".
@@ -19,13 +18,6 @@ use app\models\Phrase;
  */
 class Sound extends \yii\db\ActiveRecord
 {
-
-    // const SCENARIO_FILE = 'file';
-    const SCENARIO_CREATE = 'create';
-    const TYPE_WORD = 1;
-    const TYPE_SENTENSE = 2;
-    const TYPE_PHRASE = 3;
-
     /**
      * {@inheritdoc}
      */
@@ -72,9 +64,9 @@ class Sound extends \yii\db\ActiveRecord
 
     public static function getItemsForCreateSoundOfFile($type, $text_id)
     {
-        if ($type == self::TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
-        if ($type == self::TYPE_PHRASE) return Phrase::findAll(['sound_id' => null, 'id_text' => $text_id, 'status' => STATUS_ACTIVE]);
-        return Sentense::findAll(['sound_id' => null, 'id_text' => $text_id, 'status' => STATUS_ACTIVE]);
+        if ($type == TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
+        if ($type == TYPE_SUBSTRING) return Substring::findAll(['sound_id' => null, 'text_id' => $text_id, 'status' => STATUS_ACTIVE]);
+        return FullString::findAll(['sound_id' => null, 'text_id' => $text_id, 'status' => STATUS_ACTIVE]);
     }
 
     public static function addList($type)
@@ -97,22 +89,20 @@ class Sound extends \yii\db\ActiveRecord
 
     private static function getStringItem($type, $string)
     {
-        if ($type == self::TYPE_WORD) return Word::findOne(['engl' => $string, 'status' => STATUS_ACTIVE]);
-        $pos_end_space = strripos($string, ' ');
-        $string = substr($string, 0, $pos_end_space);
-        if ($type == self::TYPE_SENTENSE) return Sentense::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
-        return Phrase::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
+        if ($type == TYPE_WORD) return Word::findOne(['engl' => $string, 'status' => STATUS_ACTIVE]);
+        if ($type == TYPE_STRING) return FullString::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
+        return Substring::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
     }
 
     private static function saveFile($item, $file_name, $ext, $type) 
     {
-        $sound = self::create($type, $file_name, $ext, $item->id);
+        $sound = self::create($type, $ext, $item->id);
         $item->sound_id = $sound->id;
         rename('temp/'.$file_name.'.'.$ext, 'sounds/'.$sound->filename);
         return $item->save(false);
     }
 
-    public static function create($type, $file_name, $ext, $item_id)
+    public static function create($type, $ext, $item_id)
     {
         $sound = self::findOne(['item_id' => $item_id, 'type' => $type, 'status' => STATUS_ACTIVE]);
         if (!$sound) $sound = (new self);
@@ -125,7 +115,11 @@ class Sound extends \yii\db\ActiveRecord
 
     private static function getSoundName($ext)
     {
-        $last_id = self::find()->select('id')->orderBy('id DESC')->column()[0];
-        return (($last_id ? $last_id : 0) + 1) . '.' . $ext;
+        do {
+            $name = uniqid();
+            $filename = $name . '.' . $ext;
+            $file = '/web/sounds/' . $filename;
+        } while (file_exists($file));
+        return $filename;
     }
 }

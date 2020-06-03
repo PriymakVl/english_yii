@@ -8,13 +8,6 @@ $this->title = 'Предложения';
 $this->params['breadcrumbs'][] = ['label' => 'Тексты', 'url' => ['/text']];
 $this->params['breadcrumbs'][] = $this->title;
 
-function create_sound_player($model) {
-    if (!$model->sound_id) return 'нет';
-    $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
-    if (!$sound) return 'нет';
-    return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
-}
-
 ?>
 <div class="sentense-index">
 
@@ -33,7 +26,7 @@ function create_sound_player($model) {
 
             'engl',
             'ru',
-            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_sound_player($model);}],
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return $model->getSoundPlayer();}],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

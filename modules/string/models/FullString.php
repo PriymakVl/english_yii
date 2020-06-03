@@ -18,14 +18,6 @@ use app\models\Sound;
  */
 class FullString extends \app\modules\string\models\BaseString
 {
-    const SCENARIO_SOUND = 'sound';
-    const SCENARIO_UPDATE = 'update';
-
-    public $all; //array all of setneses text
-    public $allQty; //count all sentenses of text
-    public $currentNum;
-    public $soundfile;
-
     /**
      * {@inheritdoc}
      */
@@ -40,9 +32,10 @@ class FullString extends \app\modules\string\models\BaseString
     public function rules()
     {
         return [
-            [['id_text', 'status', 'sound_id'], 'integer'],
+            [['text_id', 'status', 'sound_id'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
-            [['sound'], 'file',  'extensions' => 'wav, mp3'], //'skipOnEmpty' => false,
+            [['engl', 'ru'], 'required'],
+            [['sound_file'], 'file',  'extensions' => 'wav, mp3'],
         ];
     }
 
@@ -55,68 +48,21 @@ class FullString extends \app\modules\string\models\BaseString
             'id' => 'ID',
             'engl' => 'Engl',
             'ru' => 'Ru',
-            'id_text' => 'Id Text',
+            'text_id' => 'Id Text',
             'status' => 'Status',
         ];
     }
 
-    public function scenarios()
-{
-    $scenarios = parent::scenarios();
-    $scenarios[static::SCENARIO_SOUND] = ['sound_id'];
-    $scenarios[static::SCENARIO_UPDATE] = ['id_text, status, engl, ru'];
-    return $scenarios;
-}
+    // private function getRandom()
+    // {
+    //     $num = rand(1, $this->allQty);
+    //     if ($num == $currentNum) $this->getRandom();
+    //     return $this->all[$num - 1];
+    // }
 
-    public static function breakText($text)
+    public function getSubstrings()
     {
-        $count_engl_str = preg_match_all("/.*?[.?!](?:\s|$)/s", $text->engl, $engl_str);
-        $count_ru_str = preg_match_all("/.*?[.?!](?:\s|$)/s", $text->ru, $ru_str);
-        if (!$count_engl_str || !$count_ru_str) return;
-        return self::addFromText($engl_str[0], $ru_str[0], $text->id);
-    }
-
-    public static function addFromText($engl_str, $ru_str, $id_text)
-    {
-        for ($i = 0; $i < count($engl_str); $i++) {
-            $obj = new self;
-            $engl = str_replace("\r\n", " ", $engl_str[$i]);//delete line break
-            $ru = str_replace("\r\n", " ", $ru_str[$i]);
-            $obj->engl = trim($engl);
-            $obj->ru = trim($ru);
-            $obj->id_text = $id_text;
-            $obj->save();
-        }
-    }
-
-    public function getAll()
-    {
-         $this->all = Sentense::findAll(['id_text' => $this->id_text, 'status' => 1]);
-         $this->allQty = count($this->all);
-         return $this;
-    }
-
-    private function getRandom()
-    {
-        $num = rand(1, $this->allQty);
-        if ($num == $currentNum) $this->getRandom();
-        return $this->all[$num - 1];
-    }
-
-    public function getWords()
-    {
-        $items = explode(' ', $this->engl);
-        $words = [];
-        foreach ($items as $item) {
-            $word = Word::findOne(['engl' => trim($item), 'status' => STATUS_ACTIVE]);
-            if ($word) $words[] = $word;
-        }
-        return $words;
-    }
-
-    public function getPhrases()
-    {
-        return $this->hasMany(Phrase::className(), ['id_sentense' => 'id'])->where(['status' => STATUS_ACTIVE]);
+        return $this->hasMany(Substring::className(), ['str_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
     }
 
     public function shiftUpLanguage($lang)
@@ -141,37 +87,35 @@ class FullString extends \app\modules\string\models\BaseString
         }
     } 
 
-    public function updateSentense()
+    public static function add($engl, $ru, $text_id, $subtext_id)
     {
-        if ($this->validate()) {
-            $this->soundfile = UploadedFile::getInstance($this, 'soundfile');
-            if ($this->soundfile) $this->sound_id = Sound::create(Sound::TYPE_SENTENSE, $this->soundfile->baseName, $this->soundfile->extension, $this->id);
+            $obj = new self;
+            //delete line break
+            $engl = str_replace("\r\n", "", $engl);
+            $ru = str_replace("\r\n", "", $ru);
+            $obj->engl = trim($engl);
+            $obj->ru = trim($ru);
+            $obj->text_id = $text_id;
+            $obj->subtext_id = $subtext_id;
+            $obj->save();
+    }
+
+    public static function break($subtexts)
+    {
+        foreach ($subtexts as $sub) {
+            preg_match_all("/.*?[.?!](?:\s|$)/s", $sub->engl, $engl_str);
+            preg_match_all("/.*?[.?!](?:\s|$)/s", $sub->ru, $ru_str);
+            self::addStrings($engl_str[0], $ru_str[0], $sub->text->id, $sub->id);
         }
-        return $this->save();
-    }
+    } 
 
-    public static function getNeighbor($id, $direction)
+    private static function addStrings($engl_str, $ru_str, $text_id, $subtext_id)
     {
-        $sentense = self::findOne($id);
-        if (!$sentense) return false;
-        $sentenses_text = self::findAll(['id_text' => $sentense->id_text, 'status' => STATUS_ACTIVE]);
-        foreach ($sentenses_text as $key => $value) {
-            if ($value->id == $sentense->id) {
-                if ($direction == 'next' && $key == count($sentenses_text) - 1) return $sentenses_text[0];
-                if ($direction == 'next') return $sentenses_text[++$key];
-                if ($direction == 'prev' && $key == 0) return $sentenses_text[count($sentenses_text) - 1];
-                if ($direction == 'prev') return $sentenses_text[--$key];
-            }
+        for ($i = 0, $count = count($engl_str); $i < $count; $i++) {
+            $check = self::findOne(['engl' => $engl_str[$i], 'subtext_id' => $subtext_id]);
+            if ($check) continue;
+            self::add($engl_str[$i], $ru_str[$i], $text_id, $subtext_id);
         }
-        throw new NotFoundHttpException('Не найдено предложения'); 
     }
-
-    public function delete()
-    {
-        $this->status = STATUS_INACTIVE;
-        $this->save(false);
-        return $this;
-    }
-
 
 }

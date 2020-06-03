@@ -10,7 +10,7 @@ use app\helpers\BreadcrumbsHelper;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Категории';
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($parent);
+$this->params['breadcrumbs'] = BreadcrumbsHelper::category($parent);
 
 function create_link_name($model)
 {
@@ -64,16 +64,16 @@ function create_link_name($model)
 
                 'urlCreator' => function ($action, $model, $key, $index) {
                     if ($action === 'add') {
-                        return 'create?parent_id='.$model->id;
+                        return '/category/create?parent_id='.$model->id;
                     }
                     else if ($action === 'view') {
-                        return 'view?id='.$model->id;
+                        return '/category/view?id='.$model->id;
                     }
                     else if ($action === 'update') {
-                        return 'update?id='.$model->id;
+                        return '/category/update?id='.$model->id;
                     }
                     else if ($action === 'delete') {
-                        return 'delete?id='.$model->id;
+                        return '/category/delete?id='.$model->id;
                     }
                 }
             ],

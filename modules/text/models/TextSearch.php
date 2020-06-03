@@ -1,10 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\modules\text\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Text;
+use app\modules\text\models\Text;
 
 /**
  * TextSearch represents the model behind the search form of `app\models\Text`.
@@ -38,16 +38,16 @@ class TextSearch extends Text
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pageSize)
+    public function search($params, $cat_id = false)
     {
         $where = ['status' => STATUS_ACTIVE];
-        if (isset($params['cat_id'])) $where = array_merge($where, ['cat_id' => $params['cat_id']]);
+        if ($cat_id) $where['cat_id'] = $cat_id;
         $query = Text::find()->where($where);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query, 'pagination' => ['pageSize' => $pageSize,],
+            'query' => $query,
         ]);
 
         $this->load($params);

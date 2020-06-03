@@ -16,11 +16,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'ru')->textarea(['rows' => '3']) ?>
 
-    <?= $form->field($model, 'id_text')->textInput(['readonly' => true]) ?>
+    <?= $form->field($model, 'text_id')->hiddenInput(['value' => $model->text_id])->label(false); ?>
 
-    <?= $form->field($model, 'status')->textInput(['readonly' => true]) ?>
-
-    <?= $form->field($model, 'soundfile')->fileInput()->label('Файл озвучки') ?>
+    <?= $form->field($model, 'sound_file')->fileInput()->label('Файл озвучки') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

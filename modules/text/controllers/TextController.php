@@ -1,9 +1,9 @@
 <?php
 
-namespace app\controllers;
+namespace app\modules\text\controllers;
 
 use Yii;
-use app\models\Text;
+use app\modules\text\models\{Text, TextSearch};
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -30,18 +30,11 @@ class TextController extends \app\controllers\BaseController
      * Lists all Text models.
      * @return mixed
      */
-    public function actionIndex($cat_id = false)
+    public function actionIndex()
     {
-        $cat = Category::findOne($cat_id);
-
-        $where = $cat_id ? ['status' => STATUS_ACTIVE, 'cat_id' => $cat_id] : ['status' => STATUS_ACTIVE];
-        $dataProvider = new ActiveDataProvider([
-            'query' => Text::find()->where($where),
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider, 'cat' => $cat,
-        ]);
+        $searchModel = new TextSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('index', compact('searchModel', 'dataProvider'));
     }
 
     /**
@@ -73,6 +66,14 @@ class TextController extends \app\controllers\BaseController
         return $this->render('create', [
             'model' => $model, 'cat' => $cat,
         ]);
+    }
+
+    public function actionCategory($cat_id)
+    {
+        $cat = Category::findOne($cat_id);
+        $searchModel = new TextSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $cat_id);
+        return $this->render('category', compact('cat', 'searchModel', 'dataProvider'));
     }
 
     /**

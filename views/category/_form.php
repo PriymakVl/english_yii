@@ -17,7 +17,7 @@ use app\models\Category;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 	
 
-	<? if ($parent) echo $form->field($model, 'parent_id')->textInput(['value' => $parent->id, 'readonly' => 'readonly'])->label('Родительская категория: <span class="text-primary">'.$parent->name.'</span>');?>
+	<? echo $form->field($model, 'parent_id')->textInput(['value' => $parent->id])->label('Родительская категория: <span class="text-primary">'.$parent->name.'</span>');?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

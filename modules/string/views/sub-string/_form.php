@@ -12,17 +12,15 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'engl')->textInput(['maxlength' => true]) ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-    <?= $form->field($model, 'ru')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'engl')->textarea(['rows' => '3']) ?>
 
-    <?= $form->field($model, 'id_text')->textInput() ?>
+    <?= $form->field($model, 'ru')->textarea(['rows' => '3']) ?>
 
-    <?= $form->field($model, 'id_sentense')->textInput() ?>
+    <?= $form->field($model, 'text_id')->hiddenInput(['value' => $model->text_id])->label(false); ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <?= $form->field($model, 'soundfile')->fileInput()->label('Файл озвучки') ?>
+    <?= $form->field($model, 'sound_file')->fileInput()->label('Файл озвучки') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

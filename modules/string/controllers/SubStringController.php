@@ -4,7 +4,7 @@ namespace app\modules\string\controllers;
 
 use Yii;
 use app\modules\string\models\{SubString, SubStringSearch};
-use app\models\Text;
+use app\modules\text\models\Text;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
@@ -53,27 +53,17 @@ class SubStringController extends \app\controllers\BaseController
         ]);
     }
 
-    public function actionCreateForm()
+    public function actionAddFromString()
     {
-        $model = new Phrase();
-
+        $model = new SubString(['scenario' => SubString::SCENARIO_ADD_FROM_STRING]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->setMessage('Фраза добавлена');
+            if ($model->str_id) return $this->redirect(['/string/view', 'id' => $model->str_id]);
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
-    }
-
-    //from sentense
-    public function actionCreate()
-    {
-        $model = new Phrase();
-        if ($model->load(Yii::$app->request->post()) && $model->save(false)) {
-            return $this->setMessage('Фраза добавлена')->redirect(['/sentense/view', 'id' => $model->id_sentense]);
-        }
-        throw new NotFoundHttpException('Ошибка при добавлении фразы');
     }
 
     public function actionAddFromFiles($id_text = false)
@@ -90,8 +80,8 @@ class SubStringController extends \app\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->edit()) {
+        $model->scenario = SubString::SCENARIO_UPDATE;
+        if ($model->load(Yii::$app->request->post()) && $model->edit(TYPE_SUBSTRING)) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
         
@@ -109,9 +99,9 @@ class SubStringController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        $subtext = $this->findModel($id);
+        $subtext->remove();
+        return $this->redirect(['text', 'text_id' => $subtext->text_id]);
     }
 
     public function actionText($text_id)
@@ -119,9 +109,9 @@ class SubStringController extends \app\controllers\BaseController
         Url::remember();
         $searchModel = new SubstringSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 5;
+        // $dataProvider->pagination->pageSize = 5;
         $text = Text::findOne($text_id);
-        // $text->countStatistics($text->substrings);
+        $text->countStatistics($text->substrings);
         return $this->render('text', compact('text', 'searchModel', 'dataProvider'));
     }
 

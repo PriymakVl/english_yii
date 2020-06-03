@@ -7,12 +7,12 @@ use app\helpers\BreadcrumbsHelper;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Перечень текстов категории: '.$cat->name;
+$this->title = 'Перечень текстов категории: ' . $cat->name;
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::category($cat);
+$this->params['breadcrumbs'] = BreadcrumbsHelper::category($cat, false);
 
 function create_link_title($model) {
-    return Html::a($model->title, ['/text/view', 'id' => $model->id]);
+    return Html::a($model->title, ['view', 'id' => $model->id]);
 }
 
 ?>
@@ -21,12 +21,11 @@ function create_link_title($model) {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Добавить текст', ['/text/create', 'cat_id' => $cat->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Добавить текст', ['create', 'cat_id' => $cat->id], ['class' => 'btn btn-success']) ?>
     </p>
 
 
     <?= GridView::widget([
-        'filterModel' => $searchModel,
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],

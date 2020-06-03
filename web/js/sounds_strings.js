@@ -2,16 +2,16 @@ $(document).ready(function() {
 
     var learned_ids = '';
     var learned_qty = 0;
-    var id_text;
+    var text_id;
 
     $('#start').click(function(event) {
         event.preventDefault();
-        id_text = get_params_url('id_text');
+        id_text = get_params_url('text_id');
         $(this).hide();
         $('#stop').show();
-        let phrases = this.dataset.phrases.split(';');
-        if (!phrases) return alert('Нет фраз');
-        play_all(15000, phrases);
+        let strings = this.dataset.strings.split(';');
+        if (!strings) return alert('Нет строк');
+        play_all(15000, strings);
     });
 
     $('#stop').click(function(event) {
@@ -22,23 +22,23 @@ $(document).ready(function() {
 });
 
 
-function play_all(delay, phrases)
+function play_all(delay, strings)
 {
     index = 0;
-    setInterval(play_phrase, delay, phrases);
+    setInterval(play_strings, delay, strings);
 }
 
-function play_phrase(phrases) 
+function play_strings(strings) 
 {
     document.querySelectorAll('.view').forEach(item => {item.style.display = 'none'});
-    let arr = phrases[index].split(':');
+    let arr = strings[index].split(':');
     sound = new Audio('/web/sounds/' + arr[0]);
     sound.play();
     setTimeout(show_text_box, 5000, 'engl', arr[1]);
     setTimeout(show_text_box, 10000, 'ru', arr[2]);
     index++;
-    show_statistics(phrases);
-    if (index == phrases.length) return alert('Фрафзы  пройдены');
+    show_statistics(strings);
+    if (index == strings.length) return alert('Строки пройдены');
 }
 
 function show_text_box(id, value) {
@@ -47,9 +47,9 @@ function show_text_box(id, value) {
     box.innerText = value;
 }
 
-function show_statistics(phrases) {
-    phrase_all.innerText = phrases.length;
-    phrase_sounded.innerText = index;
-    phrase_rest.innerText = phrases.length - index;
+function show_statistics(strings) {
+    str_all.innerText = strings.length;
+    str_sounded.innerText = index;
+    str_rest.innerText = strings.length - index;
 }
 

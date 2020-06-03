@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\modules\text\models;
 
 use Yii;
 use app\modules\word\models\{WordText, Word};

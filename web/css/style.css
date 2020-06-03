@@ -55,3 +55,21 @@
 .statistics span {
     color: red;
 }
+
+.statistics_sounds {
+    position: fixed;
+    left: 10px;
+    top: 50%;
+    padding: 20px;
+    background: #e5e5e5;
+    font-size: 20px;
+ }
+
+ .player-btn {
+ 	font-size: 1.5em;
+ 	cursor: pointer;
+ }
+
+ .player-btn:hover {
+ 	opacity: .8;
+ }

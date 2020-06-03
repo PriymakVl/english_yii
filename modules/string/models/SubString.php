@@ -24,7 +24,9 @@ class SubString extends \app\modules\string\models\BaseString
     // const DELIMITER_PUNCTUATION_MARKS = 1;
     // const DELIMITER_LINE_BREAK = 2;
 
-    // const SCENARIO_FILES = 'files';
+    const SCENARIO_ADD_FROM_FILES = 'files';
+    const SCENARIO_ADD_FROM_STRING = 'string';
+    const SCENARIO_UPDATE = 'update';
 
     // public $delimeter; 
 
@@ -42,9 +44,11 @@ class SubString extends \app\modules\string\models\BaseString
     public function rules()
     {
         return [
-            [['text_id', 'str_id', 'status', 'delimeter'], 'integer'],
+            [['text_id', 'subtext_id', 'str_id', 'status'], 'integer'],
             [['engl', 'ru'], 'string', 'max' => 255],
             [['engl', 'ru'], 'filter', 'filter' => 'trim'],
+            [['engl', 'ru'], 'required'],
+            [['sound_file'], 'file',  'extensions' => 'wav, mp3'],
             [['file_ru', 'file_engl'], 'file', 'skipOnEmpty' => false, 'extensions' => 'txt'],
         ];
     }
@@ -52,8 +56,9 @@ class SubString extends \app\modules\string\models\BaseString
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        // $scenarios[static::SCENARIO_FILES] = ['delimeter', 'id_text'];
-        // $scenarios[static::SCENARIO_FILES] = ['delimeter', 'file_ru', 'file_engl', 'id_text'];
+        $scenarios[static::SCENARIO_ADD_FROM_STRING] = ['engl', 'ru', 'str_id', 'text_id', 'subtext_id'];
+        $scenarios[static::SCENARIO_UPDATE] = ['engl', 'ru', 'str_id', 'text_id', 'subtext_id', 'sound_file'];
+        $scenarios[static::SCENARIO_ADD_FROM_FILES] = ['delimeter', 'file_ru', 'file_engl', 'text_id'];
         return $scenarios;
     }
 

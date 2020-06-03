@@ -6,7 +6,8 @@ use yii\helpers\Html;
 /* @var $model app\models\Phrase */
 
 $this->title = 'Update Phrase: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Phrases', 'url' => ['index']];
+if ($model->text_id) $this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['text', 'text_id' => $model->text_id]];
+else $this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>

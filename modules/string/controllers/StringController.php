@@ -4,10 +4,11 @@ namespace app\modules\string\controllers;
 
 use Yii;
 use app\modules\string\models\{FullString, FullStringSearch, SubString};
-use app\models\Text;
+use app\modules\text\models\{Text, SubText};
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 
 class StringController extends \app\controllers\BaseController
 {
@@ -28,50 +29,50 @@ class StringController extends \app\controllers\BaseController
 
     public function actionIndex()
     {
-
+        $searchModel = new FullStringSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionText($text_id)
     {
+        Url::remember();
+        $searchModel = new FullStringSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $text = Text::findOne($text_id);
-        $strings = FullString::findAll(['text_id' => $text_id, 'status' => STATUS_ACTIVE]);
-        return $this->render('text', compact('strings', 'text'));
+        $text->countStatistics($text->strings);
+        return $this->render('text', compact('text', 'searchModel', 'dataProvider'));
     }
 
-    public function actionBreakText($text_id)
+    public function actionBreakSubText($text_id)
     {
-        debug($text_id);
-        // if (!$) Sentense::breakText($text);
+        $subtexts = SubText::findAll(['text_id' => $text_id, 'status' => STATUS_ACTIVE]);
+        if (!$subtexts) return $this->setMessage("У текста еще нет абзацев")->back();
+        FullString::break($subtexts);
+        return $this->setMessage("Текст успешно разбит на предложения")->back();
+    }
+
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        $substr = new SubString();
+        return $this->render('view', compact('model', 'substr'));
     }
 
     /**
-     * Displays a single Sentense model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id, $direction = false)
-    {
-        if ($direction) $model = Sentense::getNeighbor($id, $direction);
-        else $model = Sentense::findOne($id);
-        if (!$model) throw new NotFoundHttpException('Предложение не найдено');
-        $phrase = new Phrase();
-        return $this->render('view', compact('model', 'phrase'));
-    }
-
-    /**
-     * Creates a new Sentense model.
+     * Creates a new FullString model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Sentense();
-
+        $model = new FullString();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -87,10 +88,9 @@ class StringController extends \app\controllers\BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->load(Yii::$app->request->post()) && $model->updateSentense()) {
+        if ($model->load(Yii::$app->request->post()) && $model->edit(TYPE_STRING)) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
@@ -105,9 +105,9 @@ class StringController extends \app\controllers\BaseController
      */
     public function actionDelete($id)
     {
-        $sentense = $this->findModel($id);
-        $sentense->delete();
-        return $this->setMessage("Предложение успешно удалено")->redirect(['text', 'id_text' => $sentense->id_text]);
+        $str = $this->findModel($id);
+        $str->remove();
+        return $this->redirect(['text', 'text_id' => $str->text_id]);
     }
 
     public function actionShift($id, $lang)
@@ -126,10 +126,9 @@ class StringController extends \app\controllers\BaseController
      */
     protected function findModel($id)
     {
-        if (($model = Sentense::findOne($id)) !== null) {
+        if (($model = FullString::findOne($id)) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

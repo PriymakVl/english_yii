@@ -6,19 +6,11 @@ use app\models\Sound;
 use yii\widgets\LinkPager;
 use app\helpers\BreadcrumbsHelper;
 
-
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\SentenseSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
 $this->title = 'Фразы';
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
-$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = $this->title;
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'text_id' => $text->id]];
+$bc_cat = BreadcrumbsHelper::category($text->category);
+$bc_text = BreadcrumbsHelper::text($text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['.......'], $bc_text);
 
 function create_sound_player($model) {
     if (!$model->sound_id) return '<span class="red">нет</span>';
@@ -27,14 +19,20 @@ function create_sound_player($model) {
     return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
 }
 ?>
-<div class="sentense-index">
+<div class="substring-index">
 
-    <h1>Фразы текста: <?= Html::encode($text->title) ?></h1>
+    <h4><b>Текст:</b> <?= $text->title ?></h4>
+    <h1> <?= Html::encode($this->title) ?></h1>
+
+     <ul class="statistics">
+        <li>Всего фраз: <span><?= $text->statistics['all'] ?></span></li>
+        <li>Выучено фраз: <span><?= $text->statistics['learned'] ?></span></li>
+        <li>Не выучено фраз: <span><?= $text->statistics['not_learned'] ?></span></li>
+    </ul>
 
     <p>
-         <?= Html::a('Создать файл для озвучки', ['/sound/create-file', 'type' => TYPE_SUBSTRING, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
+         <?= Html::a('Создать файл для озвучки', ['/sound/create-file-strings', 'type' => TYPE_SUBSTRING, 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Добавить озвучку', ['/sound/add-sounds', 'type' => TYPE_SUBSTRING], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Добавить фразы', ['add-from-files', 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Озвучить', ['sounds', 'text_id' => $text->id], ['class' => 'btn btn-success']) ?>
         <?= Html::a('Повторять', ['repeat', 'text_id' => $text->id], ['class' => 'btn btn-primary']) ?>
     </p>
@@ -51,7 +49,7 @@ function create_sound_player($model) {
 
                 'ru',
 
-                ['attribute' => 'sound', 'format' => 'raw', 'value' => function($model) {return create_sound_player($model);}], 
+                ['attribute' => 'sound', 'format' => 'raw', 'value' => function($model) {return $model->getSoundPlayer();}],  
 
                 ['class' => 'yii\grid\ActionColumn'],
             ],
@@ -59,7 +57,7 @@ function create_sound_player($model) {
 
     <? else: ?>
         <div class="alert alert-warning" role="alert">
-            У этого текста фраз еще нет
+            У этого текста предложений еще нет
         </div>
     <? endif; ?>
 

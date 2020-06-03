@@ -38,17 +38,15 @@ class CategorySearch extends Category
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pageSize)
+    public function search($params)
     {
-        $parent_id = $params['parent_id'] ?? PARENT_ID_CORE;
 
-        if ($params['CategorySearch']) $query = Category::find();
-        else $query = Category::find()->where(['parent_id' => $parent_id]);
+        $query = Category::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query, 'pagination' => ['pageSize' => $pageSize,],
+            'query' => $query,
         ]);
 
         $this->load($params);

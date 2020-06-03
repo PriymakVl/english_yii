@@ -32,12 +32,11 @@ class WordController extends \app\controllers\BaseController
      */
     public function actionIndex()
     {
-        $params['query'] = Word::find()->where(['status' => STATUS_ACTIVE]);
-        $params['pagination'] = ['pageSize' => 10];
-        $dataProvider = new ActiveDataProvider($params);
+        $searchModel = new SearchWord();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider, 'searchModel' => $searchModel
         ]);
     }
 

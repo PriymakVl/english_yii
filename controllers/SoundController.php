@@ -7,7 +7,7 @@ use app\models\Sound;
 
 class SoundController extends \app\controllers\BaseController
 {
-    public function actionCreateFile($type, $text_id = false)
+    public function actionCreateFileStrings($type, $text_id = false)
     {
         $items = Sound::getItemsForCreateSoundOfFile($type, $text_id);
         if (!$items) return $this->setMessage('Нет элементов', 'error')->back();
@@ -23,7 +23,7 @@ class SoundController extends \app\controllers\BaseController
         header('Content-Disposition: attachment; filename="for_sounds.txt"');
          
         foreach ($items as $item) {
-            // echo trim($item->engl), PHP_EOL, PHP_EOL, PHP_EOL;
+            if ($item->engl == 'con') continue; //не озвучивает программа
             echo trim($item->engl), "\r\n", "\r\n", "\r\n";
         }
     }

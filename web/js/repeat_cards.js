@@ -10,12 +10,6 @@ $(document).ready(function() {
 		$(this).parent().parent().hide();
 	});
 
-	$('.card__play').click(function() {
-		filename = $(this).attr('sound');
-		sound = new Audio('/web/sounds/' + filename);
-        sound.play();
-	});
-
 	$('.card__learned').click(function() {
 		let word_id = $(this).attr('word_id');
 		$.get( "/word/set-state", { id: word_id } ).done((data) => $(this).parent().parent().hide());

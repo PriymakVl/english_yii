@@ -53,10 +53,8 @@ class SearchWord extends \app\modules\word\models\Word
         }
 
         // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-        ]);
+        // $query->andFilterWhere([
+        // ]);
 
         $query->andFilterWhere(['like', 'engl', $this->engl])
             ->andFilterWhere(['like', 'ru', $this->ru]);

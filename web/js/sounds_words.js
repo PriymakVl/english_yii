@@ -2,14 +2,14 @@ $(document).ready(function() {
 
     var learned_ids = '';
     var learned_qty = 0;
-    var id_text;
+    var text_id;
 
     $('#start').click(function(event) {
         event.preventDefault();
-        id_text = get_params_url('id_text');
+        text_id = get_params_url('text_id');
         $(this).hide();
         $('#stop').show();
-        let words = this.dataset.wordsStr.split(';');
+        let words = this.dataset.soundsStr.split(';');
         if (!words) return alert('Нет слов');
         // $('.well').text(word_arr[2]).show();
         // var delay = prompt('Укажите задержку между словами в секундах не более 30 сек', 5);

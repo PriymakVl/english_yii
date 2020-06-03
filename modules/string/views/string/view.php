@@ -4,53 +4,48 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\Sound;
 use yii\widgets\ActiveForm;
+use app\helpers\BreadcrumbsHelper;
 
-$words = $model->getWords();
+$this->title = 'Предложение';
 
-$this->title = 'Предложение №'.$model->currentNum. ' всего предложений: '.$model->allQty;
-
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['text', 'id_text' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/phrase/text', 'id_text' => $model->id_text]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'id_text' => $model->id_text]];
+$bc_cat = BreadcrumbsHelper::category($model->text->category);
+$bc_text = BreadcrumbsHelper::text($model->text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 
 \yii\web\YiiAsset::register($this);
 
-function create_words($words) {
-    if (!$words) return '<span class="red">нет</span>';
-    $list_words = '<span id="toggle-words" onclick="show_words();">Список слов</span><ul id="list-words" class="hidden">';
-    foreach ($words as $word) {
-        $list_words .= sprintf('<li><span>%s</span>&nbsp;&nbsp;=&nbsp;&nbsp;<span>%s<span></li>', $word->engl, $word->ru);
+function create_words($model) {
+    if (!$model->words) return '<span class="red">нет</span>';
+    $words = '<span id="toggle-words" onclick="show_words(this);">Показать слова</span><ul id="list-words" class="hidden">';
+    foreach ($model->words as $word) {
+        $words .= sprintf('<li title="%s"><a href="/word/view?id=%s">%s</a></li>', $word->ru, $word->id, $word->engl);
     }
-    return $list_words.'</ul>';
+    return $words.'</ul>';
 }
 
-function create_phrases($phrases) {
-    if (!$phrases) return '<span class="red">нет</span>';
-    $list_phrases = '<ul>';
-    foreach ($phrases as $phrase) {
-        $list_phrases .= sprintf('<li>%s</li>', $phrase->engl);
+function create_substrings($model) {
+    if (!$model->substrings) return '<span class="red">нет</span>';
+    $substrings = '<span id="toggle-substr" onclick="show_substr(this);">Показать фразы</span>';
+    $substrings .= '<ul id="list-substr" class="hidden">';
+    foreach ($model->substrings as $substr) {
+        $substrings .= sprintf('<li title="%s"> <a href="/substring/view?id=%s">%s</a> </li>', $substr->ru, $substr->id, $substr->engl);
     }
-    return $list_phrases.'</ul>';
-}
-
-function create_sound_player($model) {
-    if (!$model->sound_id) return '<span class="red">нет</span>';
-    $sound = Sound::findOne(['id' => $model->sound_id, 'status' => STATUS_ACTIVE]);
-    if (!$sound) return '<span class="red">нет</span>';
-    return sprintf('<audio controls src="/sounds/%s"></audio>', $sound->filename);
+    return $substrings.'</ul>';
 }
 
 ?>
 
 <style>
-    #toggle-words {
+    #toggle-words, #toggle-substr {
         text-decoration: underline;
         font-size: 1.2em;
-    }
-    #toggle-words {
         cursor: pointer;
     }
+
+    #list-words li, #list-substr li {
+        cursor: default;
+    }
+
     .hidden {
         display: none;
     }
@@ -70,10 +65,10 @@ function create_sound_player($model) {
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Previous', ['view', 'id' => $model->id, 'direction' => 'prev'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Next', ['view', 'id' => $model->id, 'direction' => 'next'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Shift up engl', ['shift', 'id' => $model->id, 'lang' => 'engl'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Shift up ru', ['shift', 'id' => $model->id, 'lang' => 'ru'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Previous', ['view', 'id' => $model->getPrevItemId()], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Next', ['view', 'id' => $model->getNextItemId()], ['class' => 'btn btn-primary']) ?>
+        <?//= Html::a('Shift up engl', ['shift', 'id' => $model->id, 'lang' => 'engl'], ['class' => 'btn btn-primary']) ?>
+        <?//= Html::a('Shift up ru', ['shift', 'id' => $model->id, 'lang' => 'ru'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([
@@ -82,30 +77,32 @@ function create_sound_player($model) {
             'engl',
             'ru',
 
-            ['attribute' => 'phrases', 'label' => 'Фразы', 'format' => 'raw',
-                'value' => function($model) {return create_phrases($model->phrases);}, 
+            ['attribute' => 'substrings', 'label' => 'Фразы', 'format' => 'raw',
+                'value' => function($model) {return create_substrings($model);}, 
             ],
  
             ['attribute' => 'words', 'label' => 'Слова', 'format' => 'raw',
-                'value' => function($model) {return create_words($model->getWords());}, 
+                'value' => function($model) {return create_words($model);}, 
             ],
 
-            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return create_sound_player($model);}
+            ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return $model->getSoundPlayer();}
             ],
         ],
     ]) ?>
 
     <h2>Форма для добавления фраз</h2>
 
-    <?php $form = ActiveForm::begin(['action' => '/phrase/create']); ?>
+    <?php $form = ActiveForm::begin(['action' => '/substring/add-from-string']); ?>
 
-        <?= $form->field($phrase, 'engl')->textarea(['rows' => '1']) ?>
+        <?= $form->field($substr, 'engl')->textarea(['rows' => '1']) ?>
 
-        <?= $form->field($phrase, 'ru')->textarea(['rows' => '1']) ?>
+        <?= $form->field($substr, 'ru')->textarea(['rows' => '1']) ?>
 
-        <?= $form->field($phrase, 'id_text')->hiddenInput(['value' => $model->id_text])->label(false) ?>
+        <?= $form->field($substr, 'text_id')->hiddenInput(['value' => $model->text_id])->label(false) ?>
 
-        <?= $form->field($phrase, 'id_sentense')->hiddenInput(['value' => $model->id])->label(false) ?>
+        <?= $form->field($substr, 'subtext_id')->hiddenInput(['value' => $model->subtext_id])->label(false) ?>
+
+        <?= $form->field($substr, 'str_id')->hiddenInput(['value' => $model->id])->label(false) ?>
 
         <div class="form-group">
             <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -118,8 +115,15 @@ function create_sound_player($model) {
 
 <!-- js scripts  -->
 <script>
-    function show_words() {
+    function show_words(toggleBtn) {
+        toggleBtn.innerText = toggleBtn.innerText == 'Показать слова' ? 'Скрыть слова' : 'Показать слова';
         words = document.getElementById('list-words');
+        words.classList.toggle('hidden');
+    }
+
+    function show_substr(toggleBtn) {
+        toggleBtn.innerText = toggleBtn.innerText == 'Показать фразы' ? 'Скрыть фразы' : 'Показать фразы';
+        words = document.getElementById('list-substr');
         words.classList.toggle('hidden');
     }
 </script>

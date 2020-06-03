@@ -10,12 +10,9 @@ use app\helpers\BreadcrumbsHelper;
 
 $this->title = 'Фраза';
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($model->text->category, false);
-$this->params['breadcrumbs'][] = ['label' => $model->text->category->name, 'url' => ['/category/text', 'cat_id' => $model->text->category->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $model->text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $model->text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $model->text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['/text-word', 'text_id' => $model->text->id]];
+$bc_cat = BreadcrumbsHelper::category($model->text->category);
+$bc_text = BreadcrumbsHelper::text($model->text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 
 
 \yii\web\YiiAsset::register($this);

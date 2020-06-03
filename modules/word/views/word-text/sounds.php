@@ -1,6 +1,7 @@
 <?php 
 
 	use yii\helpers\Html;
+  use app\helpers\BreadcrumbsHelper;
 
 	$this->registerJsFile('@web/js/sounds_words.js', ['depends' => 'yii\web\YiiAsset']);
 
@@ -34,14 +35,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 't
     position: fixed;
     top: 50%;
     right: 100px;
-  }
-  .statistics_sounds {
-    position: fixed;
-    left: 10px;
-    top: 50%;
-    padding: 20px;
-    background: #e5e5e5;
-    font-size: 20px;
   }
 </style>
 

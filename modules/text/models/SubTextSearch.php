@@ -1,12 +1,15 @@
 <?php
 
-namespace app\modules\string\models;
+namespace app\modules\text\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\string\models\FullString;
+use app\modules\text\models\SubText;
 
-class FullStringSearch extends \app\modules\string\models\FullString
+/**
+ * SubTextSearch represents the model behind the search form of `app\modules\text\models\SubText`.
+ */
+class SubTextSearch extends SubText
 {
     /**
      * {@inheritdoc}
@@ -14,7 +17,7 @@ class FullStringSearch extends \app\modules\string\models\FullString
     public function rules()
     {
         return [
-            [['id', 'text_id', 'status'], 'integer'],
+            [['id', 'text_id', 'state', 'status'], 'integer'],
             [['engl', 'ru'], 'safe'],
         ];
     }
@@ -37,9 +40,7 @@ class FullStringSearch extends \app\modules\string\models\FullString
      */
     public function search($params)
     {
-        $where = ['status' => STATUS_ACTIVE];
-        if (isset($params['text_id'])) $where['text_id'] = $params['text_id'];
-        $query = FullString::find()->where($where);
+        $query = SubText::find();
 
         // add conditions that should always apply here
 
@@ -56,6 +57,13 @@ class FullStringSearch extends \app\modules\string\models\FullString
         }
 
         // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'text_id' => $this->text_id,
+            'state' => $this->state,
+            'status' => $this->status,
+        ]);
+
         $query->andFilterWhere(['like', 'engl', $this->engl])
             ->andFilterWhere(['like', 'ru', $this->ru]);
 
