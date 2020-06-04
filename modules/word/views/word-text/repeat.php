@@ -7,12 +7,9 @@ $this->registerJsFile('@web/js/repeat_cards.js', ['depends' => 'yii\web\YiiAsset
 
 $this->title = 'Повторение слов';
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
-$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 'text_id' => $text->id]];
+$bc_cat = BreadcrumbsHelper::category($text->category);
+$bc_text = BreadcrumbsHelper::text($text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 
 ?>
 
@@ -65,7 +62,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слова', 'url' => ['index', 't
         <div class="card__action">
           <i class="fas fa-eye-slash card__hide" title="не показывать"></i>
           <i class="fas fa-check-circle card__learned" word_id="<?=$word->id?>" title="выучено"></i>
-          <i class="fas fa-play-circle card__play" sound="<?= $word->sound->filename ?>" title="озвучить"></i>
+          <i class="fas fa-play-circle card__play" onclick="sound_play(this);" sound="<?= $word->sound->filename ?>" title="озвучить"></i>
         </div>
       </div>
     <?php endforeach ?>

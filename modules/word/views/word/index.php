@@ -28,6 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'engl',
             'ru',
+
+            ['attribute' => 'state', 'format' => 'raw', 'value' => function($model) { return $model->templateLinkState();}],
+
             ['attribute' => 'saund', 'format' => 'raw', 'value' => function($model) {return $model->getSoundPlayer();}],
 
             ['class' => 'yii\grid\ActionColumn'],

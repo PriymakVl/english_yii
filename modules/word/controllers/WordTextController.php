@@ -7,7 +7,7 @@ use yii\helpers\{ArrayHelper, Url};
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\{ActiveDataProvider, Pagination};
-use app\models\Text;
+use app\modules\text\models\Text;
 use app\modules\word\models\ {Word, WordText, WordTextSearch};
 use app\modules\string\models\ {FullString, Substring};
 

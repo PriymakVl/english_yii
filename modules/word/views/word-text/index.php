@@ -10,19 +10,9 @@ $this->registerJsFile('@web/js/sort_state.js', ['depends' => 'yii\web\YiiAsset']
 
 $this->title = 'Слова';
 
-$this->params['breadcrumbs'] = BreadcrumbsHelper::create($text->category, false);
-$this->params['breadcrumbs'][] = ['label' => $text->category->name, 'url' => ['/category/text', 'cat_id' => $text->category->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Текст', 'url' => ['/text/view', 'id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Предложения', 'url' => ['/string/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = ['label' => 'Фразы', 'url' => ['/substring/text', 'text_id' => $text->id]];
-$this->params['breadcrumbs'][] = $this->title;
-
-function create_link_state($model) {
-    $params = ['/word/set-state', 'id' => $model->word->id];
-    $style['class'] = ($model->word->state == STATE_NOT_LEARNED) ? 'text-danger' : 'text-success';
-    $name = ($model->word->state == STATE_NOT_LEARNED) ? 'не выучено' : 'выучено';
-    return Html::a($name, $params, $style);
-}
+$bc_cat = BreadcrumbsHelper::category($text->category);
+$bc_text = BreadcrumbsHelper::text($text->id);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 
 ?>
 
@@ -74,7 +64,7 @@ function create_link_state($model) {
             ],
 
             ['attribute' => 'state', 'label' => 'Состояние', 'format' => 'raw',
-                'value' => function($model) {return create_link_state($model);}, 
+                'value' => function($model) {return $model->word->templateLinkState();}, 
             ],
  
             ['attribute' => 'sound', 'format' => 'raw', 'value' => function($model) {return $model->word->getSoundPlayer();}], 

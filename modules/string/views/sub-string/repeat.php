@@ -9,7 +9,7 @@ $this->title = 'Повторение фраз';
 
 $bc_cat = BreadcrumbsHelper::category($text->category);
 $bc_text = BreadcrumbsHelper::text($text->id);
-$this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
+$this->params['breadcrumbs'] = array_merge($bc_cat, ['--- Разделы ---'], $bc_text);
 
  ?>
 
@@ -61,7 +61,9 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
         </div>
         <div class="card__action">
           <i class="fas fa-eye-slash card__hide" title="не показывать"></i>
-          <i class="fas fa-play-circle card__play" onclick="sound_play(this);" sound="<?= $substr->sound->filename ?>"></i>
+          <?php if ($substr->sound): ?>
+            <i class="fas fa-play-circle card__play" onclick="sound_play(this);" sound="<?= $substr->sound->filename ?>"></i>
+          <?php endif ?>
         </div>
       </div>
     <?php endforeach ?>

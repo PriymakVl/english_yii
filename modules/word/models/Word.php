@@ -3,6 +3,7 @@
 namespace app\modules\word\models;
 
 use Yii;
+use yii\helpers\Html;
 use app\models\Sound;
 use app\modules\string\models\{FullString, Substring};
 
@@ -107,5 +108,13 @@ class Word extends \app\modules\word\models\BaseWord
         $word = strtolower(trim($word));
         if (!$flag_engl) $word = mb_convert_encoding($word, "utf-8", "windows-1251");
         return htmlspecialchars($word);
+    }
+
+    public function templateLinkState()
+    {
+        $params = ['/word/set-state', 'id' => $this->id];
+        $style['class'] = ($this->state == STATE_NOT_LEARNED) ? 'text-danger' : 'text-success';
+        $name = ($this->state == STATE_NOT_LEARNED) ? 'не выучено' : 'выучено';
+        return Html::a($name, $params, $style);
     }
 }
