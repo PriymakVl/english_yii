@@ -5,6 +5,7 @@ namespace app\modules\text\models;
 use Yii;
 use app\modules\word\models\{WordText, Word};
 use app\modules\string\models\{FullString, SubString};
+use app\modules\text\models\SubText;
 use app\models\Category;
 
 /**
@@ -55,6 +56,11 @@ class Text extends \app\models\ModelApp
             'status' => 'Status',
             'cat_id' => 'Категория',
         ];
+    }
+
+    public function getSubtexts()
+    {
+        return $this->hasMany(SubText::className(), ['text_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
     }
 
     public function getCategory()

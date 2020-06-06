@@ -32,9 +32,7 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, $bc_text);
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Предложения', ['/string/text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Фразы', ['/substring/text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Слова', ['/word-text', 'text_id' => $model->id], ['class' => 'btn btn-primary']) ?>
+
         <?php if ($model->ref): ?>
             <a href="<?= $model->ref ?> " class="btn btn-primary" target="_blank">Источник</a>
         <?php endif; ?>

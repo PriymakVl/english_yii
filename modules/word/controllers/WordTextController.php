@@ -7,7 +7,7 @@ use yii\helpers\{ArrayHelper, Url};
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\{ActiveDataProvider, Pagination};
-use app\modules\text\models\Text;
+use app\modules\text\models\{Text, Subtext};
 use app\modules\word\models\ {Word, WordText, WordTextSearch};
 use app\modules\string\models\ {FullString, Substring};
 
@@ -115,10 +115,13 @@ class WordTextController extends \app\controllers\BaseController
         return $this->render('sounds', compact('sounds_str', 'text'));
     }
 
-    public function actionRepeat($text_id)
+    public function actionRepeat($text_id, $subtext_id = false)
     {
         $text = Text::findOne($text_id);
+        $subtext = Subtext::findOne($subtext_id);
+        $words = $subtext ? $subtext->words : $text->words;
         $words = $text->sortItems($text->words, STATE_NOT_LEARNED);
+        // debug(;цщквы);
         return $this->render('repeat', compact('words', 'text'));
     }
 

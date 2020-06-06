@@ -43,13 +43,27 @@ class ModelApp extends \yii\db\ActiveRecord
 
     public function getWords()
     {
-        $items = explode(' ', $this->engl);
+        $items = $this->breakWords($this->engl);
         $words = [];
+        if (!$items) return $words;
         foreach ($items as $item) {
-            $word = Word::findOne(['engl' => trim($item), 'status' => STATUS_ACTIVE]);
+            $word = Word::findOne(['engl' => $item, 'status' => STATUS_ACTIVE]);
             if ($word) $words[] = $word;
         }
         return $words;
+    }
+
+    protected function breakWords($str)
+    {
+        $words = [];
+        $items = explode(' ', $str);
+        if (!$items) return $words;
+        foreach ($items as $item) {
+            $word = preg_replace('/[^a-zA-Z]/ui', '', $item); 
+            if (!$word) continue;
+            $words[] = strtolower($word);
+        }
+        return array_unique($words);
     }
 
     public function getState()

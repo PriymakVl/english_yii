@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use app\helpers\BreadcrumbsHelper;
 
 $this->registerJsFile('@web/js/repeat_cards.js', ['depends' => 'yii\web\YiiAsset']);
+$this->registerJsFile('@web/js/select_subtext.js', ['depends' => 'yii\web\YiiAsset']);
 
 $this->title = 'Повторение слов';
 
@@ -50,6 +51,14 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 </style>
 
 <button id="turn_lang" class="btn btn-primary">Russion</button>
+
+<label for="subtext">№ абзаца: </label>
+<select name="subtext" id="subtext">
+  <option value="">Все</option>
+  <?php foreach ($text->subtexts as $subtext): ?>
+    <option value="<?= $subtext->id ?>"><?= $subtext->number ?></option>
+  <?php endforeach ?>
+</select>
 
 
 <div class="wrapper">

@@ -6,9 +6,10 @@ use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use app\models\Sound;
+use app\modules\string\models\Substring;
 
 /**
- * This is the model class for table "sentense".
+ * This is the model class for table "strings".
  *
  * @property int $id
  * @property string|null $engl
@@ -99,7 +100,7 @@ class FullString extends \app\modules\string\models\BaseString
             $obj->subtext_id = $subtext_id;
             $obj->save();
     }
-
+    //breal subtext on string 
     public static function break($subtexts)
     {
         foreach ($subtexts as $sub) {
