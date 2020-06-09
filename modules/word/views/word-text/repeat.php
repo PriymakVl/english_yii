@@ -51,6 +51,22 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
   .card__action .fas:hover  {
     color: red;
   }
+
+  .modal-body h3 {
+    position: relative;
+  }
+
+  .modal-body .player-btn {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    font-size: 22px;
+  }
+
+  .modal-body h3:hover {
+    cursor: pointer;
+    background: #ccc;
+  }
 </style>
 
 <button id="turn_lang" class="btn btn-primary">Russion</button>
@@ -77,7 +93,9 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
           <i class="fas fa-eye-slash card__hide" title="не показывать"></i>
           <i class="fas fa-check-circle card__learned" word_id="<?=$word->id?>" title="выучено"></i>
           <i class="fas fa-play-circle card__play" onclick="sound_play(this);" sound="<?= $word->sound->filename ?>" title="озвучить"></i>
-          <i class="fas fa-quote-right" engl="<?= $word->engl ?>" onclick="showPhrases(this);" data-phrases="<?=Sound::createSoundsString($word->substrings);?>" title="фразы"></i>
+          <?php if ($word->substrings): ?>
+             <i class="fas fa-quote-right" engl="<?= $word->engl ?>" ru="<?= $word->ru ?>" onclick="showPhrases(this);" data-phrases="<?=Sound::createSoundsString($word->substrings);?>" title="фразы"></i>
+          <?php endif ?>
         </div>
       </div>
     <?php endforeach ?>
@@ -98,9 +116,7 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
         <h4 class="modal-title"></h4>
       </div>
       <!-- Основное содержимое модального окна -->
-      <div class="modal-body">
-        Содержимое модального окна...
-      </div>
+      <div class="modal-body"></div>
     </div>
   </div>
 </div>
@@ -108,18 +124,21 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 <script>
   function showPhrases(elem)
   {
-    let phrases = $(elem).data('phrases');
-    phrases_arr = phrases.split(';');
+    let phrases_str = $(elem).data('phrases');
+
+    phrases_arr = phrases_str.split(';');
     phrases_list = '';
-    // return console.log(phrases_arr);
+
     for (let i = 0; i < phrases_arr.length; i++) {
       item = phrases_arr[i].split(':');
       if (item[1] == undefined) continue;
-      phrases_list += '<h3 title="' + item[2] + '">' + item[1] + '</h3>';
+      phrases_list += '<h3 title="' + item[2] + '">' + item[1];
+      phrases_list += '<i class="fas fa-play-circle player-btn" onclick="sound_play(this);" sound="' + item[0] + '"></i>';
+      phrases_list += '</h3>';
     }
-    let word = $(this).attr('engl');
-    return console.log(word);
-    $('.modal-title span').text(word);
+    let engl = $(elem).attr('engl');
+    let ru = $(elem).attr('ru');
+    $('.modal-title').text(engl + ' (' + ru + ')');
     $('.modal-body').html(phrases_list);
     $('#myModalBox').modal('show');
   }
