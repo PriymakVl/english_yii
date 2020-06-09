@@ -5,7 +5,7 @@ namespace app\modules\word\models;
 use Yii;
 use yii\helpers\Html;
 use app\models\Sound;
-use app\modules\string\models\{FullString, Substring};
+use app\modules\string\models\{FullString, SubString};
 
 /**
  * This is the model class for table "word".
@@ -80,7 +80,7 @@ class Word extends \app\modules\word\models\BaseWord
 
     public function getSubstrings()
     {
-        return Substring::find()->where(['status' => STATUS_ACTIVE])->andWhere(['like', 'engl', $this->engl])->all();
+        return SubString::find()->where(['status' => STATUS_ACTIVE])->andWhere(['like', 'engl', $this->engl])->all();
     }
 
     public static function getIdByName($engl, $ru)
