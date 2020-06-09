@@ -6,7 +6,7 @@ use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
 use app\models\Sound;
-use app\modules\string\models\Substring;
+use app\modules\string\models\SubString;
 
 /**
  * This is the model class for table "strings".
@@ -63,7 +63,7 @@ class FullString extends \app\modules\string\models\BaseString
 
     public function getSubstrings()
     {
-        return $this->hasMany(Substring::className(), ['str_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
+        return $this->hasMany(SubString::className(), ['str_id' => 'id'])->where(['status' => STATUS_ACTIVE]);
     }
 
     public function shiftUpLanguage($lang)

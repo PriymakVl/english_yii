@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use app\helpers\BreadcrumbsHelper;
+use app\models\Sound;
 
 $this->registerJsFile('@web/js/repeat_cards.js', ['depends' => 'yii\web\YiiAsset']);
 $this->registerJsFile('@web/js/select_subtext.js', ['depends' => 'yii\web\YiiAsset']);
@@ -41,9 +42,11 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
     text-decoration: underline;
   }
   .card__action {
+    width: 20%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: space-between;
   }
   .card__action .fas:hover  {
     color: red;
@@ -56,9 +59,11 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
 <select name="subtext" id="subtext">
   <option value="">Все</option>
   <?php foreach ($text->subtexts as $subtext): ?>
-    <option value="<?= $subtext->id ?>"><?= $subtext->number ?></option>
+    <option value="<?= $subtext->id ?>" <?= $subtext->id == $subtext_id ? 'selected' : '' ?>><?= $subtext->number ?></option>
   <?php endforeach ?>
 </select>
+
+<span>Количество слов: <?= count($words) ?></span>
 
 
 <div class="wrapper">
@@ -72,6 +77,7 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
           <i class="fas fa-eye-slash card__hide" title="не показывать"></i>
           <i class="fas fa-check-circle card__learned" word_id="<?=$word->id?>" title="выучено"></i>
           <i class="fas fa-play-circle card__play" onclick="sound_play(this);" sound="<?= $word->sound->filename ?>" title="озвучить"></i>
+          <i class="fas fa-quote-right" engl="<?= $word->engl ?>" onclick="showPhrases(this);" data-phrases="<?=Sound::createSoundsString($word->substrings);?>" title="фразы"></i>
         </div>
       </div>
     <?php endforeach ?>
@@ -81,4 +87,41 @@ $this->params['breadcrumbs'] = array_merge($bc_cat, ['...'], $bc_text);
     </div>
   <? endif; ?>
 </div>
+
+<!-- HTML-код модального окна -->
+<div id="myModalBox" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Заголовок модального окна -->
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <!-- Основное содержимое модального окна -->
+      <div class="modal-body">
+        Содержимое модального окна...
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showPhrases(elem)
+  {
+    let phrases = $(elem).data('phrases');
+    phrases_arr = phrases.split(';');
+    phrases_list = '';
+    // return console.log(phrases_arr);
+    for (let i = 0; i < phrases_arr.length; i++) {
+      item = phrases_arr[i].split(':');
+      if (item[1] == undefined) continue;
+      phrases_list += '<h3 title="' + item[2] + '">' + item[1] + '</h3>';
+    }
+    let word = $(this).attr('engl');
+    return console.log(word);
+    $('.modal-title span').text(word);
+    $('.modal-body').html(phrases_list);
+    $('#myModalBox').modal('show');
+  }
+</script>
 

@@ -16,7 +16,7 @@ use app\modules\word\models\{Word};
  * @property string $filename
  * @property int|null $status
  */
-class Sound extends \yii\db\ActiveRecord
+class Sound extends \app\models\ModelApp
 {
     /**
      * {@inheritdoc}
