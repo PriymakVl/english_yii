@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\web\NotFoundHttpException;
-use app\modules\string\models\{FullString, Substring};
+use app\modules\string\models\{FullString, SubString};
 use app\modules\word\models\{Word};
 
 /**
@@ -65,7 +65,7 @@ class Sound extends \app\models\ModelApp
     public static function getItemsForCreateSoundOfFile($type, $text_id)
     {
         if ($type == TYPE_WORD) return Word::findAll(['sound_id' => null, 'status' => STATUS_ACTIVE]);
-        if ($type == TYPE_SUBSTRING) return Substring::findAll(['sound_id' => null, 'text_id' => $text_id, 'status' => STATUS_ACTIVE]);
+        if ($type == TYPE_SUBSTRING) return SubString::findAll(['sound_id' => null, 'text_id' => $text_id, 'status' => STATUS_ACTIVE]);
         return FullString::findAll(['sound_id' => null, 'text_id' => $text_id, 'status' => STATUS_ACTIVE]);
     }
 
@@ -91,7 +91,8 @@ class Sound extends \app\models\ModelApp
     {
         if ($type == TYPE_WORD) return Word::findOne(['engl' => $string, 'status' => STATUS_ACTIVE]);
         if ($type == TYPE_STRING) return FullString::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
-        return Substring::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
+        return Sub
+        string::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
     }
 
     private static function saveFile($item, $file_name, $ext, $type) 
