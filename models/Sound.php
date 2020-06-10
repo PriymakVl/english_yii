@@ -91,8 +91,7 @@ class Sound extends \app\models\ModelApp
     {
         if ($type == TYPE_WORD) return Word::findOne(['engl' => $string, 'status' => STATUS_ACTIVE]);
         if ($type == TYPE_STRING) return FullString::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
-        return Sub
-        string::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
+        return SubString::find()->where(['like', 'engl', $string])->andWhere(['status' => STATUS_ACTIVE])->one();
     }
 
     private static function saveFile($item, $file_name, $ext, $type) 
